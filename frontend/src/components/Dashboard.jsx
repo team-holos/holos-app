@@ -13,15 +13,17 @@ function Dashboard() {
             <li>Tagesübersicht</li>
             <li>Ziel für heute</li>
         </ul>
+       
+
         <form>
-            <label for="Shortcuts">"Menu"</label>
-            <select id="übersicht" name="Übersicht">
-            <option value="ernährung" name="Ernährung">Ernährung</option>
-            <option value="fitness" name="Fitness">Fitness</option>
-            <option value="mentale Gesundheit" name="Mentale Gesundheit">Mentale Gesundheit</option>
-            <option value="entspannung" name="Entspannung">Entspannung</option>
+            <label for="shortcuts">"Menu"</label>
+            <select id="uebersicht" name="uebersicht">
+            <option value="ernaehrung" name="ernaehrung">Ernährung</option>
+            <option value="fitness" name="fitness">Fitness</option>
+            <option value="mentale Gesundheit" name="mentale Gesundheit">Mentale Gesundheit</option>
+            <option value="entspannung" name="entspannung">Entspannung</option>
             </select>
-        </form>
+        </form> 
     </div>
 );
 }

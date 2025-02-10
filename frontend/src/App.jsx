@@ -1,15 +1,20 @@
-import Dashboard from "./components/Dashboard";
-import Layout from "./Layout/Layout";
+import Layout from "./layout/Layout";
+import DashboardPage from "./pages/DashboardPage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 
 function App() {
     return (
         
         <Layout>
-            <Dashboard />
+               <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<DashboardPage />} />
+                  </Routes>
+                </BrowserRouter>
         </Layout>
     );
-}
+};
 
 
 export default App;

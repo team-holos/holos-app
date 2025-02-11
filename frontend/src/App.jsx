@@ -8,15 +8,15 @@ import LoginPage from "./pages/LoginPage";
 function App() {
     return (
         
+        <BrowserRouter>
         <Layout>
-               <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<DashboardPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/login" element={<LoginPage />} />
                   </Routes>
-                </BrowserRouter>
         </Layout>
+                </BrowserRouter>
     );
 };
 

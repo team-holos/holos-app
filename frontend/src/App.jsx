@@ -7,6 +7,7 @@ import NutritionPage from "./pages/NutritionPage";
 import RelaxationPage from "./pages/RelaxationPage";
 import SettingsPage from "./pages/SettingsPage";
 
+
 function App() {
   return (
     <Layout>

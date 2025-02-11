@@ -10,15 +10,13 @@ function DashboardPage() {
   };
   return (
     <div className="text-[#2D336B] p-4 my-4">
-      <ul>
-        <li>
           <h1 className="text-2xl mb-4">Welcome User!</h1>
-        </li>
+      <ul className="list-disc list-inside">
         <li>Tagesübersicht</li>
         <li>Ziel für heute</li>
       </ul>
 
-      <form className="flex items-center">
+      <form className="flex items-center mt-16">
         {/* <label htmlFor="shortcuts" className="inline-block">
           <Menu />
         </label> */}

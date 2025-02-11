@@ -21,7 +21,7 @@ function Navigation() {
           <option value="/mentalhealth">Mentale Gesundheit</option>
           <option value="/relaxation">Entspannung</option>
           <option value="/settings">Einstellungen</option>
-          <option value="/dashboard">Dashboard</option>
+          <option value="/">Dashboard</option>
         </select>
       </form>
     </div>

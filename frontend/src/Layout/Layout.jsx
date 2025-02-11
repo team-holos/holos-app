@@ -3,7 +3,7 @@
 
 function Layout({ children }) {
     return (
-        <div className="container mx-auto mt-2 h-screen">
+        <div className="container mx-auto mt-2 h-screen bg-[#FFF2F2]">
             <Header />
             {children}
             <Footer />

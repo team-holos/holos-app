@@ -25,7 +25,7 @@ function AIChat() {
             }
 
             const data = await res.json();
-            setResponse(data.response);
+            setResponse(data.response || 'No response');
         } catch (err) {
             console.error(err);
             setResponse('Error: Unable to fetch response.');

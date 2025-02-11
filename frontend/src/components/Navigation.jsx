@@ -8,11 +8,11 @@ function Navigation() {
   };
   return (
     <div>
-      <form className="flex items-center">
+      <form className="flex items-center text-[#FFF2F2]">
         <label htmlFor="shortcuts" className="inline-block">
           <Menu />
         </label>
-        <select id="uebersicht" name="uebersicht" onChange={handleNavigation}>
+        <select id="uebersicht" name="uebersicht" onChange={handleNavigation} className="bg-[#7886C7]">
           <option value="">Select a page...</option>
           <option value="/nutrion" className="inline-block">
             Ernährung

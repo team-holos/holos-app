@@ -9,10 +9,10 @@ function DashboardPage() {
     navigate(event.target.value);
   };
   return (
-    <div className="text-[#2D336B]">
+    <div className="text-[#2D336B] p-4 my-4">
       <ul>
         <li>
-          <h1>Welcome User!</h1>
+          <h1 className="text-2xl mb-4">Welcome User!</h1>
         </li>
         <li>Tagesübersicht</li>
         <li>Ziel für heute</li>

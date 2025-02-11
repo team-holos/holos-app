@@ -1,12 +1,12 @@
 function RelaxationPage() {
     return (
-        <>
-        <h1>Erholung</h1>
+        <div className="text-[#2D336B] p-4 my-4">
+        <h1 className="text-2xl mb-4">Erholung</h1>
         <ul>
             <li>Smart-Alarm</li>
             <li>Schlafanalyse-Dashboard</li>
         </ul>
-        </>
+        </div>
     )
 }
 

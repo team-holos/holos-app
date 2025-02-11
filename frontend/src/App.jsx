@@ -6,11 +6,13 @@ import MentalHealthPage from "./pages/MentalHealthPage";
 import NutritionPage from "./pages/NutritionPage";
 import RelaxationPage from "./pages/RelaxationPage";
 import SettingsPage from "./pages/SettingsPage";
+import Header from "./components/Header";
 
 
 function App() {
   return (
     <Layout>
+      <Header />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<DashboardPage />} />

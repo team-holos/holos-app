@@ -11,19 +11,18 @@ import Header from "./components/Header";
 
 function App() {
   return (
+    <BrowserRouter>
     <Layout>
-      <Header />
-      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/fitness" element={<FitnessPage />} />
           <Route path="/mentalhealth" element={<MentalHealthPage />} />
           <Route path="/nutrion" element={<NutritionPage />} />
           <Route path="/relaxation" element={<RelaxationPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
-      </BrowserRouter>
     </Layout>
+      </BrowserRouter>
   );
 }
 

@@ -19,11 +19,11 @@ function DashboardPage() {
       </ul>
 
       <form className="flex items-center">
-        <label htmlFor="shortcuts" className="inline-block">
+        {/* <label htmlFor="shortcuts" className="inline-block">
           <Menu />
-        </label>
+        </label> */}
         <select id="uebersicht" name="uebersicht" onChange={handleNavigation}>
-          {/* <option value="">Select a page...</option> */}
+          <option value="">Nächste Aufgabe...</option>
           <option value="/nutrion" className="inline-block">
             Ernährung
           </option>

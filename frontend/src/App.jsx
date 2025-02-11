@@ -7,12 +7,10 @@ import NutritionPage from "./pages/NutritionPage";
 import RelaxationPage from "./pages/RelaxationPage";
 import SettingsPage from "./pages/SettingsPage";
 
-
-
 function App() {
   return (
     <BrowserRouter>
-    <Layout>
+      <Layout>
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/fitness" element={<FitnessPage />} />
@@ -21,8 +19,8 @@ function App() {
           <Route path="/relaxation" element={<RelaxationPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
-    </Layout>
-      </BrowserRouter>
+      </Layout>
+    </BrowserRouter>
   );
 }
 

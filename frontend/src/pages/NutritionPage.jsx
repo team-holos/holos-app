@@ -1,6 +1,6 @@
 function Nutrition() {
     return(
-        <h1>Nutrition</h1>
+        <h1>Ernährung</h1>
     )
 }
 export default Nutrition;

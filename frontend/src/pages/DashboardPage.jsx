@@ -20,13 +20,14 @@ function DashboardPage() {
 
 
             <form>
-                <label for="shortcuts">"Menu"</label>
+                <label htmlFor="shortcuts">Menu</label>
                 <select id="uebersicht" name="uebersicht" onChange={handleNavigation}>
                     <option value="">Select a page...</option>
-                    <option value="/NutritionPage">Ernährung</option>
-                    <option value="/Fitness">Fitness</option>
-                    <option value="/MentalHealth">Mentale Gesundheit</option>
-                    <option value="/Relaxation">Entspannung</option>
+                    <option value="/nutrion">Ernährung</option>
+                    <option value="/fitness">Fitness</option>
+                    <option value="/mentalhealth">Mentale Gesundheit</option>
+                    <option value="/relaxation">Entspannung</option>
+                    <option value="/settings">Einstellungen</option>
                 </select>
             </form>
         </div>

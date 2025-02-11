@@ -1,7 +1,7 @@
 // import { useState } from "react";
 // import Nutrition from "./NutritionPage";
 import { useNavigate } from "react-router-dom";
-import { Menu } from "lucide-react";
+// import { Menu } from "lucide-react";
 
 function DashboardPage() {
   const navigate = useNavigate();

@@ -8,13 +8,15 @@ import RelaxationPage from "./pages/RelaxationPage";
 import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import HomePage from "./pages/HomePage";
 
 function App() {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/fitness" element={<FitnessPage />} />
           <Route path="/mentalhealth" element={<MentalHealthPage />} />
           <Route path="/nutrion" element={<NutritionPage />} />

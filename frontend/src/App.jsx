@@ -8,6 +8,7 @@ import RelaxationPage from "./pages/RelaxationPage";
 import SettingsPage from "./pages/SettingsPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -17,7 +18,7 @@ function App() {
           <Route path="/chat" element={<AIChat />} />
           <Route path="/fitness" element={<FitnessPage />} />
           <Route path="/mentalhealth" element={<MentalHealthPage />} />
-          <Route path="/nutrition" element={<NutritionPage />} />
+          <Route path="/nutrion" element={<NutritionPage />} />
           <Route path="/relaxation" element={<RelaxationPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>

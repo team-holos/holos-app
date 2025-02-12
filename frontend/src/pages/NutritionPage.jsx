@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import NutritionPlan from '../components/NutritionPlan';
+// import NutritionPlanData from '../components/NutritionPlanData';
 import NutritionPlanData from '../components/NutritionPlanData';
 
 
@@ -13,7 +14,6 @@ function NutritionPage() {
             <li>KI-basierende Rezeptempfehlungen</li>
         </ul>
         <NutritionPlan plan={plan} />
-        <NutritionPlanData />
         </>
         
     );

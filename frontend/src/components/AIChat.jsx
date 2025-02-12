@@ -31,8 +31,6 @@ function AIChat() {
       const responseContent =
         data.choices?.[0]?.message?.content?.trim() || "No response available.";
 
-      console.log("Response Content:", responseContent);
-
       setResponse(responseContent);
     } catch (err) {
       console.error("Error fetching or parsing response:", err);
@@ -40,6 +38,11 @@ function AIChat() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetChat = () => {
+    setPrompt("");
+    setResponse("");
   };
 
   return (
@@ -65,10 +68,26 @@ function AIChat() {
           padding: "10px",
           border: "1px solid #ccc",
           borderRadius: "5px",
+          marginBottom: "10px",
         }}
       >
         {loading ? "Loading..." : response}
       </div>
+      <button
+        onClick={resetChat}
+        disabled={loading}
+        style={{
+          padding: "10px 20px",
+          fontSize: "16px",
+          backgroundColor: "#007BFF",
+          color: "#FFF",
+          border: "none",
+          borderRadius: "5px",
+          cursor: loading ? "not-allowed" : "pointer",
+        }}
+      >
+        Reset
+      </button>
     </div>
   );
 }

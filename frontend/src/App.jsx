@@ -8,7 +8,7 @@ import RelaxationPage from "./pages/RelaxationPage";
 import SettingsPage from "./pages/SettingsPage";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
-
+import PWResetPage from "./pages/PWResetPage";
 
 function App() {
   return (
@@ -23,6 +23,7 @@ function App() {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/reset" element={<PWResetPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

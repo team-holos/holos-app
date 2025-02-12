@@ -49,7 +49,7 @@ function RegisterPage() {
     setPasswordError(null);
   }
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-sm mx-auto text-sm">
       {successMessage && (
         <p className="bg-green-500 text-white p-2">{successMessage}</p>
       )}

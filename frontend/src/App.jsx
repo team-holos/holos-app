@@ -15,14 +15,14 @@ function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/fitness" element={<FitnessPage />} />
           <Route path="/mentalhealth" element={<MentalHealthPage />} />
           <Route path="/nutrion" element={<NutritionPage />} />
           <Route path="/relaxation" element={<RelaxationPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/login" element={<LoginPage />} />
           <Route path="/reset" element={<PWResetPage />} />
         </Routes>
       </Layout>

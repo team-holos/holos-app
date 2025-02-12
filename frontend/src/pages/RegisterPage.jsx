@@ -91,7 +91,7 @@ function RegisterPage() {
       >
         Register
       </button>
-      <h2 class="max-w-sm and mx-auto"><a href="/login">Zurück zur Loginseite</a></h2>
+      <h2 class="max-w-sm and mx-auto"><a href="/">Zurück zur Loginseite</a></h2>
     </form>
   );
 }

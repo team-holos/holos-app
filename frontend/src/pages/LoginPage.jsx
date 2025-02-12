@@ -73,7 +73,7 @@ function LoginPage() {
       <h2 class="max-w-sm and mx-auto"><a href="/register">Noch kein Account<br/>
       (link zur Registrierung)<br/></a>
       </h2>
-      <h2 class="max-w-sm and mx-auto">Passwort vergessen?</h2>
+      <h2 class="max-w-sm and mx-auto"><a href="/reset">Passwort vergessen?</a></h2>
     </form>
   );
 }

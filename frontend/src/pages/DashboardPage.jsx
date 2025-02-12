@@ -20,7 +20,7 @@ function DashboardPage() {
 
 
             <form>
-                <label for="shortcuts">"Menu"</label>
+                <label htmlFor="shortcuts">"Menu"</label>
                 <select id="uebersicht" name="uebersicht" onChange={handleNavigation}>
                     <option value="">Select a page...</option>
                     <option value="/NutritionPage">Ernährung</option>

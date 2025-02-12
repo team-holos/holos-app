@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import NutritionPlan from '../components/NutritionPlan';
-import Nutritionplan from './NutritionPlanData'
+import NutritionPlanData from '../components/NutritionPlanData';
 
 
 function NutritionPage() {
-    const [plan, setPlan] = useState(Nutritionplan);
+    const [plan, setPlan] = useState(NutritionPlanData);
     return(
         <>
         <h1>Ernährung</h1>
@@ -13,6 +13,7 @@ function NutritionPage() {
             <li>KI-basierende Rezeptempfehlungen</li>
         </ul>
         <NutritionPlan plan={plan} />
+        <NutritionPlanData />
         </>
         
     );

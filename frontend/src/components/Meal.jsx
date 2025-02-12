@@ -7,10 +7,10 @@ function Meal({ meal }) {
   return (
     <div>
       <h3>{meal.name} ({meal.calories} kcal)</h3>
-      <button onClick={() => setIngredientsVisible(!ingredientsVisible)}> 
-        {ingredientsVisible ? "Zutaten verbergen" : "Zutaten anzeigen"} 
+      <button onClick={() => setIngredientsVisible(!IngredientsVisible)}> 
+        {IngredientsVisible ? "Zutaten verbergen" : "Zutaten anzeigen"} 
       </button>
-      {ingredientsVisible && <Ingredients ingredients={meal.ingredients} />}
+      {IngredientsVisible && <Ingredients ingredients={meal.ingredients} />}
     </div>
   );
 }

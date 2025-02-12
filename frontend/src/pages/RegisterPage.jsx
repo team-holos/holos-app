@@ -56,7 +56,7 @@ function RegisterPage() {
       {errorMessage && (
         <p className="bg-red-500 text-white p-2">{errorMessage}</p>
       )}
-      <h1 className="text-xl mb-4">Register</h1>
+      <h1 className="text-xl mb-4 max-w-sm and mx-auto" >Register</h1>
       <label htmlFor="register-email">Email</label>
       <input
         type="email"

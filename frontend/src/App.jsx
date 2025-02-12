@@ -6,6 +6,9 @@ import MentalHealthPage from "./pages/MentalHealthPage";
 import NutritionPage from "./pages/NutritionPage";
 import RelaxationPage from "./pages/RelaxationPage";
 import SettingsPage from "./pages/SettingsPage";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
+
 
 function App() {
   return (
@@ -18,6 +21,8 @@ function App() {
           <Route path="/nutrion" element={<NutritionPage />} />
           <Route path="/relaxation" element={<RelaxationPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

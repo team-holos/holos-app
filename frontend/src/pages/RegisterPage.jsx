@@ -17,7 +17,7 @@ function RegisterPage() {
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) === false
     ) {
       setEmailError("Invalid email address");
-      retu
+      return;
     }
     const password = formData.get("password");
     const passwordRetype = formData.get("password-retype");

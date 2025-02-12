@@ -14,9 +14,7 @@ function AIChat() {
     try {
       const res = await fetch("/api/v1/chat/completions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "deepseek-r1-distill-qwen-7b",
           temperature: 0.7,
@@ -25,12 +23,14 @@ function AIChat() {
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch response");
-      }
+      if (!res.ok) throw new Error("Failed to fetch response");
 
       const data = await res.json();
-      setResponse(data.choices?.[0]?.message?.content || "No response");
+      const sanitizedResponse = data.choices[0].message.content
+        .replace(/<think>[\s\S]*?<\/think>/g, "")
+        .trim();
+
+      setResponse(sanitizedResponse || "No response");
     } catch (err) {
       console.error(err);
       setResponse("Error: Unable to fetch response.");

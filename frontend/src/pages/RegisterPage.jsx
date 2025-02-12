@@ -87,10 +87,11 @@ function RegisterPage() {
       {passwordError && <p className="text-red-500">{passwordError}</p>}
       <button
         type="submit"
-        className="bg-green-500 px-4 py-2 text-white font-semibold cursor-pointer"
+        className="bg-green-500 px-2 py-1 text-white font-semibold cursor-pointer"
       >
         Register
       </button>
+      <h2 class="max-w-sm and mx-auto"><a href="/login">Zurück zur Loginseite</a></h2>
     </form>
   );
 }

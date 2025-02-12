@@ -18,7 +18,7 @@ function AIChat() {
         body: JSON.stringify({
           model: "deepseek-r1-distill-qwen-7b",
           temperature: 0.7,
-          max_tokens: 100,
+          max_tokens: 1000,
           messages: [{ role: "user", content: prompt }],
         }),
       });
@@ -26,14 +26,17 @@ function AIChat() {
       if (!res.ok) throw new Error("Failed to fetch response");
 
       const data = await res.json();
-      const sanitizedResponse = data.choices[0].message.content
-        .replace(/<think>[\s\S]*?<\/think>/g, "")
-        .trim();
+      console.log("API Response:", data);
 
-      setResponse(sanitizedResponse || "No response");
+      const responseContent =
+        data.choices?.[0]?.message?.content?.trim() || "No response available.";
+
+      console.log("Response Content:", responseContent);
+
+      setResponse(responseContent);
     } catch (err) {
-      console.error(err);
-      setResponse("Error: Unable to fetch response.");
+      console.error("Error fetching or parsing response:", err);
+      setResponse("Error: Unable to fetch or parse response.");
     } finally {
       setLoading(false);
     }

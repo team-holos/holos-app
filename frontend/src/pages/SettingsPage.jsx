@@ -1,4 +1,7 @@
+import React, { useState } from "react";
+
 function SettingsPage() {
+  const [theme, setTheme] = useState("light");
   const handleSave = () => {
     alert("Einstellungen gespeichert");
   };

@@ -2,6 +2,10 @@ import { useState } from "react";
 
 function MentalHealthForm() {
   const [textarea, setTextarea] = useState("Dein persönliches Journal....");
+  const handleSave = () => {
+    alert("Einstellungen gespeichert");
+
+  };
 
   const handleChange = (event) => {
     setTextarea(event.target.value);
@@ -14,11 +18,8 @@ function MentalHealthForm() {
         onChange={handleChange}
         className="border p-2 my-2 w-full rounded mt-4 font-extralight"
       />
-      <button>
-        <input
-          type="submit"
-          className="p-2 border rounded cursor-pointer"
-        />
+      <button onClick={handleSave} className="p-2 border rounded cursor-pointer  bg-[#2D336B] text-[#FFF2F2]">
+        Speichern
       </button>
     </form>
   );

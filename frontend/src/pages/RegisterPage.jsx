@@ -101,7 +101,7 @@ function RegisterPage() {
         id="username"
         name="username"
         className="border p-2"
-        placeholder="deine Vorname"
+        placeholder="Deine Vorname"
       />
       <label htmlFor="register-email">Email:</label>
       <input
@@ -109,23 +109,30 @@ function RegisterPage() {
         id="register-email"
         name="email"
         className="border p-2"
-        placeholder="EMail Adress"
+        placeholder="Email Adresse"
       />
       <label htmlFor="birthday">Geburtsdatum:</label>
       <DatePicker
         className="border p-2 w-full"
         selected={birthday}
         onChange={(date) => setBirthday(date)}
+        placeholderText="dd/mm/yyyy"
       />
       {emailError && <p className="text-red-500">{emailError}</p>}
+      <label htmlFor="weight">Gewicht:</label>
+      <input type="text"
+        id="weight"
+        name="weight"
+        className="border p-2"
+        placeholder="Gib dein Gewicht in Kilogramm an" />
       <form className="flex gap-4">
-        <span className="font-medium">Geschlecht:</span> 
+        <span className="font-medium">Geschlecht:</span>
         <div className="radio">
           <label className="flex items-center gap-2">
             <input
               type="radio"
               value="female"
-              checked={selectedGender==="female"}
+              checked={selectedGender === "female"}
               onChange={(e) => setSelectedGender(e.target.value)}
             />
             Weiblich
@@ -136,7 +143,7 @@ function RegisterPage() {
             <input
               type="radio"
               value="male"
-              checked={selectedGender==="male"}
+              checked={selectedGender === "male"}
               onChange={(e) => setSelectedGender(e.target.value)}
             />
             Männlich
@@ -147,31 +154,31 @@ function RegisterPage() {
             <input
               type="radio"
               value="diverse"
-              checked={selectedGender==="diverse"}
+              checked={selectedGender === "diverse"}
               onChange={(e) => setSelectedGender(e.target.value)}
             />
             Divers
           </label>
         </div>
       </form>
-      <label htmlFor="register-password">Password</label>
+      <label htmlFor="register-password">Passwort:</label>
       <input
         type="password"
         id="register-password"
         name="password"
         className="border p-2"
-        placeholder="Password"
+        placeholder="Passwort"
         minLength="8"
         maxLength="24"
       />
 
-      <label htmlFor="register-password-retype">Retype Password</label>
+      <label htmlFor="register-password-retype">Passwort bestätigen:</label>
       <input
         type="password"
         id="register-password-retype"
         name="password-retype"
         className="border p-2"
-        placeholder="Password retype"
+        placeholder="Passwort erneut eingeben"
       />
       {passwordError && <p className="text-red-500">{passwordError}</p>}
       <button

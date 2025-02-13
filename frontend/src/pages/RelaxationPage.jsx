@@ -17,11 +17,11 @@ function RelaxationPage() {
   return (
     <div className="text-[#2D336B] p-4 my-4">
       <h1 className="text-2xl mb-4">Erholung</h1>
-      <ul className="list-disc list-inside">
+      <ul className="list-disc list-inside p-4 my-4">
         <li>Smart-Alarm</li>
-        <li>Schlafanalyse-Dashboard</li>
       </ul>
-      <form onSubmit={handleSubmit}>
+      <h3 className="font-bold">Schlafanalyse-Dashboard</h3>
+      <form onSubmit={handleSubmit} className="p-4 my-4">
         <label>
           Einschlafzeit:
           <input
@@ -40,10 +40,11 @@ function RelaxationPage() {
             onChange={handleChange}
           />
         </label>
-
-        <input type="submit" />
       </form>
-      <MoodForm />    
+      <div className="p-4 my-4">
+        <MoodForm />
+        <input type="submit" className="p-2 my-2 mt-10 border rounded" />
+      </div>
     </div>
   );
 }

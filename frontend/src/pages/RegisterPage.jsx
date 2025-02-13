@@ -118,38 +118,39 @@ function RegisterPage() {
         onChange={(date) => setBirthday(date)}
       />
       {emailError && <p className="text-red-500">{emailError}</p>}
-      <form>
+      <form className="flex gap-4">
+        <span className="font-medium">Geschlecht:</span> 
         <div className="radio">
-          <label>
+          <label className="flex items-center gap-2">
             <input
               type="radio"
               value="female"
               checked={selectedGender==="female"}
               onChange={(e) => setSelectedGender(e.target.value)}
             />
-            weiblich
+            Weiblich
           </label>
         </div>
         <div className="radio">
-          <label>
+          <label className="flex items-center gap-2">
             <input
               type="radio"
               value="male"
               checked={selectedGender==="male"}
               onChange={(e) => setSelectedGender(e.target.value)}
             />
-            männlich
+            Männlich
           </label>
         </div>
         <div className="radio">
-          <label>
+          <label className="flex items-center gap-2">
             <input
               type="radio"
               value="diverse"
               checked={selectedGender==="diverse"}
               onChange={(e) => setSelectedGender(e.target.value)}
             />
-            divers
+            Divers
           </label>
         </div>
       </form>

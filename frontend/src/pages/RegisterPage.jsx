@@ -1,12 +1,15 @@
 import { useState } from "react";
 const API_URL = import.meta.env.VITE_API_URL;
 import { Link } from "react-router-dom";
+import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
 
 function RegisterPage() {
   const [emailError, setEmailError] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [birthday, setBirthday] = useState(null);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -27,6 +30,13 @@ function RegisterPage() {
       setPasswordError("Passwords do not match");
       return;
     }
+    // Datepicker
+  //  const Example = () => {
+    //  const [birthday, setBirthday] = useState(new Date());
+     // return <DatePicker selected={birthday} onChange={(date) => setBirthday(date)} />;
+    //};
+    
+    
 
     const response = await fetch(`${API_URL}auth/register`, {
       method: "POST",
@@ -57,13 +67,27 @@ function RegisterPage() {
         <p className="bg-red-500 text-white p-2">{errorMessage}</p>
       )}
       <h1 className="text-xl mb-4 max-w-sm and mx-auto" >Register</h1>
-      <label htmlFor="register-email">Email</label>
+      <label htmlFor="username">Vorname:</label>
+      <input type="text"
+        id="username"
+        name="username"
+        className="border p-2"
+        placeholder="deine Vorname" 
+        />
+      <label htmlFor="register-email">Email:</label>
       <input
         type="email"
         id="register-email"
         name="email"
         className="border p-2"
         placeholder="EMail Adress"
+      />
+      <label htmlFor="birthday">Geburtsdatum:</label>
+      <input type=""
+      id="birthday"
+      name="birthday"
+      className="border p-2"
+      placeholder="DD/MM/YYYY" 
       />
       {emailError && <p className="text-red-500">{emailError}</p>}
       <label htmlFor="register-password">Password</label>

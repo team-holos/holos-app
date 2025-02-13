@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Exercise from './Exercise';
 
-function Exercise({ exercise }) {
+function Exercises() {
+  const [exercises, setExercises] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/Exercises')
+      .then(res => res.json())
+      .then(data => setExercises(data))
+      .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
+  }, []);
+
   return (
     <div>
-      <h3>{exercise.name}</h3>
-      <p>{exercise.description}</p>
-      <a href={exercise.video} target="_blank" rel="noopener noreferrer">Video</a> // verknüpfte Ressource in einem neuen Browserkontext öffnen, rel="noopener noreferrer" schützt vor Angriffen
-      <p>Typ: {exercise.type}</p>
+      {exercises.map(exercise => (
+        <Exercise key={exercise.id} exercise={exercise} />
+      ))}
     </div>
   );
 }
 
-export default Exercise;
+export default Exercises;

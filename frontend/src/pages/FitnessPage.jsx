@@ -1,76 +1,36 @@
 import React from 'react';
 import Exercise from '../components/Exercise';
+import CategoryFilter from '../components/CategoryFilter';
+import GoalFilter from '../components/GoalFilter';
+import LevelFilter from '../components/LevelFilter';
 
 function FitnessPage() {
-  const exercises = [
-    {
-      id: 1,
-      name: "Liegestütze",
-      description: "Eine klassische Übung für den Oberkörper.",
-      video: "https://www.youtube.com",
-      type: "Strength Training"
-    },
-    {
-      id: 2,
-      name: "Kniebeugen",
-      description: "Eine Grundübung für die Beinmuskulatur.",
-      video: "https://www.youtube.com",
-      type: "Strength Training"
-    },
-    {
-      id: 3,
-      name: "Rudern",
-      description: "Eine Übung für den Rücken und die Arme.",
-      video: "https://www.youtube.com",
-      type: "Strength Training"
-    },
-    {
-      id: 4,
-      name: "Plank",
-      description: "Eine statische Übung zur Stärkung des Rumpfes.",
-      video: "https://www.youtube.com",
-      type: "Core Training"
-    },
-    {
-      id: 5,
-      name: "Ausfallschritte",
-      description: "Eine Variation der Kniebeuge für mehr Balance.",
-      video: "https://www.youtube.com",
-      type: "Strength Training"
-    },
-    {
-      id: 6,
-      name: "Dips",
-      description: "Eine anspruchsvolle Übung für den Oberkörper.",
-      video: "https://www.youtube.com",
-      type: "Strength Training"
-    },
-    {
-      id: 7,
-      name: "Klimmzüge",
-      description: "Eine der besten Übungen für den Rücken.",
-      video: "https://www.youtube.com",
-      type: "Strength Training"
-    },
-    {
-      id: 8,
-      name: "Crunches",
-      description: "Eine Übung für die Bauchmuskulatur.",
-      video: "https://www.youtube.com",
-      type: "Core Training"
-    },
-    {
-      id: 9,
-      name: "Wadenheben",
-      description: "Eine Übung für die Wadenmuskulatur.",
-      video: "https://www.youtube.com",
-      type: "Strength Training"
-    }
-  ];
+  const [exercises, setExercises] = useState([]);
+  const [categoryFilter, setCategoryFilter] = useState('All');
+  const [goalFilter, setGoalFilter] = useState('All');
+  const [levelFilter, setLevelFilter] = useState('All');
+
+  useEffect(() => {
+    fetch('http://localhost:3000/exercises')
+      .then(res => res.json())
+      .then(data => setExercises(data))
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
+
+  const filteredExercises = exercises.filter(exercise => {
+    return (
+      (categoryFilter === 'All' || exercise.category === categoryFilter) &&
+      (goalFilter === 'All' || exercise.goal === goalFilter) &&
+      (levelFilter === 'All' || exercise.level === levelFilter)
+    );
+  });
 
   return (
     <div>
-      {exercises.map(exercise => (
+      <CategoryFilter onFilterChange={setCategoryFilter} />
+      <GoalFilter onFilterChange={setGoalFilter} />
+      <LevelFilter onFilterChange={setLevelFilter} />
+      {filteredExercises.map(exercise => (
         <Exercise key={exercise.id} exercise={exercise} />
       ))}
     </div>

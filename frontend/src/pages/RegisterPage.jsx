@@ -2,7 +2,7 @@ import { useState } from "react";
 const API_URL = import.meta.env.VITE_API_URL;
 import { Link } from "react-router-dom";
 import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 function RegisterPage() {
   const [emailError, setEmailError] = useState(null);
@@ -10,6 +10,7 @@ function RegisterPage() {
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [birthday, setBirthday] = useState(null);
+  const [birthdayError, setBirthdayError] = useState(null);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -30,13 +31,19 @@ function RegisterPage() {
       setPasswordError("Passwords do not match");
       return;
     }
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    if (birthday > today) {
+      setBirthdayError("birthday is in future");
+      return;
+    }
+    
     // Datepicker
-  //  const Example = () => {
-    //  const [birthday, setBirthday] = useState(new Date());
-     // return <DatePicker selected={birthday} onChange={(date) => setBirthday(date)} />;
-    //};
-    
-    
+    const Example = () => {
+      return;
+    };
+
+
 
     const response = await fetch(`${API_URL}auth/register`, {
       method: "POST",
@@ -72,8 +79,8 @@ function RegisterPage() {
         id="username"
         name="username"
         className="border p-2"
-        placeholder="deine Vorname" 
-        />
+        placeholder="deine Vorname"
+      />
       <label htmlFor="register-email">Email:</label>
       <input
         type="email"
@@ -83,12 +90,7 @@ function RegisterPage() {
         placeholder="EMail Adress"
       />
       <label htmlFor="birthday">Geburtsdatum:</label>
-      <input type=""
-      id="birthday"
-      name="birthday"
-      className="border p-2"
-      placeholder="DD/MM/YYYY" 
-      />
+      <DatePicker className="border p-2 w-full" selected={birthday} onChange={(date) => setBirthday(date)} />
       {emailError && <p className="text-red-500">{emailError}</p>}
       <label htmlFor="register-password">Password</label>
       <input

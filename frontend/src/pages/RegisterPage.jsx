@@ -11,6 +11,7 @@ function RegisterPage() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [birthday, setBirthday] = useState(null);
   const [birthdayError, setBirthdayError] = useState(null);
+  const [selectedGender, setSelectedGender] = useState(null);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -31,19 +32,36 @@ function RegisterPage() {
       setPasswordError("Passwords do not match");
       return;
     }
+
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
     if (birthday > today) {
       setBirthdayError("birthday is in future");
       return;
     }
-    
-    // Datepicker
-    const Example = () => {
-      return;
+
+    const isAtLeast16 = (birthday) => {
+      const today = new Date();
+      const birth = new Date(birthday);
+
+      let age = today.getFullYear() - birth.getFullYear();
+      const monthDiff = today.getMonth() - birth.getMonth();
+
+      // Adjust age if birthday hasn't occurred this year
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birth.getDate())
+      ) {
+        age--;
+      }
+
+      return age >= 16;
     };
 
-
+    // Datepicker
+    //const Example = () => {
+    //return;
+    //};
 
     const response = await fetch(`${API_URL}auth/register`, {
       method: "POST",
@@ -66,16 +84,20 @@ function RegisterPage() {
     setPasswordError(null);
   }
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-sm mx-auto text-sm">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-2 max-w-sm mx-auto text-sm"
+    >
       {successMessage && (
         <p className="bg-green-500 text-white p-2">{successMessage}</p>
       )}
       {errorMessage && (
         <p className="bg-red-500 text-white p-2">{errorMessage}</p>
       )}
-      <h1 className="text-xl mb-4 max-w-sm and mx-auto" >Register</h1>
+      <h1 className="text-xl mb-4 max-w-sm and mx-auto">Register</h1>
       <label htmlFor="username">Vorname:</label>
-      <input type="text"
+      <input
+        type="text"
         id="username"
         name="username"
         className="border p-2"
@@ -90,8 +112,47 @@ function RegisterPage() {
         placeholder="EMail Adress"
       />
       <label htmlFor="birthday">Geburtsdatum:</label>
-      <DatePicker className="border p-2 w-full" selected={birthday} onChange={(date) => setBirthday(date)} />
+      <DatePicker
+        className="border p-2 w-full"
+        selected={birthday}
+        onChange={(date) => setBirthday(date)}
+      />
       {emailError && <p className="text-red-500">{emailError}</p>}
+      <form>
+        <div className="radio">
+          <label>
+            <input
+              type="radio"
+              value="female"
+              checked={selectedGender==="female"}
+              onChange={(e) => setSelectedGender(e.target.value)}
+            />
+            weiblich
+          </label>
+        </div>
+        <div className="radio">
+          <label>
+            <input
+              type="radio"
+              value="male"
+              checked={selectedGender==="male"}
+              onChange={(e) => setSelectedGender(e.target.value)}
+            />
+            männlich
+          </label>
+        </div>
+        <div className="radio">
+          <label>
+            <input
+              type="radio"
+              value="diverse"
+              checked={selectedGender==="diverse"}
+              onChange={(e) => setSelectedGender(e.target.value)}
+            />
+            divers
+          </label>
+        </div>
+      </form>
       <label htmlFor="register-password">Password</label>
       <input
         type="password"
@@ -102,6 +163,7 @@ function RegisterPage() {
         minLength="8"
         maxLength="24"
       />
+
       <label htmlFor="register-password-retype">Retype Password</label>
       <input
         type="password"
@@ -117,7 +179,9 @@ function RegisterPage() {
       >
         Register
       </button>
-      <h2 class="max-w-sm and mx-auto"><a href="/">Zurück zur Loginseite</a></h2>
+      <h2 class="max-w-sm and mx-auto">
+        <a href="/">Zurück zur Loginseite</a>
+      </h2>
     </form>
   );
 }

@@ -2,12 +2,18 @@ import React, { useState } from "react";
 
 function SettingsPage() {
   const [theme, setTheme] = useState("light");
+
   const handleSave = () => {
     alert("Einstellungen gespeichert");
   };
 
   const handleReset = () => {
+    setTheme("light");
     alert("Einstellungen zurückgesetzt");
+  };
+
+  const handleThemeChange = (e) => {
+    setTheme(e.target.value);
   };
 
   return (
@@ -18,6 +24,21 @@ function SettingsPage() {
         <li>Gesundheitsziele</li>
         <li>Benachrichtungseinstellungen</li>
       </ul>
+      <div className="mt-6">
+      <label htmlFor="theme-select"></label>
+        <select
+          id="theme-select"
+          value={theme}
+      onChange={handleThemeChange}
+          className="border border-gray-300 rounded px-4 py-2"
+        >
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+
+
+        </select>
+      </div>
+
 
       <div className="mt-6 flex space-x-4">
         <button

@@ -1,4 +1,5 @@
 import MentalHealthForm from "../components/MentalHealthForm";
+import MyTimer from "../components/MyTimer";
 
 function MentalHealthPage() {
   return (
@@ -9,7 +10,7 @@ function MentalHealthPage() {
         <MentalHealthForm />
      </div>
         <h3 className="mt-2 font-semibold">Meditations-Bereich</h3>
-      
+      <MyTimer />
     </div>
   );
 }

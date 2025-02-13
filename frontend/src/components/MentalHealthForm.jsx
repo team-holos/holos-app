@@ -12,8 +12,14 @@ function MentalHealthForm() {
       <textarea
         value={textarea}
         onChange={handleChange}
-        className="border w-full rounded mt-4 font-extralight"
+        className="border p-2 my-2 w-full rounded mt-4 font-extralight"
       />
+      <button>
+        <input
+          type="submit"
+          className="p-2 border rounded cursor-pointer"
+        />
+      </button>
     </form>
   );
 }

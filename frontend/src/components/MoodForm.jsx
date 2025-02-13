@@ -10,7 +10,7 @@ function MoodForm() {
     return (
       <form>
         <label>Wähle aus, wie Du Dich fühlst:</label>
-        <select value={myMood} onChange={handleChange}>
+        <select value={myMood} onChange={handleChange} className="m-4 border rounded bg-[#FFF2F2]">
           <option value="Erholt">Erholt</option>
           <option value="Energie">Voller Energie</option>
           <option value="Müde">Müde</option>

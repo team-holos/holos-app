@@ -1,5 +1,6 @@
 import { useState } from "react";
 import MoodForm from "../components/MoodForm";
+import SleepQualityForm from "../components/SleepQualityForm";
 
 function RelaxationPage() {
   const [inputs, setInputs] = useState({});
@@ -16,34 +17,39 @@ function RelaxationPage() {
   };
   return (
     <div className="text-[#2D336B] p-4 my-4">
-      <h1 className="text-2xl mb-4">Erholung</h1>
-      <ul className="list-disc list-inside p-4 my-4">
+      <h1 className="text-2xl">Erholung</h1>
+      <ul className="list-disc list-inside p-2 my-2">
         <li>Smart-Alarm</li>
       </ul>
       <h3 className="font-bold">Schlafanalyse-Dashboard</h3>
-      <form onSubmit={handleSubmit} className="p-4 my-4">
+      <form onSubmit={handleSubmit} className="p-2 my-2 flex flex-col">
         <label>
           Einschlafzeit:
           <input
             type="number"
-            name="fallasleep"
-            value={inputs.fallasleep || ""}
+            name="fallAsleep"
+            value={inputs.fallAsleep || ""}
             onChange={handleChange}
+            className="border rounded m-4 p-1"
           />
         </label>
         <label>
           Aufwachzeit:
           <input
             type="number"
-            name="wakeuptime"
-            value={inputs.wakuptime || ""}
+            name="wakeup"
+            value={inputs.wakeup || ""}
             onChange={handleChange}
+            className="border rounded m-4 p-1"
           />
         </label>
       </form>
-      <div className="p-4 my-4">
+      <div className="p-2 my-4">
+        <SleepQualityForm />
         <MoodForm />
-        <input type="submit" className="p-2 my-2 mt-10 border rounded" />
+        <button>
+          <input type="submit" className="p-2 my-2 mt-10 border rounded cursor-pointer" />
+        </button>
       </div>
     </div>
   );

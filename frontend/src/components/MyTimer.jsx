@@ -22,14 +22,17 @@ function MyTimer({ expiryTimestamp }) {
   return (
     <div style={{ textAlign: "center" }}>
       <p>Meditations - Timer</p>
-      <div style={{ fontSize: "100px" }}>
+      <div style={{ fontSize: "50px" }}>
         <span>{days}</span>:<span>{hours}</span>:<span>{minutes}</span>:
         <span>{seconds}</span>
       </div>
       <p>{isRunning ? "Running" : "Not running"}</p>
-      <button onClick={start}>Start</button>
-      <button onClick={pause}>Pause</button>
-      <button onClick={resume}>Resume</button>
+      <div>
+        
+      </div>
+      <button onClick={start} className="p-2">Start</button>
+      <button onClick={pause} className="p-2">Pause</button>
+      <button onClick={resume} className="p-2">Resume</button>
       <button
         onClick={() => {
           // Restarts to 5 minutes timer

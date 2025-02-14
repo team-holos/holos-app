@@ -1,6 +1,6 @@
 import MentalHealthForm from "../components/MentalHealthForm";
 import MyTimer from "../components/MyTimer";
-import SoundForm from "../components/SoundForm";
+// import SoundForm from "../components/SoundForm";
 
 function MentalHealthPage() {
   const time = new Date();
@@ -15,7 +15,7 @@ function MentalHealthPage() {
      </div>
         <h3 className="mt-2 font-semibold">Meditations-Bereich</h3>
       <MyTimer expiryTimestamp={time} />
-      <SoundForm />
+      {/* <SoundForm /> */}
     </div>
   );
 }

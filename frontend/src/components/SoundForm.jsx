@@ -1,9 +1,9 @@
 import useSound from "use-sound";
-import piano from "../sounds/soft-piano.mp3";
+import softPiano from "/sounds/soft-piano.mp3";
 
 
 const SoundForm = () => {
-  const [playSound] = useSound({piano});
+  const [playSound] = useSound({softPiano});
 
   return (
     <div>

@@ -1,10 +1,11 @@
 import MentalHealthForm from "../components/MentalHealthForm";
 import MyTimer from "../components/MyTimer";
-// import SoundForm from "../components/SoundForm";
+import SoundForm from "../components/SoundForm";
 
 function MentalHealthPage() {
   const time = new Date();
-  time.setSeconds(time.getSeconds() + 600); //10 minutes timer
+  // time.setSeconds(time.getSeconds() + 600); //10 minutes timer
+  time.setSeconds(time.getSeconds() + 3); //3 seconds timer to try sound effect
   
   return (
     <div className="text-[#2D336B] p-4 my-4">
@@ -15,7 +16,7 @@ function MentalHealthPage() {
      </div>
         <h3 className="mt-2 font-semibold">Meditations-Bereich</h3>
       <MyTimer expiryTimestamp={time} />
-      {/* <SoundForm /> */}
+      <SoundForm />
     </div>
   );
 }

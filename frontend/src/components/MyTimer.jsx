@@ -26,13 +26,14 @@ function MyTimer({ expiryTimestamp }) {
         <span>{days}</span>:<span>{hours}</span>:<span>{minutes}</span>:
         <span>{seconds}</span>
       </div>
-      <p>{isRunning ? "Running" : "Not running"}</p>
+      <p className="text-xs">{isRunning ? "Running" : "Not running"}</p>
       <div>
         
       </div>
-      <button onClick={start} className="p-2">Start</button>
-      <button onClick={pause} className="p-2">Pause</button>
-      <button onClick={resume} className="p-2">Resume</button>
+      <div className="text-[#FFF2F2] text-xs">
+      <button onClick={start} className="p-2 border rounded bg-[#2D336B]">Start</button>
+      <button onClick={pause} className="p-2 border rounded m-2 bg-[#2D336B]">Pause</button>
+      <button onClick={resume} className="p-2 border rounded bg-[#2D336B]">Resume</button>
       <button
         onClick={() => {
           // Restarts to 5 minutes timer
@@ -40,9 +41,10 @@ function MyTimer({ expiryTimestamp }) {
           time.setSeconds(time.getSeconds() + 300);
           restart(time);
         }}
-      >
+      className="p-2 border rounded m-2 bg-[#2D336B]">
         Restart
       </button>
+      </div>
     </div>
   );
 }

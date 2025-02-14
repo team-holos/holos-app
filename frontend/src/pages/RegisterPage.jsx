@@ -5,6 +5,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 function RegisterPage() {
+  const [username, setUsername] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [passwordRetype, setPasswordRetype] = useState(null);
+  const [weight, setWeight] = useState(null);
+  const [email, setEmail] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
@@ -41,6 +46,7 @@ function RegisterPage() {
     }
     if (password.length < 8) {
       setPasswordError("Passwort muss mindestens 8 Zeichen lang sein");
+      return false;
     }
     if (!/[A-Z]/.test(password)) {
       setPasswordError(
@@ -48,13 +54,17 @@ function RegisterPage() {
       );
       return false;
     }
+    setPasswordError(null);
+    return true;
   }
   async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const email = formData.get("email");
     // check if is valid email address
-    
+    if (!validateEmail(email)|| !validateBirthday(birthday)|| !validatePassword(password)) {
+      return;
+    }
     
     /*const password = formData.get("password");
     const passwordRetype = formData.get("password-retype");
@@ -103,7 +113,7 @@ function RegisterPage() {
       body: JSON.stringify({ email, password, passwordRetype, birthday }),
     });
 
-    if (response.ok === false) {
+    if (!response.ok) {
       const error = await response.json();
       setErrorMessage(error.errors);
       return;
@@ -111,6 +121,12 @@ function RegisterPage() {
 
     const data = await response.json();
     setSuccessMessage(data.message);
+    setErrorMessage(null);
+    setEmail("");
+    setPassword("");
+    setPasswordRetype("");
+    setBirthday("");
+    setWeight("");
 
     
   }

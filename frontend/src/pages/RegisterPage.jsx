@@ -21,8 +21,8 @@ function RegisterPage() {
     if (
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) === false
     ) {
-      setEmailError("Invalid email address");
-      return;
+      //setEmailError("Invalid email address");
+      //return;
     }
     const password = formData.get("password");
     const passwordRetype = formData.get("password-retype");
@@ -40,7 +40,7 @@ function RegisterPage() {
       return;
     }
 
-    const isAtLeast16 = (birthday) => {
+      const isAtLeast16 = (birthday) => {
       const today = new Date();
       const birth = new Date(birthday);
 
@@ -68,7 +68,7 @@ function RegisterPage() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password, passwordRetype }),
+      body: JSON.stringify({ email, password, passwordRetype, birthday }),
     });
 
     if (response.ok === false) {
@@ -82,6 +82,7 @@ function RegisterPage() {
 
     setEmailError(null);
     setPasswordError(null);
+    setBirthdayError(null);
   }
   return (
     <form

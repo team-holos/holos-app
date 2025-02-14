@@ -1,6 +1,5 @@
-import React from 'react';
-import useSound from 'use-sound';
-import piano from '../sounds/soft-piano.mp3'
+import useSound from "use-sound";
+import piano from "../sounds/soft-piano.mp3";
 
 
 const SoundForm = () => {

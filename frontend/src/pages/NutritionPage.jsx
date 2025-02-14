@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import NutritionPlan from '../components/NutritionPlan';
 
 function NutritionPage() {
-  const [nutritionData, setNutritionData] = useState([]);
+  const [nutritionData, setNutritionData] = useState([]); // nutritionData folgt im Backenend als nutritionData.json
   const [selectedPlanId, setSelectedPlanId] = useState(null);
 
   useEffect(() => {

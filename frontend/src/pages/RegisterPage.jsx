@@ -17,7 +17,7 @@ function RegisterPage() {
       /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) === false
     ) {
       setEmailError("Invalid email address");
-      retu
+      return;
     }
     const password = formData.get("password");
     const passwordRetype = formData.get("password-retype");
@@ -49,14 +49,14 @@ function RegisterPage() {
     setPasswordError(null);
   }
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-sm mx-auto text-sm">
       {successMessage && (
         <p className="bg-green-500 text-white p-2">{successMessage}</p>
       )}
       {errorMessage && (
         <p className="bg-red-500 text-white p-2">{errorMessage}</p>
       )}
-      <h1 className="text-xl mb-4">Register</h1>
+      <h1 className="text-xl mb-4 max-w-sm and mx-auto" >Register</h1>
       <label htmlFor="register-email">Email</label>
       <input
         type="email"
@@ -87,10 +87,11 @@ function RegisterPage() {
       {passwordError && <p className="text-red-500">{passwordError}</p>}
       <button
         type="submit"
-        className="bg-green-500 px-4 py-2 text-white font-semibold cursor-pointer"
+        className="bg-green-500 px-2 py-1 text-white font-semibold cursor-pointer"
       >
         Register
       </button>
+      <h2 class="max-w-sm and mx-auto"><a href="/">Zurück zur Loginseite</a></h2>
     </form>
   );
 }

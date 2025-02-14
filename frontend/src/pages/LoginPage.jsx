@@ -31,7 +31,7 @@ function LoginPage() {
     setToken(data.token);
   }
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-sm mx-auto text-sm">
       {successMessage && (
         <p className="bg-green-500 text-white p-2">{successMessage}</p>
       )}
@@ -46,9 +46,9 @@ function LoginPage() {
           <button>logout</button>
         </div>
       )}
-
-      <h1 className="text-xl mb-4">Login</h1>
-      <label htmlFor="email">Email</label>
+      <h1 class="max-w-sm and mx-auto">Willkommen bei Holos!</h1>
+      <h2 className="text-xl mb-4 max-w-sm and mx-auto">Login</h2>
+      <label htmlFor="email" class="max-w-sm and mx-auto">Email</label>
       <input
         type="text"
         id="email"
@@ -56,7 +56,7 @@ function LoginPage() {
         className="border p-2"
         placeholder="Email address"
       />
-      <label htmlFor="password">Password</label>
+      <label htmlFor="password" class="max-w-sm and mx-auto">Password</label>
       <input
         type="password"
         id="password"
@@ -70,6 +70,10 @@ function LoginPage() {
       >
         Login
       </button>
+      <h2 class="max-w-sm and mx-auto"><a href="/register">Noch kein Account<br/>
+      (link zur Registrierung)<br/></a>
+      </h2>
+      <h2 class="max-w-sm and mx-auto"><a href="/reset">Passwort vergessen?</a></h2>
     </form>
   );
 }

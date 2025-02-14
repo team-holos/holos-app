@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Exercise from '../components/Exercise';
 import CategoryFilter from '../components/CategoryFilter';
 import GoalFilter from '../components/GoalFilter';
 import LevelFilter from '../components/LevelFilter';
+
 
 function FitnessPage() {
   const [exercises, setExercises] = useState([]);

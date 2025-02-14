@@ -12,40 +12,51 @@ function RegisterPage() {
   const [birthday, setBirthday] = useState(null);
   const [birthdayError, setBirthdayError] = useState(null);
   const [selectedGender, setSelectedGender] = useState(null);
-
+  function validateEmail(email) {
+    if (!email) {
+      setEmailError("Email fehlt");
+      return false;
+    }
+    if (
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) === false
+    ) {
+      setEmailError("Invalid email address");
+      return false;
+    }
+    setEmailError(null);
+    return true;
+  }
+  function validateBirthday(birthday) {
+    if (!birthday) {
+      setBirthdayError("Geburtsdatum fehlt");
+      return false;
+    }
+    setBirthdayError(null);
+    return true;
+  }
+  function validatePassword(password) {
+    if (!password) {
+      setPasswordError("Passwort fehlt");
+      return false;
+    }
+    if (password.length < 8) {
+      setPasswordError("Passwort muss mindestens 8 Zeichen lang sein");
+    }
+    if (!/[A-Z]/.test(password)) {
+      setPasswordError(
+        "Passwort muss mindestens einen Großbuchstaben enthalten"
+      );
+      return false;
+    }
+  }
   async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const email = formData.get("email");
     // check if is valid email address
-    function validateEmail(email) {
-      if (!email) {
-        setEmailError("Email fehlt");
-        return false;
-      }
-      if (
-        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) === false
-      ) {
-      setEmailError("Invalid email address");
-      return false;
-      }
-    }
-    function validateBirthday(birthday) {
-      if (!birthday) {
-        setBirthdayError("Geburtsdatum fehlt");
-        return false;
-      }
-    }
-    function validatePassword(password) {
-      if (!password) {
-        setPasswordError("Passwort fehlt")
-        return false;
-      }
-      if (password.length < 8) {
-        setPasswordError("Passwort muss mindestens 8 Zeichen lang sein")
-      }
-    }
-    const password = formData.get("password");
+    
+    
+    /*const password = formData.get("password");
     const passwordRetype = formData.get("password-retype");
 
     // check if password and passwordretype match
@@ -53,15 +64,15 @@ function RegisterPage() {
       setPasswordError("Passwords do not match");
       return;
     }
-
-    const today = new Date();
+*/
+    /*const today = new Date();
     today.setHours(0, 0, 0, 0);
     if (birthday > today) {
       setBirthdayError("birthday is in future");
       return;
     }
-
-      const isAtLeast16 = (birthday) => {
+*/
+    /*const isAtLeast16 = (birthday) => {
       const today = new Date();
       const birth = new Date(birthday);
 
@@ -78,7 +89,7 @@ function RegisterPage() {
 
       return age >= 16;
     };
-
+*/
     // Datepicker
     //const Example = () => {
     //return;
@@ -101,12 +112,10 @@ function RegisterPage() {
     const data = await response.json();
     setSuccessMessage(data.message);
 
-    setEmailError(null);
-    setPasswordError(null);
-    setBirthdayError(null);
+    
   }
   return (
-    <form 
+    <form
       onSubmit={handleSubmit}
       className="flex flex-col gap-2 max-w-sm mx-auto text-sm bg-[#A9B5DF] mt-10"
     >
@@ -116,8 +125,15 @@ function RegisterPage() {
       {errorMessage && (
         <p className="bg-red-500 text-white p-2">{errorMessage}</p>
       )}
-      <h1 className="text-xl mb-4 max-w-sm and mx-auto text-[#2D336B] font-extrabold">Registrierung</h1>
-      <label htmlFor="username" class="text-[#2D336B] text-base pl-3 font-semibold">Vorname:</label>
+      <h1 className="text-xl mb-4 max-w-sm and mx-auto text-[#2D336B] font-extrabold">
+        Registrierung
+      </h1>
+      <label
+        htmlFor="username"
+        class="text-[#2D336B] text-base pl-3 font-semibold"
+      >
+        Vorname:
+      </label>
       <input
         type="text"
         id="username"
@@ -125,7 +141,12 @@ function RegisterPage() {
         className="border p-2 bg-[#FFF2F2]"
         placeholder="Deine Vorname"
       />
-      <label htmlFor="register-email" class="text-[#2D336B] text-base pl-3 font-semibold">Email:</label>
+      <label
+        htmlFor="register-email"
+        class="text-[#2D336B] text-base pl-3 font-semibold"
+      >
+        Email:
+      </label>
       <input
         type="email"
         id="register-email"
@@ -133,7 +154,12 @@ function RegisterPage() {
         className="border p-2 bg-[#FFF2F2]"
         placeholder="Email Adresse"
       />
-      <label htmlFor="birthday" class="text-text-[#2D336B] text-base pl-3 font-semibold">Geburtsdatum:</label>
+      <label
+        htmlFor="birthday"
+        class="text-text-[#2D336B] text-base pl-3 font-semibold"
+      >
+        Geburtsdatum:
+      </label>
       <DatePicker
         className="border p-2 w-full bg-[#FFF2F2]"
         selected={birthday}
@@ -141,14 +167,20 @@ function RegisterPage() {
         placeholderText="dd/mm/yyyy"
       />
       {emailError && <p className="text-red-500">{emailError}</p>}
-      <label htmlFor="weight" class="text-[#FFF2F2]">Gewicht:</label>
-      <input type="text"
+      <label htmlFor="weight" class="text-[#FFF2F2]">
+        Gewicht:
+      </label>
+      <input
+        type="text"
         id="weight"
         name="weight"
         className="border p-2 bg-[#FFF2F2]"
-        placeholder="Gib dein Gewicht in Kilogramm an" />
+        placeholder="Gib dein Gewicht in Kilogramm an"
+      />
       <form className="flex gap-4">
-        <span className="font-medium" class="text-[#FFF2F2]">Geschlecht:</span>
+        <span className="font-medium" class="text-[#FFF2F2]">
+          Geschlecht:
+        </span>
         <div className="radio">
           <label className="flex items-center gap-2">
             <input
@@ -183,7 +215,9 @@ function RegisterPage() {
           </label>
         </div>
       </form>
-      <label htmlFor="register-password" class="text-[#FFF2F2]">Passwort:</label>
+      <label htmlFor="register-password" class="text-[#FFF2F2]">
+        Passwort:
+      </label>
       <input
         type="password"
         id="register-password"
@@ -194,7 +228,9 @@ function RegisterPage() {
         maxLength="24"
       />
 
-      <label htmlFor="register-password-retype" class="text-[#FFF2F2]">Passwort bestätigen:</label>
+      <label htmlFor="register-password-retype" class="text-[#FFF2F2]">
+        Passwort bestätigen:
+      </label>
       <input
         type="password"
         id="register-password-retype"
@@ -209,7 +245,7 @@ function RegisterPage() {
       >
         Register
       </button>
-      <h2 class="max-w-sm and mx-auto text-[#FFF2F2]" >
+      <h2 class="max-w-sm and mx-auto text-[#FFF2F2]">
         <a href="/">Zurück zur Loginseite</a>
       </h2>
     </form>

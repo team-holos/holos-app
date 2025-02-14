@@ -5,15 +5,20 @@ function SettingsPage() {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState("light");
   const [language, setLanguage] = useState("de");
+  const [pendingLanguage, setPendingLanguage] = useState("de");
 
   const handleSave = () => {
+    i18n.changeLanguage(pendingLanguage);
+    setLanguage(pendingLanguage);
     alert(t("save"));
   };
 
   const handleReset = () => {
     setTheme("light");
-    setLanguage("de");
+    setPendingLanguage("de");
     i18n.changeLanguage("de");
+    setLanguage("de");
+    alert(t("reset"));
   };
 
   const handleThemeChange = (e) => {
@@ -21,9 +26,7 @@ function SettingsPage() {
   };
 
   const handleLanguageChange = (e) => {
-    const selectedLanguage = e.target.value;
-    setLanguage(selectedLanguage);
-    i18n.changeLanguage(selectedLanguage);
+    setPendingLanguage(e.target.value);
   };
 
   return (
@@ -34,6 +37,7 @@ function SettingsPage() {
         <li>{t("healthGoals")}</li>
         <li>{t("notificationSettings")}</li>
       </ul>
+
       <div className="mt-6">
         <label htmlFor="theme-select" className="block mb-2">
           {t("theme")}
@@ -55,7 +59,7 @@ function SettingsPage() {
         </label>
         <select
           id="language-select"
-          value={language}
+          value={pendingLanguage}
           onChange={handleLanguageChange}
           className="border border-gray-300 rounded px-4 py-2"
         >

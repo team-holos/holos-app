@@ -14,6 +14,7 @@ function MyTimer({ expiryTimestamp }) {
     resume,
     restart,
   } = useTimer({
+    autoStart: false,
     expiryTimestamp,
     onExpire: () => console.warn("onExpire called"),
   });

@@ -18,11 +18,32 @@ function RegisterPage() {
     const formData = new FormData(event.target);
     const email = formData.get("email");
     // check if is valid email address
-    if (
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) === false
-    ) {
-      //setEmailError("Invalid email address");
-      //return;
+    function validateEmail(email) {
+      if (!email) {
+        setEmailError("Email fehlt");
+        return false;
+      }
+      if (
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) === false
+      ) {
+      setEmailError("Invalid email address");
+      return false;
+      }
+    }
+    function validateBirthday(birthday) {
+      if (!birthday) {
+        setBirthdayError("Geburtsdatum fehlt");
+        return false;
+      }
+    }
+    function validatePassword(password) {
+      if (!password) {
+        setPasswordError("Passwort fehlt")
+        return false;
+      }
+      if (password.length < 8) {
+        setPasswordError("Passwort muss mindestens 8 Zeichen lang sein")
+      }
     }
     const password = formData.get("password");
     const passwordRetype = formData.get("password-retype");
@@ -85,9 +106,9 @@ function RegisterPage() {
     setBirthdayError(null);
   }
   return (
-    <form
+    <form 
       onSubmit={handleSubmit}
-      className="flex flex-col gap-2 max-w-sm mx-auto text-sm"
+      className="flex flex-col gap-2 max-w-sm mx-auto text-sm bg-[#A9B5DF] mt-10"
     >
       {successMessage && (
         <p className="bg-green-500 text-white p-2">{successMessage}</p>
@@ -95,39 +116,39 @@ function RegisterPage() {
       {errorMessage && (
         <p className="bg-red-500 text-white p-2">{errorMessage}</p>
       )}
-      <h1 className="text-xl mb-4 max-w-sm and mx-auto">Register</h1>
-      <label htmlFor="username">Vorname:</label>
+      <h1 className="text-xl mb-4 max-w-sm and mx-auto text-[#2D336B] font-extrabold">Registrierung</h1>
+      <label htmlFor="username" class="text-[#2D336B] text-base pl-3 font-semibold">Vorname:</label>
       <input
         type="text"
         id="username"
         name="username"
-        className="border p-2"
+        className="border p-2 bg-[#FFF2F2]"
         placeholder="Deine Vorname"
       />
-      <label htmlFor="register-email">Email:</label>
+      <label htmlFor="register-email" class="text-[#2D336B] text-base pl-3 font-semibold">Email:</label>
       <input
         type="email"
         id="register-email"
         name="email"
-        className="border p-2"
+        className="border p-2 bg-[#FFF2F2]"
         placeholder="Email Adresse"
       />
-      <label htmlFor="birthday">Geburtsdatum:</label>
+      <label htmlFor="birthday" class="text-text-[#2D336B] text-base pl-3 font-semibold">Geburtsdatum:</label>
       <DatePicker
-        className="border p-2 w-full"
+        className="border p-2 w-full bg-[#FFF2F2]"
         selected={birthday}
         onChange={(date) => setBirthday(date)}
         placeholderText="dd/mm/yyyy"
       />
       {emailError && <p className="text-red-500">{emailError}</p>}
-      <label htmlFor="weight">Gewicht:</label>
+      <label htmlFor="weight" class="text-[#FFF2F2]">Gewicht:</label>
       <input type="text"
         id="weight"
         name="weight"
-        className="border p-2"
+        className="border p-2 bg-[#FFF2F2]"
         placeholder="Gib dein Gewicht in Kilogramm an" />
       <form className="flex gap-4">
-        <span className="font-medium">Geschlecht:</span>
+        <span className="font-medium" class="text-[#FFF2F2]">Geschlecht:</span>
         <div className="radio">
           <label className="flex items-center gap-2">
             <input
@@ -162,33 +183,33 @@ function RegisterPage() {
           </label>
         </div>
       </form>
-      <label htmlFor="register-password">Passwort:</label>
+      <label htmlFor="register-password" class="text-[#FFF2F2]">Passwort:</label>
       <input
         type="password"
         id="register-password"
         name="password"
-        className="border p-2"
+        className="border p-2 bg-[#FFF2F2]"
         placeholder="Passwort"
         minLength="8"
         maxLength="24"
       />
 
-      <label htmlFor="register-password-retype">Passwort bestätigen:</label>
+      <label htmlFor="register-password-retype" class="text-[#FFF2F2]">Passwort bestätigen:</label>
       <input
         type="password"
         id="register-password-retype"
         name="password-retype"
-        className="border p-2"
+        className="border p-2 bg-[#FFF2F2]"
         placeholder="Passwort erneut eingeben"
       />
       {passwordError && <p className="text-red-500">{passwordError}</p>}
       <button
         type="submit"
-        className="bg-green-500 px-2 py-1 text-white font-semibold cursor-pointer"
+        className="bg-[#2D336B] px-2 py-1 text-white font-semibold cursor-pointer hover:bg-[#7886C7]"
       >
         Register
       </button>
-      <h2 class="max-w-sm and mx-auto">
+      <h2 class="max-w-sm and mx-auto text-[#FFF2F2]" >
         <a href="/">Zurück zur Loginseite</a>
       </h2>
     </form>

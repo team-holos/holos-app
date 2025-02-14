@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 function SettingsPage() {
   const [theme, setTheme] = useState("light");
+  const [language, setLanguage] = useState("de");
 
   const handleSave = () => {
     alert("Einstellungen gespeichert");
@@ -9,11 +10,16 @@ function SettingsPage() {
 
   const handleReset = () => {
     setTheme("light");
+    setLanguage("de");
     alert("Einstellungen zurückgesetzt");
   };
 
   const handleThemeChange = (e) => {
     setTheme(e.target.value);
+  };
+
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
   };
 
   return (
@@ -25,20 +31,30 @@ function SettingsPage() {
         <li>Benachrichtungseinstellungen</li>
       </ul>
       <div className="mt-6">
-      <label htmlFor="theme-select"></label>
+        <label htmlFor="theme-select"></label>
         <select
           id="theme-select"
           value={theme}
-      onChange={handleThemeChange}
+          onChange={handleThemeChange}
           className="border border-gray-300 rounded px-4 py-2"
         >
           <option value="light">Light</option>
-          <option value="dark">Dark</option>
-
-
+          <option value="dark">Dark NYI</option>
         </select>
       </div>
 
+      <div className="mt-6">
+        <label htmlFor="language-select">Sprache: </label>
+        <select
+          id="language-select"
+          value={language}
+          onChange={handleLanguageChange}
+          className="border border-gray-300 rounded px-4 py-2"
+        >
+          <option value="de">Deutsch</option>
+          <option value="en">Englisch</option>
+        </select>
+      </div>
 
       <div className="mt-6 flex space-x-4">
         <button

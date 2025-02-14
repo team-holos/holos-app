@@ -1,17 +1,19 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function SettingsPage() {
+  const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState("light");
   const [language, setLanguage] = useState("de");
 
   const handleSave = () => {
-    alert("Einstellungen gespeichert");
+    alert(t("save"));
   };
 
   const handleReset = () => {
     setTheme("light");
     setLanguage("de");
-    alert("Einstellungen zurückgesetzt");
+    i18n.changeLanguage("de");
   };
 
   const handleThemeChange = (e) => {
@@ -19,32 +21,38 @@ function SettingsPage() {
   };
 
   const handleLanguageChange = (e) => {
-    setLanguage(e.target.value);
+    const selectedLanguage = e.target.value;
+    setLanguage(selectedLanguage);
+    i18n.changeLanguage(selectedLanguage);
   };
 
   return (
     <div className="text-[#2D336B] p-4 my-4">
-      <h1 className="text-2xl mb-4">Einstellungen</h1>
+      <h1 className="text-2xl mb-4">{t("settings")}</h1>
       <ul className="list-disc list-inside">
-        <li>Persönliche Daten</li>
-        <li>Gesundheitsziele</li>
-        <li>Benachrichtungseinstellungen</li>
+        <li>{t("personalData")}</li>
+        <li>{t("healthGoals")}</li>
+        <li>{t("notificationSettings")}</li>
       </ul>
       <div className="mt-6">
-        <label htmlFor="theme-select"></label>
+        <label htmlFor="theme-select" className="block mb-2">
+          {t("theme")}
+        </label>
         <select
           id="theme-select"
           value={theme}
           onChange={handleThemeChange}
           className="border border-gray-300 rounded px-4 py-2"
         >
-          <option value="light">Light</option>
-          <option value="dark">Dark NYI</option>
+          <option value="light">{t("light")}</option>
+          <option value="dark">{t("dark")}</option>
         </select>
       </div>
 
       <div className="mt-6">
-        <label htmlFor="language-select">Sprache: </label>
+        <label htmlFor="language-select" className="block mb-2">
+          {t("language")}
+        </label>
         <select
           id="language-select"
           value={language}
@@ -52,7 +60,7 @@ function SettingsPage() {
           className="border border-gray-300 rounded px-4 py-2"
         >
           <option value="de">Deutsch</option>
-          <option value="en">Englisch</option>
+          <option value="en">English</option>
         </select>
       </div>
 
@@ -61,13 +69,13 @@ function SettingsPage() {
           onClick={handleSave}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
         >
-          Speichern
+          {t("save")}
         </button>
         <button
           onClick={handleReset}
           className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
         >
-          Zurücksetzen
+          {t("reset")}
         </button>
       </div>
     </div>

@@ -2,7 +2,7 @@ import useSound from "use-sound";
 import softPiano from "/sounds/soft-piano.mp3";
 
 const SoundForm = () => {
-  const [playSound, { stop, sound }] = useSound(softPiano, { sound: softPiano });
+  const [playSound, { stop }] = useSound(softPiano, { loop: true });
 
   return (
     <div>

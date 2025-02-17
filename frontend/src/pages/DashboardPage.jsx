@@ -8,12 +8,12 @@ function DashboardPage() {
   const navigate = useNavigate();
   const [schritte, setSchritte] = useState(0);
   const zielSchritte = 10000;
-  const fortschritt = (schritte / zielSchritte) * 100;
 
   useEffect(() => {
     const interval = setInterval(() => {
       setSchritte((prevSchritte) => {
         const neueSchritte = Math.min(prevSchritte + Math.floor(Math.random() * 500), zielSchritte);
+        console.log("neueSchritte");
         return neueSchritte;
       });
     }, 5000);
@@ -24,6 +24,10 @@ function DashboardPage() {
   const handleNavigation = (event) => {
     navigate(event.target.value);
   };
+
+  const fortschritt = (schritte / zielSchritte) * 100;
+  console.log("Schritte:", schritte);
+
   return (
     <div className="text-[#2D336B] p-4 my-4">
       <h1 className="text-2xl mb-4">Welcome User!</h1>
@@ -32,13 +36,18 @@ function DashboardPage() {
         <li>Ziel für heute</li>
       </ul>
 
+      <div>
+        Schritte: {schritte} / {zielSchritte}
+        <div style={{ width: `${fortschritt}%`, height: '20px', backgroundColor: 'green' }}></div>
+      </div>
+
       <form className="flex items-center mt-16">
         {/* <label htmlFor="shortcuts" className="inline-block">
           <Menu />
         </label> */}
         <select id="uebersicht" name="uebersicht" onChange={handleNavigation}>
           <option value="">Nächste Aufgabe...</option>
-          <option value="/nutrion" className="inline-block">
+          <option value="/nutrition" className="inline-block">
             Ernährung
           </option>
           <option value="/fitness">Fitness</option>

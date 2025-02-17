@@ -2,7 +2,9 @@
 // import Nutrition from "./NutritionPage";
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import WaterTracker from "../components/WaterTracker";
 // import { Menu } from "lucide-react";
+
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -55,6 +57,7 @@ function DashboardPage() {
         <li>Ziel für heute</li>
       </ul>
 
+
       <div>
         Schritte: {steps} / {goalSteps}
         <div style={{ width: `${progress}%`, height: '20px', backgroundColor: 'green' }}></div>
@@ -69,10 +72,16 @@ function DashboardPage() {
         onChange={handleGoalChange}
       />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-      <button onClick={simulationActiv ? stopSimulation : startSimulation}>
-    {simulationActiv ? "Stopp" : "Start"}
-</button>
+        <button
+          onClick={simulationActiv ? stopSimulation : startSimulation}
+          style={{ border: '1px solid #ccc', padding: '5px 10px', borderRadius: '5px' }}
+        >
+          {simulationActiv ? "Stopp" : "Start"}
+        </button>
       </div>
+
+      <WaterTracker />
+
       <form className="flex items-center mt-16">
         {/* <label htmlFor="shortcuts" className="inline-block">
           <Menu />

@@ -2,11 +2,12 @@ import useSound from "use-sound";
 import softPiano from "/sounds/soft-piano.mp3";
 
 const SoundForm = () => {
-  const [playSound] = useSound(softPiano);
+  const [playSound, { stop, sound }] = useSound(softPiano, { sound: softPiano });
 
   return (
     <div>
       <button onClick={playSound} className="border rounded p-2">Play Sound</button>
+      <button onClick={stop} className="border rounded p-2">Stop Sound</button>
     </div>
   );
 };

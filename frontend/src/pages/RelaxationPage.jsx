@@ -13,14 +13,15 @@ function RelaxationPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    alert("Eingabe gespeichert!");
     console.log(inputs);
   };
   return (
     <div className="text-[#2D336B] p-4 my-4">
-      <h1 className="text-2xl">Erholung</h1>
-      <ul className="list-disc list-inside p-2 my-2">
+      <h1 className="text-2xl mb-2">Erholung</h1>
+      {/* <ul className="list-disc list-inside p-2 my-2">
         <li>Smart-Alarm</li>
-      </ul>
+      </ul> */}
       <h3 className="font-bold">Schlafanalyse-Dashboard</h3>
       <form onSubmit={handleSubmit} className="p-2 my-2 flex flex-col">
         <label>
@@ -31,7 +32,7 @@ function RelaxationPage() {
             value={inputs.fallAsleep || ""}
             onChange={handleChange}
             className="border rounded m-4 p-1"
-          />
+          /> Uhr
         </label>
         <label>
           Aufwachzeit:
@@ -41,13 +42,13 @@ function RelaxationPage() {
             value={inputs.wakeup || ""}
             onChange={handleChange}
             className="border rounded m-4 p-1"
-          />
+          /> Uhr
         </label>
       </form>
       <div className="p-2 my-4">
         <SleepQualityForm />
         <MoodForm />
-        <button>
+        <button onClick={handleSubmit}>
           <input type="submit" className="p-2 my-2 mt-10 border rounded cursor-pointer" />
         </button>
       </div>

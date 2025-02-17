@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import authRoutes from "./src/routes/auth.js";
 
 
 dotenv.config();
@@ -12,7 +13,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+
 // API Routes
+app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("Holos Backend läuft!");

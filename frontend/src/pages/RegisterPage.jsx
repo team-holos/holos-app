@@ -17,7 +17,7 @@ function RegisterPage() {
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [birthday, setBirthday] = useState(null);
-  const [setBirthdayError] = useState(null);
+  const [birthdayError, setBirthdayError] = useState(null);
   const [selectedGender, setSelectedGender] = useState(null);
   function validateEmail(email) {
     if (!email) {
@@ -43,8 +43,28 @@ function RegisterPage() {
     return true;
   }
   function validateBirthday(birthday) {
-    if (!birthday) {
+    console.log(birthday);
+    /* if (!birthday) {
       setBirthdayError("Geburtsdatum fehlt");
+      return false;
+    } */
+    if (birthday > today) {
+      setBirthdayError("birthday is in future");
+      return false;
+    }
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+
+    // Adjust age if birthday hasn't occurred this year
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
+    ) {
+      age--;
+    }
+
+    if (age < 16) {
+      setBirthdayError("Du musst mindestens 16 Jahre alt sein!");
       return false;
     }
     setBirthdayError(null);
@@ -85,7 +105,7 @@ function RegisterPage() {
     const passwordRetype = formData.get("password-retype");
     const birthday = formData.get("birthday");
     const weight = formData.get("weight");
-    // check if is valid email address
+    // check if is valid email address, username, password, birthday
     const emailValid = validateEmail(email);
     const usernameValid = validateUsername(username);
     const passwordValid = validatePassword(password);
@@ -110,28 +130,13 @@ function RegisterPage() {
 */
     /*const today = new Date();
     today.setHours(0, 0, 0, 0);
-    if (birthday > today) {
-      setBirthdayError("birthday is in future");
-      return;
-    }
+    
 */
     /*const isAtLeast16 = (birthday) => {
       const today = new Date();
       const birth = new Date(birthday);
 
-      let age = today.getFullYear() - birth.getFullYear();
-      const monthDiff = today.getMonth() - birth.getMonth();
-
-      // Adjust age if birthday hasn't occurred this year
-      if (
-        monthDiff < 0 ||
-        (monthDiff === 0 && today.getDate() < birth.getDate())
-      ) {
-        age--;
-      }
-
-      return age >= 16;
-    };
+     
 */
     // Datepicker
     //const Example = () => {
@@ -178,9 +183,8 @@ function RegisterPage() {
       </h1>
       <label
         htmlFor="username"
-        class="text-[#2D336B] text-base pl-3 font-semibold"
+        className="text-[#2D336B] text-base pl-3 font-semibold"
       >
-        
         Vorname:
       </label>
       <input
@@ -188,12 +192,12 @@ function RegisterPage() {
         id="username"
         name="username"
         className="border p-2 bg-[#FFF2F2]"
-        placeholder="Deine Vorname"
+        placeholder="Dein Vorname"
       />
       {usernameError && <p className="text-red-500">{usernameError}</p>}
       <label
         htmlFor="register-email"
-        class="text-[#2D336B] text-base pl-3 font-semibold"
+        className="text-[#2D336B] text-base pl-3 font-semibold"
       >
         Email:
       </label>
@@ -207,7 +211,7 @@ function RegisterPage() {
       {emailError && <p className="text-red-500">{emailError}</p>}
       <label
         htmlFor="birthday"
-        class="text-text-[#2D336B] text-base pl-3 font-semibold"
+        className="text-text-[#2D336B] text-base pl-3 font-semibold"
       >
         Geburtsdatum:
       </label>
@@ -217,8 +221,8 @@ function RegisterPage() {
         onChange={(date) => setBirthday(date)}
         placeholderText="dd/mm/yyyy"
       />
-
-      <label htmlFor="weight" class="text-[#FFF2F2]">
+      {birthdayError && <p className="text-red-500">{birthdayError}</p>}
+      <label htmlFor="weight" className="text-[#FFF2F2]">
         Gewicht:
       </label>
       <input
@@ -228,8 +232,7 @@ function RegisterPage() {
         className="border p-2 bg-[#FFF2F2]"
         placeholder="Gib dein Gewicht in Kilogramm an"
       />
-      <form className="flex gap-4">
-        <span className="font-medium" class="text-[#FFF2F2]">
+        <span className="font-medium" className="text-[#FFF2F2]">
           Geschlecht:
         </span>
         <div className="radio">
@@ -265,8 +268,7 @@ function RegisterPage() {
             Divers
           </label>
         </div>
-      </form>
-      <label htmlFor="register-password" class="text-[#FFF2F2]">
+      <label htmlFor="register-password" className="text-[#FFF2F2]">
         Passwort:
       </label>
       <input
@@ -279,7 +281,7 @@ function RegisterPage() {
         maxLength="24"
       />
       {passwordError && <p className="text-red-500">{passwordError}</p>}
-      <label htmlFor="register-password-retype" class="text-[#FFF2F2]">
+      <label htmlFor="register-password-retype" className="text-[#FFF2F2]">
         Passwort bestätigen:
       </label>
       <input
@@ -295,7 +297,7 @@ function RegisterPage() {
       >
         Register
       </button>
-      <h2 class="max-w-sm and mx-auto text-[#FFF2F2]">
+      <h2 className="max-w-sm and mx-auto text-[#FFF2F2]">
         <a href="/">Zurück zur Loginseite</a>
       </h2>
     </form>

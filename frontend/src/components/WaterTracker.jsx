@@ -16,7 +16,7 @@ function WaterTracker() {
                 Consumed: {waterConsumed} ml / Goal: {waterGoal} ml
                 <div style={{ width: `${(waterConsumed / waterGoal) * 100}%`, height: '20px', backgroundColor: 'blue' }}></div>
             </div>
-            <button onClick={logWaterIntake}>Wasser trinken!</button>
+            <button onClick={logWaterIntake}>Wasser getrunken</button>
         </div>
     );
 }

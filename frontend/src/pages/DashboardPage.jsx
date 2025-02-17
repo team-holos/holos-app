@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import WaterTracker from "../components/WaterTracker";
+import SleepTracker from '../components/SleepTracker';
 // import { Menu } from "lucide-react";
 
 
@@ -81,6 +82,7 @@ function DashboardPage() {
       </div>
 
       <WaterTracker />
+      <SleepTracker />
 
       <form className="flex items-center mt-16">
         {/* <label htmlFor="shortcuts" className="inline-block">

@@ -22,7 +22,7 @@ function DashboardPage() {
         </label> */}
         <select id="uebersicht" name="uebersicht" onChange={handleNavigation}>
           <option value="">Nächste Aufgabe...</option>
-          <option value="/nutrion" className="inline-block">
+          <option value="/nutrition" className="inline-block">
             Ernährung
           </option>
           <option value="/fitness">Fitness</option>

@@ -1,8 +1,6 @@
 import { useState } from "react";
 const API_URL = import.meta.env.VITE_API_URL;
 import { Link } from "react-router-dom";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 function RegisterPage() {
   const [setUsername] = useState(null);
@@ -43,15 +41,17 @@ function RegisterPage() {
     return true;
   }
   function validateBirthday(birthday) {
-    console.log(birthday);
-    /* if (!birthday) {
+    const today = new Date();
+    const birth = new Date(birthday);
+    if (!birthday) {
       setBirthdayError("Geburtsdatum fehlt");
       return false;
-    } */
-    if (birthday > today) {
+    }
+    if (birth > today) {
       setBirthdayError("birthday is in future");
       return false;
     }
+
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
 
@@ -93,9 +93,10 @@ function RegisterPage() {
       );
       return false;
     }
-    setPasswordError(null);
-    return true;
+        
+
   }
+
   async function handleSubmit(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -118,30 +119,6 @@ function RegisterPage() {
     ) {
       return;
     }
-
-    /*const password = formData.get("password");
-    const passwordRetype = formData.get("password-retype");
-
-    // check if password and passwordretype match
-    if (password !== passwordRetype) {
-      setPasswordError("Passwords do not match");
-      return;
-    }
-*/
-    /*const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-*/
-    /*const isAtLeast16 = (birthday) => {
-      const today = new Date();
-      const birth = new Date(birthday);
-
-     
-*/
-    // Datepicker
-    //const Example = () => {
-    //return;
-    //};
 
     const response = await fetch(`${API_URL}auth/register`, {
       method: "POST",
@@ -215,11 +192,14 @@ function RegisterPage() {
       >
         Geburtsdatum:
       </label>
-      <DatePicker
+      <input
+        type="date"
+        id="birthday"
+        name="birthday"
         className="border p-2 w-full bg-[#FFF2F2]"
         selected={birthday}
         onChange={(date) => setBirthday(date)}
-        placeholderText="dd/mm/yyyy"
+        defaultValue="dd/mm/yyyy"
       />
       {birthdayError && <p className="text-red-500">{birthdayError}</p>}
       <label htmlFor="weight" className="text-[#FFF2F2]">
@@ -232,9 +212,10 @@ function RegisterPage() {
         className="border p-2 bg-[#FFF2F2]"
         placeholder="Gib dein Gewicht in Kilogramm an"
       />
-        <span className="font-medium" className="text-[#FFF2F2]">
-          Geschlecht:
-        </span>
+      <div className="flex gap-4">
+      <span className="font-medium" className="text-[#FFF2F2]">
+        Geschlecht:
+      </span>
         <div className="radio">
           <label className="flex items-center gap-2">
             <input
@@ -268,6 +249,8 @@ function RegisterPage() {
             Divers
           </label>
         </div>
+      </div>
+
       <label htmlFor="register-password" className="text-[#FFF2F2]">
         Passwort:
       </label>

@@ -7,7 +7,7 @@ const SoundForm = () => {
   return (
     <div>
       <button onClick={playSound} className="border rounded p-2">Play Sound</button>
-      <button onClick={stop} className="border rounded p-2">Stop Sound</button>
+      <button onClick={() => stop()} className="border rounded p-2">Stop Sound</button>
     </div>
   );
 };

@@ -4,14 +4,15 @@ import SoundForm from "../components/SoundForm";
 
 function MentalHealthPage() {
   const time = new Date();
-  // time.setSeconds(time.getSeconds() + 600); //10 minutes timer
-  time.setSeconds(time.getSeconds() + 3); //3 seconds timer to try sound effect
+  time.setSeconds(time.getSeconds() + 600); //10 minutes timer
+  // time.setSeconds(time.getSeconds() + 3); //3 seconds timer to try sound effect
   
   return (
     <div className="text-[#2D336B] p-4 my-4">
       <h1 className="text-2xl mb-4">Mentale Gesundheit</h1>
      <div>
         <h3 className="mb-2 font-semibold">Journaling</h3>
+        <p>Hier hast Du die Möglichkeit Deine Gedanken festzuhalten oder ein Dankbarkeitstagebuch zu führen:</p>
         <MentalHealthForm />
      </div>
         <h3 className="mt-2 font-semibold">Meditations-Bereich</h3>

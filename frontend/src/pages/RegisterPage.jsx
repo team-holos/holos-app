@@ -5,18 +5,19 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 function RegisterPage() {
-  const [username, setUsername] = useState(null);
-  const [password, setPassword] = useState(null);
-  const [passwordRetype, setPasswordRetype] = useState(null);
-  const [weight, setWeight] = useState(null);
-  const [email, setEmail] = useState(null);
+  const [setUsername] = useState(null);
+  const [setPassword] = useState(null);
+  const [setPasswordRetype] = useState(null);
+  const [setWeight] = useState(null);
+  const [setWeightError] = useState(null);
+  const [setEmail] = useState(null);
   const [usernameError, setUsernameError] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [birthday, setBirthday] = useState(null);
-  const [birthdayError, setBirthdayError] = useState(null);
+  const [setBirthdayError] = useState(null);
   const [selectedGender, setSelectedGender] = useState(null);
   function validateEmail(email) {
     if (!email) {
@@ -49,6 +50,14 @@ function RegisterPage() {
     setBirthdayError(null);
     return true;
   }
+  function validateWeight(weight) {
+    if (!weight) {
+      setWeightError("Gewicht fehlt");
+      return false;
+    }
+    setWeightError(null);
+    return true;
+  }
   function validatePassword(password) {
     if (!password) {
       setPasswordError("Passwort fehlt");
@@ -77,11 +86,15 @@ function RegisterPage() {
     const birthday = formData.get("birthday");
     const weight = formData.get("weight");
     // check if is valid email address
+    const emailValid = validateEmail(email);
+    const usernameValid = validateUsername(username);
+    const passwordValid = validatePassword(password);
+    const birthdayValid = validateBirthday(birthday);
     if (
-      !validateEmail(email) ||
-      !validateBirthday(birthday) ||
-      !validatePassword(password) ||
-      !validateUsername(username)
+      emailValid === false ||
+      usernameValid === false ||
+      passwordValid === false ||
+      birthdayValid === false
     ) {
       return;
     }
@@ -276,7 +289,6 @@ function RegisterPage() {
         className="border p-2 bg-[#FFF2F2]"
         placeholder="Passwort erneut eingeben"
       />
-      {/*{passwordError && <p className="text-red-500">{passwordError}</p>}*/}
       <button
         type="submit"
         className="bg-[#2D336B] px-2 py-1 text-white font-semibold cursor-pointer hover:bg-[#7886C7]"

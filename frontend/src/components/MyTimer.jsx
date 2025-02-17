@@ -47,6 +47,11 @@ function MyTimer({ expiryTimestamp }) {
     restart(newExpiryTimestamp);
   };
 
+  const handleStart = () => {
+    start();
+    playExpireSound();
+  };
+
   return (
     <div style={{ textAlign: "center" }}>
       <p>Meditations - Timer</p>
@@ -57,7 +62,7 @@ function MyTimer({ expiryTimestamp }) {
       <p className="text-xs">{isRunning ? "Running" : "Not running"}</p>
       <div></div>
       <div className="text-[#FFF2F2] text-xs">
-        <button onClick={start} className="p-2 border rounded bg-[#2D336B]">
+        <button onClick={handleStart} className="p-2 border rounded bg-[#2D336B]">
           Start
         </button>
         <button onClick={pause} className="p-2 border rounded m-2 bg-[#2D336B]">

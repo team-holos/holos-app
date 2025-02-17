@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 function DashboardPage() {
   const navigate = useNavigate();
   const [schritte, setSchritte] = useState(0);
-  const zielSchritte = 10000;
+  const [zielSchritte, setZielSchritte] = useState(10000);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,6 +25,10 @@ function DashboardPage() {
     navigate(event.target.value);
   };
 
+  const handleZielChange = (event) => {
+    setZielSchritte(parseInt(event.target.value, 10) || 0);
+  };
+
   const fortschritt = (schritte / zielSchritte) * 100;
   console.log("Schritte:", schritte);
 
@@ -40,6 +44,15 @@ function DashboardPage() {
         Schritte: {schritte} / {zielSchritte}
         <div style={{ width: `${fortschritt}%`, height: '20px', backgroundColor: 'green' }}></div>
       </div>
+
+      {/* Eingabefeld für das Ziel */}
+      <label htmlFor="ziel">Ziel:</label>
+      <input
+        type="number"
+        id="ziel"
+        value={zielSchritte}
+        onChange={handleZielChange}
+      />
 
       <form className="flex items-center mt-16">
         {/* <label htmlFor="shortcuts" className="inline-block">

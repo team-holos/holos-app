@@ -31,14 +31,20 @@ function SleepTracker() {
                 type="time"
                 id="sleepTime"
                 value={sleepTime}
-                onChange={(e) => setSleepTime(e.target.value)}
+                onChange={(e) => {
+                    setSleepTime(e.target.value);
+                    calculateSleepDuration();
+                }}
             />
             <label htmlFor="wakeTime">Aufwachzeit:</label>
             <input
                 type="time"
                 id="wakeTime"
                 value={wakeTime}
-                onChange={(e) => setWakeTime(e.target.value)}
+                onChange={(e) => {
+                    setWakeTime(e.target.value);
+                    calculateSleepDuration();
+                }}
             />
             <button onClick={calculateSleepDuration}>Berechne Schlafdauer</button>
         </div>

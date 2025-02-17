@@ -12,7 +12,7 @@ function MentalHealthForm() {
   };
 
   return (
-    <form >
+    <form>
       <textarea
         value={textarea}
         onChange={handleChange}

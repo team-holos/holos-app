@@ -6,31 +6,46 @@ import { useNavigate } from "react-router-dom";
 
 function DashboardPage() {
   const navigate = useNavigate();
-  const [schritte, setSchritte] = useState(0);
-  const [zielSchritte, setZielSchritte] = useState(10000);
+  const [steps, setSteps] = useState(0);
+  const [goalSteps, setGoalSteps] = useState(10000);
+  const [simulationActiv, setSimulationActiv] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSchritte((prevSchritte) => {
-        const neueSchritte = Math.min(prevSchritte + Math.floor(Math.random() * 500), zielSchritte);
-        console.log("neueSchritte");
-        return neueSchritte;
-      });
-    }, 5000);
+    let interval;
+    if (simulationActiv) {
+      interval = setInterval(() => {
+        setSteps((prevSteps) => {
+          const newSteps = Math.min(prevSteps + Math.floor(Math.random() * 500), goalSteps);
+          console.log("neueSchritte");
+          return newSteps;
+        });
+      }, 5000);
+    }
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [simulationActiv]);
 
   const handleNavigation = (event) => {
     navigate(event.target.value);
   };
 
-  const handleZielChange = (event) => {
-    setZielSchritte(parseInt(event.target.value, 10) || 0);
+  const handleGoalChange = (event) => {
+    setGoalSteps(parseInt(event.target.value, 10) || 0);
   };
 
-  const fortschritt = (schritte / zielSchritte) * 100;
-  console.log("Schritte:", schritte);
+  const startSimulation = () => {
+    setSimulationActiv(true);
+  };
+
+  const stopSimulation = () => {
+    setSimulationActiv(false);
+  };
+  const progress = (steps / goalSteps) * 100;
+  console.log("Schritte:", steps);
 
   return (
     <div className="text-[#2D336B] p-4 my-4">
@@ -41,19 +56,23 @@ function DashboardPage() {
       </ul>
 
       <div>
-        Schritte: {schritte} / {zielSchritte}
-        <div style={{ width: `${fortschritt}%`, height: '20px', backgroundColor: 'green' }}></div>
+        Schritte: {steps} / {goalSteps}
+        <div style={{ width: `${progress}%`, height: '20px', backgroundColor: 'green' }}></div>
       </div>
 
       {/* Eingabefeld für das Ziel */}
-      <label htmlFor="ziel">Ziel:</label>
+      <label htmlFor="goal">Ziel:</label>
       <input
         type="number"
-        id="ziel"
-        value={zielSchritte}
-        onChange={handleZielChange}
+        id="goal"
+        value={goalSteps}
+        onChange={handleGoalChange}
       />
-
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <button onClick={simulationActiv ? stopSimulation : startSimulation}>
+    {simulationActiv ? "Stopp" : "Start"}
+</button>
+      </div>
       <form className="flex items-center mt-16">
         {/* <label htmlFor="shortcuts" className="inline-block">
           <Menu />

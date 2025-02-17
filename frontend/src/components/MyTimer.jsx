@@ -24,7 +24,7 @@ function MyTimer({ expiryTimestamp }) {
     onExpire: () => playExpireSound(), // Play sound on expire
   });
 
-  const [playExpireSound] = useSound({ gong }); // Initialize sound
+  const [playExpireSound] = useSound(gong); // Initialize sound
   const [time, setTime] = useState(new Date()); // State for current time
 
   useEffect(() => {

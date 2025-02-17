@@ -8,14 +8,14 @@ function MentalHealthPage() {
   // time.setSeconds(time.getSeconds() + 3); //3 seconds timer to try sound effect
   
   return (
-    <div className="text-[#2D336B] p-4 my-4">
-      <h1 className="text-2xl mb-4">Mentale Gesundheit</h1>
+    <div className="text-[#2D336B]">
+      <h1 className="text-2xl mb-2">Mentale Gesundheit</h1>
      <div>
         <h3 className="mb-2 font-semibold">Journaling</h3>
         <p>Hier hast Du die Möglichkeit Deine Gedanken festzuhalten oder ein Dankbarkeitstagebuch zu führen:</p>
         <MentalHealthForm />
      </div>
-        <h3 className="mt-2 font-semibold">Meditations-Bereich</h3>
+        <h3 className="mt-2 font-semibold text-2xl text-center">Meditations-Bereich</h3>
       <MyTimer expiryTimestamp={time} />
       <SoundForm />
     </div>

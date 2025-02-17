@@ -10,6 +10,7 @@ function RegisterPage() {
   const [passwordRetype, setPasswordRetype] = useState(null);
   const [weight, setWeight] = useState(null);
   const [email, setEmail] = useState(null);
+  const [usernameError, setUsernameError] = useState(null);
   const [emailError, setEmailError] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
@@ -29,6 +30,15 @@ function RegisterPage() {
       return false;
     }
     setEmailError(null);
+    return true;
+  }
+
+  function validateUsername(username) {
+    if (!username) {
+      setUsernameError("username fehlt");
+      return false;
+    }
+    setUsernameError(null);
     return true;
   }
   function validateBirthday(birthday) {
@@ -61,11 +71,21 @@ function RegisterPage() {
     event.preventDefault();
     const formData = new FormData(event.target);
     const email = formData.get("email");
+    const username = formData.get("username");
+    const password = formData.get("password");
+    const passwordRetype = formData.get("password-retype");
+    const birthday = formData.get("birthday");
+    const weight = formData.get("weight");
     // check if is valid email address
-    if (!validateEmail(email)|| !validateBirthday(birthday)|| !validatePassword(password)) {
+    if (
+      !validateEmail(email) ||
+      !validateBirthday(birthday) ||
+      !validatePassword(password) ||
+      !validateUsername(username)
+    ) {
       return;
     }
-    
+
     /*const password = formData.get("password");
     const passwordRetype = formData.get("password-retype");
 
@@ -122,13 +142,12 @@ function RegisterPage() {
     const data = await response.json();
     setSuccessMessage(data.message);
     setErrorMessage(null);
+    setUsername("");
     setEmail("");
     setPassword("");
     setPasswordRetype("");
     setBirthday("");
     setWeight("");
-
-    
   }
   return (
     <form
@@ -148,6 +167,7 @@ function RegisterPage() {
         htmlFor="username"
         class="text-[#2D336B] text-base pl-3 font-semibold"
       >
+        
         Vorname:
       </label>
       <input
@@ -157,6 +177,7 @@ function RegisterPage() {
         className="border p-2 bg-[#FFF2F2]"
         placeholder="Deine Vorname"
       />
+      {usernameError && <p className="text-red-500">{usernameError}</p>}
       <label
         htmlFor="register-email"
         class="text-[#2D336B] text-base pl-3 font-semibold"
@@ -170,6 +191,7 @@ function RegisterPage() {
         className="border p-2 bg-[#FFF2F2]"
         placeholder="Email Adresse"
       />
+      {emailError && <p className="text-red-500">{emailError}</p>}
       <label
         htmlFor="birthday"
         class="text-text-[#2D336B] text-base pl-3 font-semibold"
@@ -182,7 +204,7 @@ function RegisterPage() {
         onChange={(date) => setBirthday(date)}
         placeholderText="dd/mm/yyyy"
       />
-      {emailError && <p className="text-red-500">{emailError}</p>}
+
       <label htmlFor="weight" class="text-[#FFF2F2]">
         Gewicht:
       </label>
@@ -243,7 +265,7 @@ function RegisterPage() {
         minLength="8"
         maxLength="24"
       />
-
+      {passwordError && <p className="text-red-500">{passwordError}</p>}
       <label htmlFor="register-password-retype" class="text-[#FFF2F2]">
         Passwort bestätigen:
       </label>
@@ -254,7 +276,7 @@ function RegisterPage() {
         className="border p-2 bg-[#FFF2F2]"
         placeholder="Passwort erneut eingeben"
       />
-      {passwordError && <p className="text-red-500">{passwordError}</p>}
+      {/*{passwordError && <p className="text-red-500">{passwordError}</p>}*/}
       <button
         type="submit"
         className="bg-[#2D336B] px-2 py-1 text-white font-semibold cursor-pointer hover:bg-[#7886C7]"

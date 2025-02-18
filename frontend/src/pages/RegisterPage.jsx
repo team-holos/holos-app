@@ -1,5 +1,7 @@
 import { useState } from "react";
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL.endsWith("/")
+  ? import.meta.env.VITE_API_URL.slice(0, -1)
+  : import.meta.env.VITE_API_URL;
 import { Link } from "react-router-dom";
 
 function RegisterPage() {
@@ -93,12 +95,12 @@ function RegisterPage() {
       );
       return false;
     }
-        
-
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
+    console.log("API URL:", API_URL);
+
     const formData = new FormData(event.target);
     const email = formData.get("email");
     const username = formData.get("username");
@@ -213,9 +215,7 @@ function RegisterPage() {
         placeholder="Gib dein Gewicht in Kilogramm an"
       />
       <div className="flex gap-4">
-      <span className="font-medium text-[#FFF2F2]">
-        Geschlecht:
-      </span>
+        <span className="font-medium text-[#FFF2F2]">Geschlecht:</span>
         <div className="radio">
           <label className="flex items-center gap-2">
             <input

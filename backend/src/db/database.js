@@ -15,8 +15,12 @@ db.prepare(
   `
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE,
-        password TEXT
+        username TEXT,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        birthday TEXT,
+        weight REAL,
+        gender TEXT
     )
 `
 ).run();

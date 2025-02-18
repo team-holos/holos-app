@@ -9,7 +9,8 @@ const router = express.Router();
 
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, birthday, weight, gender } = req.body;
+    const { email, username, password, birthday, weight, selectedGender } =
+      req.body;
 
     const checkStatement = db.prepare(
       "SELECT COUNT(*) AS count FROM users WHERE email = ?"
@@ -21,20 +22,22 @@ router.post("/register", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
     const insertStatement = db.prepare(
-      "INSERT INTO users (email, password, birthday, weight, gender) VALUES (?, ?, ?, ?, ?)"
+      "INSERT INTO users (email, username, password, birthday, weight, gender) VALUES (?, ?, ?, ?, ?, ?)"
     );
     const info = insertStatement.run(
       email,
+      username,
       hashedPassword,
       birthday,
       weight,
-      gender,
+      selectedGender
     );
 
     res.status(201).json({
       userId: info.lastInsertRowid,
       email,
-      message: `Benutzer ${email} erfolgreich registriert!`,
+      username,
+      message: `Benutzer ${username} erfolgreich registriert!`,
     });
   } catch (error) {
     res

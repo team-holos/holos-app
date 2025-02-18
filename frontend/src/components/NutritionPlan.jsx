@@ -1,26 +1,28 @@
-import Meal from './Meal';
+import React from "react";
 
 function NutritionPlan({ plan }) {
-  console.log(plan);
+  if (!plan || !plan.days) {
+    return <div>Kein Ernährungsplan ausgewählt oder Daten fehlen.</div>;
+  }
+
   return (
     <div className='border'>
-      {plan.map((plan, index) => (
-        <div key={index}>
-          <h2>{plan.day}</h2>
+      {plan.days.map((day, dayIndex) => (
+        <div key={dayIndex}>
+          <h2>{day.day}</h2>
           <ul>
-            {plan.meal.map((meal, i) => (
-              <li key={i}>
+            {day.meals.map((meal, mealIndex) => (
+              <li key={mealIndex}>
                 <strong>{meal.name}</strong>: {meal.ingredients.join(", ")} ({meal.calories} kcal)
               </li>
-      ))}
+            ))}
           </ul>
         </div>
-
       ))}
-        </div>
-      )};
-  
-  
-
+    </div>
+  );
+}
 
 export default NutritionPlan;
+
+

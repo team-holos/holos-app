@@ -213,7 +213,7 @@ function RegisterPage() {
         placeholder="Gib dein Gewicht in Kilogramm an"
       />
       <div className="flex gap-4">
-      <span className="font-medium" className="text-[#FFF2F2]">
+      <span className="font-medium text-[#FFF2F2]">
         Geschlecht:
       </span>
         <div className="radio">

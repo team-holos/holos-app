@@ -1,0 +1,45 @@
+{
+  "info": {
+    "_postman_id": "fafae3fe-8ff8-47d2-a2b5-a5664418e595",
+    "name": "Chat-Bot-API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "41148312"
+  },
+  "item": [
+    {
+      "name": "/v1/models",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "/v1/chat/completions",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"model\": \"lmstudio-community/gemma-2b-it-GGUF\",\r\n    \"temperature\": 0.7,\r\n    \"max_tokens\": 256,\r\n    \"messages\": [\r\n        {\r\n            \"role\": \"user\",\r\n            \"content\": \"What is Holos?\"\r\n        }\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "/v1/chat/completions",
+          "path": ["v1", "chat", "completions"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

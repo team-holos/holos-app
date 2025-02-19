@@ -14,7 +14,7 @@ function Navigation() {
         </label>
         <select id="uebersicht" name="uebersicht" onChange={handleNavigation} className="bg-[#7886C7]">
           <option value="">Select a page...</option>
-          <option value="/nutrion" className="inline-block">
+          <option value="/nutrition" className="inline-block">
             Ernährung
           </option>
           <option value="/fitness">Fitness</option>

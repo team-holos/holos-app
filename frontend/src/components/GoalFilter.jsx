@@ -1,10 +1,10 @@
 import React from 'react';
 
-function GoalFilter() {
+function GoalFilter({ onChange }) {
     return (
         <div>
             <label htmlFor="goal">Ziel:</label>
-            <select id="goal">
+            <select id="goal" onChange={e => onChange(e.target.value)}>
                 <option value="all">Alle</option>
                 <option value="weightLoss">Gewichtsverlust</option>
                 <option value="muscleGain">Muskelaufbau</option>

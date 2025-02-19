@@ -46,7 +46,10 @@ function SleepTracker() {
                     calculateSleepDuration();
                 }}
             />
-            <button onClick={calculateSleepDuration}>Berechne Schlafdauer</button>
+            <button onClick={calculateSleepDuration} style={{ border: '1px solid #ccc', padding: '5px 10px', borderRadius: '5px' }}>Berechne Schlafdauer</button>
+            <p>
+                Schlafdauer: {sleepDurationHours} Stunden und {sleepDurationMinutes} Minuten
+            </p>
         </div>
     );
 }

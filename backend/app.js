@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./src/routes/auth.js";
-
+import nutritionRoutes from "./src/routes/nutrition.js";
 
 dotenv.config();
 
@@ -13,9 +13,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-
 // API Routes
 app.use("/auth", authRoutes);
+app.use("/api/nutrition", nutritionRoutes);
 
 app.get("/", (req, res) => {
   res.send("Holos Backend läuft!");
@@ -24,3 +24,5 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server läuft auf http://localhost:${PORT}`);
 });
+
+

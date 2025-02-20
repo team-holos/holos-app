@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import WaterTracker from "../components/WaterTracker";
 import SleepTracker from '../components/SleepTracker';
-import { Moon, Footprints } from 'lucide-react';
+import { Moon, Footprints, Droplet } from 'lucide-react';
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -54,9 +54,9 @@ function DashboardPage() {
         {/* Schritte-Bereich */}
         <div className="bg-white rounded-lg shadow p-4">
           <div className="flex items-center justify-between mb-2">
-          <span className="text-lg font-medium flex items-center">
-          <Footprints className="w-5 h-5 mr-2" /> 
-          </span>
+            <span className="text-lg font-medium flex items-center">
+              <Footprints className="w-5 h-5 mr-2" />
+            </span>
             <span className="text-xl font-bold">{steps} / {goalSteps}</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full">
@@ -82,6 +82,11 @@ function DashboardPage() {
 
         {/* Wasser-Bereich */}
         <div className="bg-white rounded-lg shadow p-4 border border-gray-300">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-lg font-medium flex items-center">
+              <Droplet className="w-5 h-5 mr-2" />
+            </span>
+          </div>
           <WaterTracker />
         </div>
 

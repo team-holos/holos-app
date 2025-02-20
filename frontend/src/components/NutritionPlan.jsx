@@ -1,27 +1,15 @@
 import React from 'react';
 
-function NutritionPlan({ plan, selectedFood, portion }) {
-
-    const calculateMealCalories = (meal) => {
-        let totalCalories = 0;
-        meal.ingredients.forEach(ingredientName => {
-            const foodItem = selectedFood.find(food => food.name === ingredientName);
-            if (foodItem) {
-                totalCalories += foodItem.calories * portion;
-            }
-        });
-        return totalCalories;
-    };
-
+function NutritionPlan({ plan }) {
     return (
-        <div className='border'>
-            {plan.map((planItem, index) => (
+        <div>
+            {plan.map((dayPlan, index) => (
                 <div key={index}>
-                    <h2>{planItem.day}</h2>
+                    <h2>{dayPlan.day}</h2>
                     <ul>
-                        {planItem.meal.map((meal, i) => (
-                            <li key={i}>
-                                <strong>{meal.name}</strong>: {meal.ingredients.join(", ")} ({calculateMealCalories(meal)} kcal)
+                        {dayPlan.meal.map((meal, mealIndex) => (
+                            <li key={mealIndex}>
+                                {meal.name}: {meal.ingredients.join(', ')}
                             </li>
                         ))}
                     </ul>

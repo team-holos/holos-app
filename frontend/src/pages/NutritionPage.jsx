@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-import NutritionPlan from '../components/NutritionPlan';
-import NutritionPlanData from '../components/NutritionPlanData';
+
 
 function NutritionPage() {
-    const [plan, setPlan] = useState(NutritionPlanData);
+
+    return (
+        <div>
+            <h1>Ernährung</h1>
+            <p>Hallo, diese Seite wird den Ernährungsplan anzeigen.</p>
+            </div>
+    );
+}
+   /* const [plan, setPlan] = useState(NutritionPlanData);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedFood, setSelectedFood] = useState(null);
+    const [selectedFood, setSelectedFood] = useState(foodData);;
     const [portion, setPortion] = useState(1); // Standardmäßig eine Portion
 
     // Beispiel-Lebensmitteldaten (durch Datenbank / API-Abfrage ersetzten)
@@ -57,8 +64,8 @@ function NutritionPage() {
 
             <NutritionPlan plan={plan} />
 
-            {/* Suchfeld für Lebensmittel */}
-            <input
+            {/* Suchfeld für Lebensmittel */
+           /* <input
                 type="text"
                 placeholder="Lebensmittel suchen..."
                 value={searchTerm}
@@ -66,8 +73,8 @@ function NutritionPage() {
                 className="border rounded p-2 mb-2"
             />
 
-            {/* Vorschläge für Lebensmittel */}
-            <ul>
+            {/* Vorschläge für Lebensmittel */
+          /*  <ul>
                 {filteredFoodData.map((food) => (
                     <li
                         key={food.name}
@@ -79,8 +86,8 @@ function NutritionPage() {
                 ))}
             </ul>
 
-            {/* Anzeige der Nährwertangaben und Portionseingabe */}
-            {selectedFood && (
+            {/* Anzeige der Nährwertangaben und Portionseingabe */
+         /*   {selectedFood && (
                 <div className="mt-4">
                     <h2 className="text-xl">Nährwerte für {selectedFood.name}</h2>
                     <p>Kalorien: {nutrients.kalorien}</p>
@@ -103,6 +110,6 @@ function NutritionPage() {
             )}
         </div>
     );
-}
+} */
 
 export default NutritionPage;

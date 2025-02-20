@@ -1,11 +1,7 @@
-// import { useState } from "react";
-// import Nutrition from "./NutritionPage";
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import WaterTracker from "../components/WaterTracker";
 import SleepTracker from '../components/SleepTracker';
-// import { Menu } from "lucide-react";
-
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -19,7 +15,6 @@ function DashboardPage() {
       interval = setInterval(() => {
         setSteps((prevSteps) => {
           const newSteps = Math.min(prevSteps + Math.floor(Math.random() * 500), goalSteps);
-          console.log("neueSchritte");
           return newSteps;
         });
       }, 5000);
@@ -48,57 +43,63 @@ function DashboardPage() {
     setSimulationActiv(false);
   };
   const progress = (steps / goalSteps) * 100;
-  console.log("Schritte:", steps);
 
   return (
-    <div className="text-[#2D336B] p-4 my-4">
-      <h1 className="text-2xl mb-4">Welcome User!</h1>
-      <ul className="list-disc list-inside">
-        <li>Tagesübersicht</li>
-        <li>Ziel für heute</li>
-      </ul>
+    <div className="font-roboto text-[#2D336B] p-4 my-4 bg-white rounded-lg shadow-md"> {/* Container */}
+      <h1 className="text-3xl font-bold mb-4 text-center">Willkommen, Benutzer!</h1> {/* Überschrift */}
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> {/* Grid-Layout für Bereiche */}
 
-      <div>
-        Schritte: {steps} / {goalSteps}
-        <div style={{ width: `${progress}%`, height: '20px', backgroundColor: 'green' }}></div>
+        {/* Schritte-Bereich */}
+        <div className="bg-white rounded-lg shadow p-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-lg font-medium">Schritte</span>
+            <span className="text-xl font-bold">{steps} / {goalSteps}</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full">
+            <div className="bg-green-500 text-xs font-medium text-green-100 text-center p-0.5 leading-none rounded-full" style={{ width: `${progress}%` }}> </div>
+          </div>
+          <div className="mt-2 flex items-center">
+            <label htmlFor="goal" className="mr-2">Ziel:</label>
+            <input
+              type="number"
+              id="goal"
+              value={goalSteps}
+              onChange={handleGoalChange}
+              className="border border-gray-300 rounded px-2 py-1 w-20"
+            />
+            <button
+              onClick={simulationActiv ? stopSimulation : startSimulation}
+              className={`ml-2 px-3 py-1 rounded ${simulationActiv ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
+            >
+              {simulationActiv ? "Stopp" : "Start"}
+            </button>
+          </div>
+        </div>
+
+        {/* Wasser-Bereich */}
+        <div className="bg-white rounded-lg shadow p-4 border border-gray-300">
+          <WaterTracker />
+        </div>
+
+        {/* Schlaf-Bereich */}
+        <div className="bg-white rounded-lg shadow p-4">
+          <SleepTracker />
+        </div>
+
       </div>
 
-      {/* Eingabefeld für das Ziel */}
-      <label htmlFor="goal">Ziel:</label>
-      <input
-        type="number"
-        id="goal"
-        value={goalSteps}
-        onChange={handleGoalChange}
-      />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <button
-          onClick={simulationActiv ? stopSimulation : startSimulation}
-          style={{ border: '1px solid #ccc', padding: '5px 10px', borderRadius: '5px' }}
-        >
-          {simulationActiv ? "Stopp" : "Start"}
-        </button>
-      </div>
-
-      <WaterTracker />
-      <SleepTracker />
-
-      <form className="flex items-center mt-16">
-        {/* <label htmlFor="shortcuts" className="inline-block">
-          <Menu />
-        </label> */}
-        <select id="uebersicht" name="uebersicht" onChange={handleNavigation}>
+      {/* Navigations-Dropdown */}
+      <div className="mt-8">
+        <select id="uebersicht" name="uebersicht" onChange={handleNavigation} className="border border-gray-300 rounded px-4 py-2">
           <option value="">Nächste Aufgabe...</option>
-          <option value="/nutrition" className="inline-block">
-            Ernährung
-          </option>
+          <option value="/nutrition">Ernährung</option>
           <option value="/fitness">Fitness</option>
           <option value="/mentalhealth">Mentale Gesundheit</option>
           <option value="/relaxation">Entspannung</option>
           <option value="/settings">Einstellungen</option>
         </select>
-      </form>
+      </div>
     </div>
   );
 }

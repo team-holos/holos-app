@@ -46,10 +46,10 @@ function DashboardPage() {
   const progress = (steps / goalSteps) * 100;
 
   return (
-    <div className="font-roboto text-[#2D336B] p-4 my-4 bg-white rounded-lg shadow-md"> {/* Container */}
-      <h1 className="text-3xl font-bold mb-4 text-center">Willkommen, Benutzer!</h1> {/* Überschrift */}
+    <div className="font-roboto text-[#2D336B] p-4 my-4 bg-white rounded-lg shadow-md"> 
+      <h1 className="text-3xl font-bold mb-4 text-center">Willkommen, Benutzer!</h1> 
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4"> {/* Grid-Layout für Bereiche */}
+      <div className="grid grid-cols-1 gap-4"> 
 
         {/* Schritte-Bereich */}
         <div className="bg-white rounded-lg shadow p-4">

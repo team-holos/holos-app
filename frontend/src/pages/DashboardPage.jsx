@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import WaterTracker from "../components/WaterTracker";
 import SleepTracker from '../components/SleepTracker';
+import { Moon } from 'lucide-react';
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -84,6 +85,11 @@ function DashboardPage() {
 
         {/* Schlaf-Bereich */}
         <div className="bg-white rounded-lg shadow p-4">
+          <div className="flex items-center justify-between mb-2 ">
+            <span className="text-lg font-medium flex items-center">
+              <Moon className="w-5 h-5 mr-2" />
+            </span>
+          </div>
           <SleepTracker />
         </div>
 

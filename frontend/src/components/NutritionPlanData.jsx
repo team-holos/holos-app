@@ -1,34 +1,123 @@
-/*import React, { useState, useEffect } from "react";
- import sqlite3 from "sqlite3";
+const NutritionPlanData = [
+  {
+      day: "Montag",
+      meal: [
+          {
+              name: "Frühstück",
+              ingredients: ["Haferflocken", "Beeren", "Nüsse"],
+          },
+          {
+              name: "Mittagessen",
+              ingredients: ["Salat", "Hähnchenbrust", "Gemüse"],
+          },
+          {
+              name: "Abendessen",
+              ingredients: ["Lachs", "Quinoa", "Brokkoli"],
+          },
+      ],
+  },
+  {
+      day: "Dienstag",
+      meal: [
+          {
+              name: "Frühstück",
+              ingredients: ["Joghurt", "Obst", "Müsli"],
+          },
+          {
+              name: "Mittagessen",
+              ingredients: ["Linsensuppe", "Vollkornbrot"],
+          },
+          {
+              name: "Abendessen",
+              ingredients: ["Tofu", "Gemüse-Curry", "Reis"],
+          },
+      ],
+  },
+  {
+      day: "Mittwoch",
+      meal: [
+          {
+              name: "Frühstück",
+              ingredients: ["Vollkornbrot", "Avocado", "Ei"],
+          },
+          {
+              name: "Mittagessen",
+              ingredients: ["Thunfischsalat", "Knäckebrot"],
+          },
+          {
+              name: "Abendessen",
+              ingredients: ["Hüttenkäse", "Gemüsesticks"],
+          },
+      ],
+  },
+  {
+      day: "Donnerstag",
+      meal: [
+          {
+              name: "Frühstück",
+              ingredients: ["Smoothie", "Banane", "Spinat"],
+          },
+          {
+              name: "Mittagessen",
+              ingredients: ["Quinoa-Salat", "Kichererbsen", "Gemüse"],
+          },
+          {
+              name: "Abendessen",
+              ingredients: ["Hähnchen-Enchiladas", "Salat"],
+          },
+      ],
+  },
+  {
+      day: "Freitag",
+      meal: [
+          {
+              name: "Frühstück",
+              ingredients: ["Rührei", "Toast", "Tomaten"],
+          },
+          {
+              name: "Mittagessen",
+              ingredients: ["Bohnensuppe", "Brot"],
+          },
+          {
+              name: "Abendessen",
+              ingredients: ["Pizza (selbstgemacht)", "Salat"],
+          },
+      ],
+  },
+  {
+      day: "Samstag",
+      meal: [
+          {
+              name: "Frühstück",
+              ingredients: ["Pfannkuchen", "Obst", "Joghurt"],
+          },
+          {
+              name: "Mittagessen",
+              ingredients: ["Burger (vegetarisch)", "Pommes"],
+          },
+          {
+              name: "Abendessen",
+              ingredients: ["Pasta", "Pesto", "Gemüse"],
+          },
+      ],
+  },
+  {
+      day: "Sonntag",
+      meal: [
+          {
+              name: "Frühstück",
+              ingredients: ["Waffeln", "Beeren", "Sahne"],
+          },
+          {
+              name: "Mittagessen",
+              ingredients: ["Sonntagsbraten", "Kartoffeln", "Gemüse"],
+          },
+          {
+              name: "Abendessen",
+              ingredients: ["Suppe", "Brot"],
+          },
+      ],
+  },
+];
 
-function NutritionPlanData() {
-  const [planData, setPlanData] = useState([]);
-  const useDatabase = false; // Variable zum Aktivieren/Deaktivieren der Datenbankabfrage
-
-
-  useEffect(() => {
-    if (useDatabase) { // Nur ausführen, wenn useDatabase true ist
-      // const db = new sqlite3.Database("database.db"); // Platzhalter !
-
-      db.all("SELECT * FROM NutritionPlan", [], (err, rows) => {
-        if (err) {
-          console.error(err);
-        } else {
-          setPlanData(rows);
-        }
-      });
-
-      db.close();
-    } else {
-
-      setPlanData([
-        { id: 1, name: "Mahlzeit 1" },
-        { id: 2, name: "Mahlzeit 2" },
-      ]);
-    }
-  }, [useDatabase]);
-
-  return planData;
-}
-
-export default NutritionPlanData; */
+export default NutritionPlanData;

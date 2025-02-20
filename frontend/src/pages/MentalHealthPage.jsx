@@ -2,43 +2,85 @@ import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
+// Helper function to ensure dates stay in local time
+const getLocalDateString = (date) => {
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .split("T")[0];
+};
+
 function MentalHealthPage() {
   const [date, setDate] = useState(new Date());
   const [content, setContent] = useState("");
   const [savedDates, setSavedDates] = useState([]);
 
+  // Fetch journal entry for the selected date
   useEffect(() => {
-    fetch(`/journal/${date.toISOString().split("T")[0]}`, {
+    const localDate = getLocalDateString(date);
+    console.log("Fetching entry for:", localDate);
+
+    fetch(`/api/journal/${localDate}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
-      .then((res) => res.json())
-      .then((data) => setContent(data.content || ""));
+      .then((res) => {
+        console.log("Response status:", res.status);
+        if (!res.ok) throw new Error(`Error: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Received data:", data);
+        setContent(data.content || "");
+      })
+      .catch((err) => console.error("Error fetching journal entry:", err));
   }, [date]);
 
+  // Fetch saved journal entry dates
   useEffect(() => {
-    fetch("/journal/entries/all", {
+    fetch("/api/journal/entries/all", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
-      .then((res) => res.json())
-      .then((data) => setSavedDates(data));
+      .then((res) => {
+        console.log("Fetching saved dates, response status:", res.status);
+        if (!res.ok) throw new Error(`Error: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Saved dates received:", data);
+        setSavedDates(data);
+      })
+      .catch((err) => console.error("Error fetching journal dates:", err));
   }, []);
 
+  // Save journal entry
   const saveJournal = () => {
-    fetch("/journal", {
+    const localDate = getLocalDateString(date);
+    console.log("Saving entry for:", localDate, "Content:", content);
+
+    fetch("/api/journal", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
-        date: date.toISOString().split("T")[0],
+        date: localDate,
         content,
       }),
-    }).then(() => alert("Eintrag gespeichert!"));
+    })
+      .then((res) => {
+        console.log("Save response status:", res.status);
+        if (!res.ok) throw new Error(`Error: ${res.status}`);
+        return res.json();
+      })
+      .then(() => {
+        alert("Eintrag gespeichert!");
+        setSavedDates((prev) => [...new Set([...prev, localDate])]);
+      })
+      .catch((err) => console.error("Error saving journal:", err));
   };
 
   return (
@@ -56,9 +98,7 @@ function MentalHealthPage() {
           onChange={setDate}
           value={date}
           tileClassName={({ date }) =>
-            savedDates.includes(date.toISOString().split("T")[0])
-              ? "bg-blue-300"
-              : ""
+            savedDates.includes(getLocalDateString(date)) ? "bg-blue-300" : ""
           }
         />
         <textarea
@@ -80,4 +120,3 @@ function MentalHealthPage() {
 }
 
 export default MentalHealthPage;
-

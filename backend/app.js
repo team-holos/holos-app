@@ -17,7 +17,7 @@ app.use(express.json());
 // API Routes
 app.use("/auth", authRoutes);
 app.use("/api/nutrition", nutritionRoutes);
-app.use("/journal", journalRoutes);
+app.use("/api/journal", journalRoutes);
 
 app.get("/", (req, res) => {
   res.send("Holos Backend läuft!");

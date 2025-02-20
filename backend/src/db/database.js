@@ -37,33 +37,19 @@ db.prepare(
 `
 ).run();
 
-// default nutrition plans if table is empty
-const checkPlans = db.prepare("SELECT COUNT(*) AS count FROM nutrition").get();
+// Create journal_entries table if it doesn't exist
+db.prepare(
+  `
+  CREATE TABLE IF NOT EXISTS journal_entries (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      date TEXT NOT NULL UNIQUE,
+      content TEXT DEFAULT '',
+      FOREIGN KEY(user_id) REFERENCES users(id)
+  )
+`
+).run();
 
-if (checkPlans.count === 0) {
-  const insertPlan = db.prepare(
-    "INSERT INTO nutrition (name, description, meals) VALUES (?, ?, ?)"
-  );
-
-  insertPlan.run(
-    "Low Carb Plan",
-    "A low-carb diet for weight loss.",
-    JSON.stringify(["Omelette", "Chicken Salad", "Steak & Veggies"])
-  );
-
-  insertPlan.run(
-    "Muscle Gain Plan",
-    "High protein for muscle building.",
-    JSON.stringify(["Protein Shake", "Grilled Chicken", "Rice & Veggies"])
-  );
-
-  insertPlan.run(
-    "Balanced Plan",
-    "A well-balanced diet with all macronutrients.",
-    JSON.stringify(["Oatmeal", "Grilled Fish", "Quinoa & Veggies"])
-  );
-
-  console.log("Inserted default nutrition plans into database.");
-}
+console.log("Database initialized successfully.");
 
 export default db;

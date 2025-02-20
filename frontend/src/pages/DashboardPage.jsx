@@ -73,6 +73,7 @@ function DashboardPage() {
             />
             <button
               onClick={simulationActiv ? stopSimulation : startSimulation}
+              style={{ backgroundColor: '#A9B5DF', color: 'white' }}
               className={`ml-2 px-3 py-1 rounded ${simulationActiv ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`}
             >
               {simulationActiv ? "Stopp" : "Start"}

@@ -23,9 +23,9 @@ function SleepTracker() {
     };
 
     return (
-        <div className="bg-white rounded-lg shadow p-4 border border-gray-300"> {/* Umrandung */}
-            <h2 className="text-lg font-medium mb-2">Schlaf Tracker</h2> {/* Überschrift */}
-            <div className="mb-4"> {/* Abstand für Eingabefelder */}
+        <div className="bg-white rounded-lg shadow p-4 border border-gray-300"> 
+            <h2 className="text-lg font-medium mb-2">Schlaf Tracker</h2>
+            <div className="mb-4"> 
                 <label htmlFor="sleepTime" className="block text-sm font-medium text-gray-700">Schlafenszeit:</label>
                 <input
                     type="time"
@@ -35,7 +35,7 @@ function SleepTracker() {
                         setSleepTime(e.target.value);
                         calculateSleepDuration();
                     }}
-                    className="mt-1 p-2 border border-gray-300 rounded w-full" /* Styling für Eingabefeld */
+                    className="mt-1 p-2 border border-gray-300 rounded w-full" 
                 />
             </div>
             <div>
@@ -48,11 +48,12 @@ function SleepTracker() {
                         setWakeTime(e.target.value);
                         calculateSleepDuration();
                     }}
-                    className="mt-1 p-2 border border-gray-300 rounded w-full" /* Styling für Eingabefeld */
+                    className="mt-1 p-2 border border-gray-300 rounded w-full" 
                 />
             </div>
             <button 
                 onClick={calculateSleepDuration} 
+                style={{ backgroundColor: '#A9B5DF', color: 'white' }}
                 className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
                 Berechne Schlafdauer

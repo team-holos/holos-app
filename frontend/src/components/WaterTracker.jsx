@@ -23,6 +23,7 @@ function WaterTracker() {
             </div>
             <button
                 onClick={logWaterIntake}
+                style={{ backgroundColor: '#A9B5DF', color: 'white' }}
                 className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
                 Wasser getrunken (+250ml)

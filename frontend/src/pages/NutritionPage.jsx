@@ -8,17 +8,26 @@ function NutritionPage() {
 
     const togglePlanVisibility = () => {
         setShowPlan(!showPlan);
-    }; // Hier war die schließende Klammer } vergessen!
+    };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: '5em'
+        }}>
             <h1 style={{
-                fontSize: '3em',
-                marginBottom: '2em'
+                fontSize: '3em'
             }}>
                 Alles rund um deine Ernährung
             </h1>
-            <div>
+            <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                marginTop: '20px' // Abstand zwischen Überschrift und Buttons
+            }}>
                 <button
                     style={{
                         backgroundColor: '#A9B5DF',
@@ -26,7 +35,8 @@ function NutritionPage() {
                         padding: '10px 20px',
                         border: 'none',
                         borderRadius: '5px',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        marginBottom: '10px' // Abstand zwischen den Buttons
                     }}
                     onClick={togglePlanVisibility}
                 >
@@ -39,8 +49,7 @@ function NutritionPage() {
                         padding: '10px 20px',
                         border: 'none',
                         borderRadius: '5px',
-                        cursor: 'pointer',
-                        marginLeft: '10px'
+                        cursor: 'pointer'
                     }}
                 >
                     Ernährungstipps

@@ -6,7 +6,6 @@ function GoalFilter({ currentGoal, onChange }) {
     "Gewichtsverlust",
     "Fettabbau",
     "Ausdauertraining",
-    "Allgemeine Fitness",
   ];
 
   return (
@@ -16,7 +15,7 @@ function GoalFilter({ currentGoal, onChange }) {
       </label>
       <select
         id="goal"
-        value={currentGoal} // Wichtig: Aktuelles Ziel anzeigen
+        value={currentGoal}
         onChange={(e) => onChange(e.target.value)}
         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 sm:text-sm"
       >

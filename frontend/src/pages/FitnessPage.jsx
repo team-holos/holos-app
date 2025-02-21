@@ -110,8 +110,52 @@ const FitnessPage = () => {
       description: "Verbessert Körperhaltung, stärkt die Körpermitte und fördert die Flexibilität.",
       video: "https://www.youtube.com/watch?v=IXi2tcj3Buo",
       type: "Flexibilität & Core-Training"
-    }
+    },
+
+    {
+      id: 11,
+      name: "Fortgeschrittene Übung",
+      category: "Krafttraining",
+      goal: "Muskelaufbau",
+      level: "Profi",
+      description: "Eine anspruchsvolle Übung für erfahrene Sportler.",
+      video: "https://www.youtube.com/watch?v=IffvFfniORk",
+      type: "Krafttraining"
+    },
+    {
+      id: 12,
+      name: "Einbeinige Kniebeuge mit Kurzhanteln",
+      category: "Krafttraining",
+      goal: "Muskelaufbau, Balance, Core-Stabilität",
+      level: "Profi",
+      description: "Eine anspruchsvolle Variation der Kniebeuge, die die Beinmuskulatur isoliert und die Balance verbessert.",
+      video: "https://www.youtube.com/watch?v=beispielvideo",
+    },
+    {
+      id: 13,
+      name: "Klimmzüge mit Zusatzgewicht",
+      category: "Krafttraining",
+      goal: "Muskelaufbau, Kraftzuwachs",
+      level: "Profi",
+      description: "Eine fortgeschrittene Übung für den Oberkörper, die die Rückenmuskulatur, die Arme und den Core trainiert.",
+      video: "https://www.youtube.com/watch?v=beispielvideo",
+      type: "Krafttraining"
+    },
+    {
+      id: 14,
+      name: "Plank mit instabilen Unterlagen",
+      category: "Core-Training",
+      goal: "Core-Stabilität, Kraftausdauer",
+      level: "Profi",
+      description: "Eine herausfordernde Plank-Variante, die die Core-Muskulatur durch die instabilen Unterlagen noch stärker beansprucht.",
+      video: "https://www.youtube.com/watch?v=beispielvideo",
+    },
+    {
+     
+    },
+
   ];
+
 
   useEffect(() => {
     const filteredExercises = exercisesData.filter(exercise => {

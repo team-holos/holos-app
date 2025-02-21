@@ -1,6 +1,7 @@
 import React from "react";
 
 function GoalFilter({ onChange }) {
+    const goals = [...new Set(exercisesData.map(exercise => exercise.goal))];
     return (
         <div className="mb-4">
             <label htmlFor="goal" className="block text-sm font-medium text-gray-700">Ziel:</label>
@@ -23,9 +24,13 @@ function GoalFilter({ onChange }) {
                 <option value="rehabilitation">Rehabilitation</option>
                 <option value="stressReduction">Stressabbau</option>
                 <option value="mentalWellness">Psychisches Wohlbefinden</option>
+                {goals.map(goal => (
+                    <option key={goal} value={goal}>{goal}</option>
+                ))}
             </select>
         </div>
     );
 }
+
 
 export default GoalFilter;

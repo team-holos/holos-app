@@ -149,10 +149,49 @@ const FitnessPage = () => {
       level: "Profi",
       description: "Eine herausfordernde Plank-Variante, die die Core-Muskulatur durch die instabilen Unterlagen noch stärker beansprucht.",
       video: "https://www.youtube.com/watch?v=beispielvideo",
+      type: "Krafttraining"
     },
     {
-     
+      id: 15,
+      name: "Pilates",
+      category: "Flexibilität & Core-Training",
+      goal: "Körperhaltung & Core-Stärke",
+      level: "Mittel",
+      description: "Verbessert Körperhaltung, stärkt die Körpermitte und fördert die Flexibilität.",
+      video: "https://www.youtube.com/watch?v=2fUJCpPfgWA",
+      type: "Flexibilität & Core-Training"
     },
+    {
+      id: 16,
+      name: "Pilates",
+      category: "Flexibilität & Core-Training",
+      goal: "Körperhaltung & Core-Stärke",
+      level: "Mittel",
+      description: "Verbessert Körperhaltung, stärkt die Körpermitte und fördert die Flexibilität.",
+      video: "https://www.youtube.com/watch?v=tH5I4FYbyKE",
+      type: "Flexibilität & Core-Training"
+    },
+    {
+      id: 17,
+      name: "Pilates",
+      category: "Flexibilität & Core-Training",
+      goal: "Körperhaltung & Core-Stärke",
+      level: "Profi",
+      description: "Verbessert Körperhaltung, stärkt die Körpermitte und fördert die Flexibilität.",
+      video: "https://www.youtube.com/watch?v=-9eD2QHUk88",
+      type: "Flexibilität & Core-Training"
+    },
+    {
+      id: 18,
+      name: "Pilates",
+      category: "Flexibilität & Core-Training",
+      goal: "Körperhaltung & Core-Stärke",
+      level: "Profi",
+      description: "Verbessert Körperhaltung, stärkt die Körpermitte und fördert die Flexibilität.",
+      video: "https://www.youtube.com/watch?v=jIj2usUx0L8",
+      type: "Flexibilität & Core-Training"
+    },
+    
 
   ];
 

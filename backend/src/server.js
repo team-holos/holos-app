@@ -18,12 +18,10 @@ app.use(cors());
 const PORT = process.env.API_PORT || 3000;
 
 // Import routes
-const nutritionRoutes = require("./routes/nutrition"); // ✅ Nutrition API
-const journalRoutes = require("./routes/journal"); // ✅ Added Journal API
+const nutritionRoutes = require("./routes/nutrition"); // ✅ Add this line
 
 // Register routes
-app.use("/api/nutrition", nutritionRoutes);
-app.use("/api/journal", journalRoutes); // ✅ Now Journal API is active
+app.use("/api/nutrition", nutritionRoutes); // ✅ Now nutrition routes are active
 
 // Define user array
 const users = [];

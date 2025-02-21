@@ -103,13 +103,13 @@ const exercisesData = [
   },
   {
     id: 10,
-    name: "Yoga",
-    category: "Flexibilität",
-    goal: "Dehnung",
+    name: "Pilates",
+    category: "Flexibilität & Core-Training",
+    goal: "Körperhaltung & Core-Stärke",
     level: "Anfänger",
-    description: "Fördert Flexibilität und Entspannung.",
+    description: "Verbessert Körperhaltung, stärkt die Körpermitte und fördert die Flexibilität.",
     video: "https://www.youtube.com/watch?v=v7Ayj4IJ9Y8",
-    type: "Flexibilität"
+    type: "Flexibilität & Core-Training"
   }
 ];
 
@@ -124,6 +124,8 @@ useEffect(() => {
 
   setExercises(filteredExercises);
 }, [categoryFilter, goalFilter, levelFilter]);
+
+
 return (
   <div className="container mx-auto p-4">
     <h1 className="text-2xl font-bold mb-4">Dein persönlicher Fitnessplan</h1>

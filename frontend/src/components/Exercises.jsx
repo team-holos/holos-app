@@ -1,3 +1,4 @@
+// Exercises.jsx
 import React, { useState, useEffect } from 'react';
 import Exercise from './Exercise';
 import CategoryFilter from './CategoryFilter';
@@ -12,43 +13,30 @@ function Exercises() {
     level: 'all',
   });
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
+    // Mock-Daten (ersetzen, wenn das Backend fertig ist)
+    const mockData = [
+      { id: 1, name: 'Liegestütze', category: 'Krafttraining', goal: 'Muskelaufbau', level: 'Anfänger' },
+      { id: 2, name: 'Kniebeugen', category: 'Krafttraining', goal: 'Beine', level: 'Anfänger' },
+      { id: 3, name: 'Joggen', category: 'Cardio', goal: 'Ausdauer', level: 'Anfänger' },
+      // ... weitere Übungen
+    ];
 
-      try {
-        const queryString = new URLSearchParams(filters).toString();
-        const response = await fetch(`/api/exercises?${queryString}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setExercises(data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-      };
+    // Filterlogik (ohne Backend)
+    const filteredExercises = mockData.filter(exercise => {
+      return (
+        (filters.category === 'all' || exercise.category === filters.category) &&
+        (filters.goal === 'all' || exercise.goal === filters.goal) &&
+        (filters.level === 'all' || exercise.level === filters.level)
+      );
+    });
 
-      fetchData();
-    }, [filters]);
+    setExercises(filteredExercises);
+  }, [filters]);
 
   const handleFilterChange = (filterType, value) => {
     setFilters({ ...filters, [filterType]: value });
   };
-
-  if (loading) {
-    return <div className="text-center text-gray-500">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="text-center text-red-500">Error: {error.message}</div>;
-  }
 
   return (
     <div className="container mx-auto p-4">

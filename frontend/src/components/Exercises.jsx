@@ -32,6 +32,7 @@ function Exercises() {
         setError(err);
       } finally {
         setLoading(false);
+      }
       };
 
       fetchData();

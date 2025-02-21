@@ -1,6 +1,7 @@
 import React from 'react';
 
 function LevelFilter({ onChange }) {
+    const levels = [...new Set(exercisesData.map(exercise => exercise.level))];
     return (
         <div className="mb-4">
             <label htmlFor="level" className="block text-sm font-medium text-gray-700">Level:</label>
@@ -13,9 +14,10 @@ function LevelFilter({ onChange }) {
                 <option value="beginner">Anfänger</option>
                 <option value="intermediate">Fortgeschritten</option>
                 <option value="advanced">Profi</option>
+                {levels.map(level => (
+                    <option key={level} value={level}>{level}</option>
+                ))}
             </select>
         </div>
     );
 }
-
-export default LevelFilter;

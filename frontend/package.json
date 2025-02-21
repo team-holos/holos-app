@@ -15,6 +15,7 @@
     "lucide": "^0.475.0",
     "lucide-react": "^0.475.0",
     "react": "^19.0.0",
+    "react-calendar": "^5.1.0",
     "react-datepicker": "^8.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^15.4.0",

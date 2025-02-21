@@ -36,79 +36,90 @@ db.exec(`
         FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
-
     CREATE TABLE IF NOT EXISTS nutrition (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         description TEXT NOT NULL,
         meals TEXT NOT NULL 
     );
+
+    CREATE TABLE IF NOT EXISTS journal_entries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        date TEXT NOT NULL UNIQUE,
+        content TEXT DEFAULT '',
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    );
 `);
 
+console.log("Database initialized successfully.");
 
+// Insert default nutrition plans if they don't exist
 const checkPlans = db.prepare("SELECT COUNT(*) AS count FROM nutrition").get();
-
 if (checkPlans.count === 0) {
-  const insertPlan = db.prepare(
-    "INSERT INTO nutrition (name, description, meals) VALUES (?, ?, ?)"
-  );
+    const insertPlan = db.prepare(
+        "INSERT INTO nutrition (name, description, meals) VALUES (?, ?, ?)"
+    );
 
-  insertPlan.run(
-    "Low Carb Plan",
-    "A low-carb diet for weight loss.",
-    JSON.stringify(["Omelette", "Chicken Salad", "Steak & Veggies"])
-  );
+    insertPlan.run(
+        "Low Carb Plan",
+        "A low-carb diet for weight loss.",
+        JSON.stringify(["Omelette", "Chicken Salad", "Steak & Veggies"])
+    );
 
-  insertPlan.run(
-    "Muscle Gain Plan",
-    "High protein for muscle building.",
-    JSON.stringify(["Protein Shake", "Grilled Chicken", "Rice & Veggies"])
-  );
+    insertPlan.run(
+        "Muscle Gain Plan",
+        "High protein for muscle building.",
+        JSON.stringify(["Protein Shake", "Grilled Chicken", "Rice & Veggies"])
+    );
 
-  insertPlan.run(
-    "Balanced Plan",
-    "A well-balanced diet with all macronutrients.",
-    JSON.stringify(["Oatmeal", "Grilled Fish", "Quinoa & Veggies"])
-  );
+    insertPlan.run(
+        "Balanced Plan",
+        "A well-balanced diet with all macronutrients.",
+        JSON.stringify(["Oatmeal", "Grilled Fish", "Quinoa & Veggies"])
+    );
 
-  console.log("Inserted default nutrition plans into database.");
+    console.log("Inserted default nutrition plans into database.");
 }
 
+// Function to get exercises with filters
 function getExercises(filters = {}) {
-  let query = 'SELECT * FROM exercises';
-  let whereClause = [];
-  let params = [];
+    let query = 'SELECT * FROM exercises';
+    let whereClause = [];
+    let params = [];
 
-  if (filters.category && filters.category !== 'all') {
-    whereClause.push('category = ?');
-    params.push(filters.category);
-  }
-  if (filters.goal && filters.goal !== 'all') {
-    whereClause.push('goal = ?');
-    params.push(filters.goal);
-  }
-  if (filters.level && filters.level !== 'all') {
-    whereClause.push('level = ?');
-    params.push(filters.level);
-  }
+    if (filters.category && filters.category !== 'all') {
+        whereClause.push('category = ?');
+        params.push(filters.category);
+    }
+    if (filters.goal && filters.goal !== 'all') {
+        whereClause.push('goal = ?');
+        params.push(filters.goal);
+    }
+    if (filters.level && filters.level !== 'all') {
+        whereClause.push('level = ?');
+        params.push(filters.level);
+    }
 
-  if (whereClause.length > 0) {
-    query += ' WHERE ' + whereClause.join(' AND ');
-  }
+    if (whereClause.length > 0) {
+        query += ' WHERE ' + whereClause.join(' AND ');
+    }
 
-  return db.prepare(query).all(params);
+    return db.prepare(query).all(params);
 }
 
-function exercises(userId) {
-  return db.prepare('SELECT * FROM exercises WHERE user_id = ?').all(userId);
+function getUserExercises(userId) {
+    return db.prepare('SELECT * FROM exercises WHERE user_id = ?').all(userId);
 }
 
 function getNutritionPlans() {
-  return db.prepare('SELECT * FROM nutrition').all();
+    return db.prepare('SELECT * FROM nutrition').all();
 }
 
 export default {
-  db,
-  getExercises,
-  getNutritionPlans,
+    db,
+    getExercises,
+    getUserExercises,
+    getNutritionPlans,
 };
+

@@ -11,30 +11,40 @@ function AIChat() {
     if (e.key !== "Enter" || !prompt.trim()) return;
 
     setLoading(true);
+    setResponse("");
+
     try {
-      const res = await fetch("/api/v1/chat/completions", {
+      const res = await fetch("/api/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "deepseek-r1-distill-qwen-7b",
-          temperature: 0.7,
-          max_tokens: 1000,
-          messages: [{ role: "user", content: prompt }],
+          prompt: `You are Holi, an AI assistant. **Do not reflect on your responses. Do not explain how you respond. Do not include meta-thinking like "<think>" or "I should respond with...".** Always reply **directly** to the user's input with a concise, clear answer.\n\nUser: ${prompt}\n\nHoli:`,
+          temperature: 0.1,
+          max_tokens: 100,
+          stop: ["User:", "Holi:", "</think>", "I should respond"],
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to fetch response");
+      if (!res.ok) {
+        console.error("HTTP Error:", res.status, res.statusText);
+        throw new Error(`Server Error (${res.status}): ${res.statusText}`);
+      }
 
       const data = await res.json();
       console.log("API Response:", data);
 
-      const responseContent =
-        data.choices?.[0]?.message?.content?.trim() || "No response available.";
+      let responseContent =
+        data.choices?.[0]?.text?.trim() || "No response available.";
+      responseContent = responseContent
+        .replace(/<\/?think>/gi, "")
+        .replace(/I should respond.*/gi, "")
+        .trim();
 
       setResponse(responseContent);
     } catch (err) {
       console.error("Error fetching or parsing response:", err);
-      setResponse("Error: Unable to fetch or parse response.");
+      setResponse("⚠️ Error: Unable to fetch a response from Holi.");
     } finally {
       setLoading(false);
     }

@@ -1,76 +1,128 @@
-import React, { useState, useEffect } from 'react';
-import Exercise from '../components/Exercise';
-import CategoryFilter from '../components/CategoryFilter';
-import GoalFilter from '../components/GoalFilter';
-import LevelFilter from '../components/LevelFilter';
+import React, { useState, useEffect } from "react";
+import Exercise from "../components/Exercise";
+import CategoryFilter from "../components/CategoryFilter";
+import GoalFilter from "../components/GoalFilter";
+import LevelFilter from "../components/LevelFilter";
 
 function FitnessPage() {
   const [exercises, setExercises] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [categoryFilter, setCategoryFilter] = useState('All');
-  const [goalFilter, setGoalFilter] = useState('All');
-  const [levelFilter, setLevelFilter] = useState('All');
+  const [categoryFilter, setCategoryFilter] = useState("Alle");
+  const [goalFilter, setGoalFilter] = useState("Alle");
+  const [levelFilter, setLevelFilter] = useState("Alle");
+
+  const exercisesData = [
+    {
+      id: 1,
+      name: "Liegestütze",
+      category: "Krafttraining",
+      goal: "Muskelaufbau",
+      level: "Anfänger",
+      description: "Eine klassische Übung für den Oberkörper.",
+      video: "https://www.youtube.com/watch?v=IODxDxX7oi4",
+      type: "Krafttraining"
+    }, 
+    {
+      id: 3,
+      name: "Joggen",
+      category: "Cardio",
+      goal: "Ausdauer",
+      level: "Anfänger",
+      description: "Einfaches Ausdauertraining.",
+      video: "https://www.youtube.com/watch?v=m_jlWBxYmQc",
+      type: "Cardio"
+    },
+    {
+      id: 4,
+      name: "Plank",
+      category: "Core",
+      goal: "Rumpfstabilität",
+      level: "Anfänger",
+      description: "Statische Übung zur Stärkung der Rumpfmuskulatur.",
+      video: "https://www.youtube.com/watch?v=pSHjTRCQxIw",
+      type: "Krafttraining"
+    },
+    {
+      id: 5,
+      name: "Sit-Ups",
+      category: "Core",
+      goal: "Bauchmuskulatur",
+      level: "Anfänger",
+      description: "Übung zur Stärkung der Bauchmuskulatur.",
+      video: "https://www.youtube.com/watch?v=NLv19n91U_w",
+      type: "Krafttraining"
+    },
+    {
+      id: 6,
+      name: "Dumbbell Rows",
+      category: "Krafttraining",
+      goal: "Rücken",
+      level: "Fortgeschritten",
+      description: "Übung mit Hanteln für den oberen Rücken.",
+      video: "https://www.youtube.com/watch?v=v_AXnxq04V8",
+      type: "Krafttraining"
+    },
+    {
+      id: 7,
+      name: "Push-Ups (mit Knien)",
+      category: "Krafttraining",
+      goal: "Brust",
+      level: "Anfänger",
+      description: "Leichtere Variante der Liegestütze auf den Knien.",
+      video: "https://www.youtube.com/watch?v=NKejWkAyP7w",
+      type: "Krafttraining"
+    },
+    {
+      id: 8,
+      name: "Burpees",
+      category: "Cardio",
+      goal: "Ganzkörper",
+      level: "Fortgeschritten",
+      description: "Dynamische Übung für den ganzen Körper.",
+      video: "https://www.youtube.com/watch?v=tJrdPdKjmJc",
+      type: "Cardio"
+    },
+    {
+      id: 9,
+      name: "Yoga (Flow)",
+      category: "Flexibilität",
+      goal: "Ganzkörper",
+      level: "Mittel",
+      description: "Yoga-Session zur Verbesserung der Flexibilität.",
+      video: "https://www.youtube.com/watch?v=v7Ay5p799E8",
+      type: "Flexibilität"
+    },
+    {
+      id: 10,
+      name: "Wandern",
+      category: "Cardio",
+      goal: "Ausdauer",
+      level: "Anfänger",
+      description: "Einfaches Ausdauertraining in der Natur.",
+      video: "https://www.youtube.com/watch?v=jL-oW757k44",
+      type: "Cardio"
+    },
+  ];
 
   useEffect(() => {
-    setLoading(true); // Ladeanzeige aktivieren
-    fetch('http://localhost:3000/exercises')
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`); 
-        return res.json();
-        }
-      })
-      .then(data => setExercises(data))
-      .catch(error => setError(error)) // Fehler setzen
-      .finally(() => setLoading(false)); // Ladeanzeige deaktivieren
-  }, []);
+    const filteredExercises = exercisesData.filter(exercise => {
+      return (
+        (categoryFilter === "Alle" || exercise.category === categoryFilter) &&
+        (goalFilter === "Alle" || exercise.goal === goalFilter) &&
+        (levelFilter === "Alle" || exercise.level === levelFilter)
+      );
+    });
 
-  const filteredExercises = exercises.filter(exercise => {
-    return (
-      (categoryFilter === 'All' || exercise.category === categoryFilter) &&
-      (goalFilter === 'All' || exercise.goal === goalFilter) &&
-      (levelFilter === 'All' || exercise.level === levelFilter)
-    );
-  });
-
-  const resetFilters = () => {
-    setCategoryFilter('All');
-    setGoalFilter('All');
-    setLevelFilter('All');
-  };
-
-  if (loading) {
-    return <div className="text-center text-gray-500">Loading...</div>; 
-  }
-
-  if (error) {
-    return <div className="text-center text-red-500">Error: {error.message}</div>; 
-  }
+    setExercises(filteredExercises);
+  }, [categoryFilter, goalFilter, levelFilter]);
 
   return (
-    <div className="container mx-auto p-4"> 
-      <h1 className="text-2xl font-bold mb-4">Fitness-Übungen</h1>
-      <p className="mb-4 text-gray-700">Finde die passenden Übungen für dein Training.</p> 
-
-      <div className="mb-4 flex space-x-2"> 
-        <CategoryFilter onFilterChange={setCategoryFilter} />
-        <GoalFilter onFilterChange={setGoalFilter} />
-        <LevelFilter onFilterChange={setLevelFilter} />
-        <button onClick={resetFilters} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
-          Filter zurücksetzen
-        </button>
-      </div>
-
-      {filteredExercises.length === 0 ? (
-        <p className="text-center text-gray-500">Keine Übungen gefunden.</p> 
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"> 
-          {filteredExercises.map(exercise => (
-            <Exercise key={exercise.id} exercise={exercise} />
-          ))}
-        </div>
-      )}
+    <div>
+      <CategoryFilter exercisesData={exercisesData} onChange={setCategoryFilter} />
+      <GoalFilter exercisesData={exercisesData} onChange={setGoalFilter} />
+      <LevelFilter exercisesData={exercisesData} onChange={setLevelFilter} />
+      {exercises.map(exercise => (
+        <Exercise key={exercise.id} exercise={exercise} />
+      ))}
     </div>
   );
 }

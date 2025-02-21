@@ -21,3 +21,5 @@ function LevelFilter({ onChange }) {
         </div>
     );
 }
+
+export default LevelFilter;

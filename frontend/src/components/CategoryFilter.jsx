@@ -1,6 +1,6 @@
 import React from "react";
 
-function CategoryFilter({ onChange }) {
+function CategoryFilter({ exercisesData, onChange }) {
     const categories = [...new Set(exercisesData.map(exercise => exercise.category))];
 
     return (

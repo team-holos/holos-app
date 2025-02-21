@@ -6,6 +6,7 @@ function GoalFilter({ currentGoal, onChange }) {
     "Gewichtsverlust",
     "Fettabbau",
     "Ausdauertraining",
+    "Körperhaltung & Core-Stärke"
   ];
 
   return (

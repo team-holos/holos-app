@@ -82,44 +82,7 @@ if (checkPlans.count === 0) {
     console.log("Inserted default nutrition plans into database.");
 }
 
-// Function to get exercises with filters
-function getExercises(filters = {}) {
-    let query = 'SELECT * FROM exercises';
-    let whereClause = [];
-    let params = [];
+// ✅ Export `db` directly, not inside an object
+export default db;
 
-    if (filters.category && filters.category !== 'all') {
-        whereClause.push('category = ?');
-        params.push(filters.category);
-    }
-    if (filters.goal && filters.goal !== 'all') {
-        whereClause.push('goal = ?');
-        params.push(filters.goal);
-    }
-    if (filters.level && filters.level !== 'all') {
-        whereClause.push('level = ?');
-        params.push(filters.level);
-    }
-
-    if (whereClause.length > 0) {
-        query += ' WHERE ' + whereClause.join(' AND ');
-    }
-
-    return db.prepare(query).all(params);
-}
-
-function getUserExercises(userId) {
-    return db.prepare('SELECT * FROM exercises WHERE user_id = ?').all(userId);
-}
-
-function getNutritionPlans() {
-    return db.prepare('SELECT * FROM nutrition').all();
-}
-
-export default {
-    db,
-    getExercises,
-    getUserExercises,
-    getNutritionPlans,
-};
 

@@ -13,50 +13,80 @@ function MentalHealthPage() {
   const [date, setDate] = useState(new Date());
   const [content, setContent] = useState("");
   const [savedDates, setSavedDates] = useState([]);
+  const token = localStorage.getItem("token");
 
   // Fetch journal entry for the selected date
   useEffect(() => {
+    if (!token) {
+      console.warn("No token found. User is not authenticated.");
+      return;
+    }
+
     const localDate = getLocalDateString(date);
     console.log("Fetching entry for:", localDate);
 
     fetch(`/api/journal/${localDate}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
         console.log("Response status:", res.status);
+        if (res.status === 401) {
+          console.error("Unauthorized. Token might be expired.");
+          return;
+        }
         if (!res.ok) throw new Error(`Error: ${res.status}`);
         return res.json();
       })
       .then((data) => {
-        console.log("Received data:", data);
-        setContent(data.content || "");
+        if (data) {
+          console.log("Received data:", data);
+          setContent(data.content || "");
+        }
       })
       .catch((err) => console.error("Error fetching journal entry:", err));
-  }, [date]);
+  }, [date, token]);
 
   // Fetch saved journal entry dates
   useEffect(() => {
+    if (!token) {
+      console.warn("No token found. Skipping journal fetch.");
+      return;
+    }
+
     fetch("/api/journal/entries/all", {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
         console.log("Fetching saved dates, response status:", res.status);
+        if (res.status === 401) {
+          console.error("Unauthorized. Token might be expired.");
+          return;
+        }
         if (!res.ok) throw new Error(`Error: ${res.status}`);
         return res.json();
       })
       .then((data) => {
-        console.log("Saved dates received:", data);
-        setSavedDates(data);
+        if (data) {
+          console.log("Saved dates received:", data);
+          setSavedDates(data);
+        }
       })
       .catch((err) => console.error("Error fetching journal dates:", err));
-  }, []);
+  }, [token]);
 
   // Save journal entry
   const saveJournal = () => {
+    if (!token) {
+      alert("You are not logged in. Please log in to save entries.");
+      return;
+    }
+
     const localDate = getLocalDateString(date);
     console.log("Saving entry for:", localDate, "Content:", content);
 
@@ -64,7 +94,7 @@ function MentalHealthPage() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         date: localDate,
@@ -73,6 +103,10 @@ function MentalHealthPage() {
     })
       .then((res) => {
         console.log("Save response status:", res.status);
+        if (res.status === 401) {
+          console.error("Unauthorized. Token might be expired.");
+          return;
+        }
         if (!res.ok) throw new Error(`Error: ${res.status}`);
         return res.json();
       })
@@ -120,3 +154,4 @@ function MentalHealthPage() {
 }
 
 export default MentalHealthPage;
+

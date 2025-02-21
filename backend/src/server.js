@@ -17,7 +17,15 @@ app.use(cors());
 // Define Port Number with a Default Value
 const PORT = process.env.API_PORT || 3000;
 
-//define user array
+// Import routes
+const nutritionRoutes = require("./routes/nutrition"); // ✅ Nutrition API
+const journalRoutes = require("./routes/journal"); // ✅ Added Journal API
+
+// Register routes
+app.use("/api/nutrition", nutritionRoutes);
+app.use("/api/journal", journalRoutes); // ✅ Now Journal API is active
+
+// Define user array
 const users = [];
 
 // Create Register Route
@@ -49,7 +57,6 @@ app.post("/auth/login", (req, res) => {
   res.send({ message: "User successfully logged in", token });
 });
 
-
 // Get all Users Route with authentication
 app.get("/users", (req, res) => {
   const authHeader = req.headers.authorization;
@@ -64,6 +71,8 @@ app.get("/users", (req, res) => {
     res.send(users);
   });
 });
+
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

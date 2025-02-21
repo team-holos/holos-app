@@ -2,9 +2,13 @@ import React from "react";
 
 function CategoryFilter({ onChange }) {
     return (
-        <div>
+        <div className="mb-4">
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700">Kategorie:</label>
             <label htmlFor="category">Kategorie:</label>
-            <select id="category" onChange={e => onChange(e.target.value)}>
+            <select id="category"
+                onChange={e => onChange(e.target.value)}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 sm:text-sm"
+            >
                 <option value="all">Alle</option>
                 <option value="legDay">Leg Day</option>
                 <option value="core">Core</option>

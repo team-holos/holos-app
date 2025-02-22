@@ -90,27 +90,33 @@ function RegisterPage() {
   async function handleSubmit(event) {
     event.preventDefault();
     console.log("API URL:", API_URL);
-
+  
     const emailValid = validateEmail(email);
     const usernameValid = validateUsername(username);
     const passwordValid = validatePassword(password);
     const birthdayValid = validateBirthday(birthday);
-
+  
     if (!emailValid || !usernameValid || !passwordValid || !birthdayValid) {
       return;
     }
-
+  
+    if (password !== passwordRetype) {
+      setPasswordError("Passwörter stimmen nicht überein");
+      return;
+    }
+  
     const requestBody = {
       email,
       username,
       password,
+      passwordRetype,
       birthday,
       weight,
       gender: selectedGender,
     };
-
+  
     console.log("Sending Request:", requestBody);
-
+  
     const response = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
       headers: {
@@ -118,19 +124,20 @@ function RegisterPage() {
       },
       body: JSON.stringify(requestBody),
     });
-
+  
     if (!response.ok) {
       const error = await response.json();
       console.error("Server Response Error:", error);
-      setErrorMessage(error.message || "Fehler beim Registrieren.");
+      setErrorMessage(error.error || "Fehler beim Registrieren.");
       return;
     }
-
+  
     const data = await response.json();
     console.log("Registration Successful:", data);
     setSuccessMessage(data.message);
     setErrorMessage(null);
-    
+  
+    // Reset form fields
     setUsername("");
     setEmail("");
     setPassword("");
@@ -139,6 +146,7 @@ function RegisterPage() {
     setWeight("");
     setSelectedGender("");
   }
+  
 
   return (
     <form

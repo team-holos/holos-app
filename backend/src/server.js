@@ -1,76 +1,109 @@
-// Load Express Library
-const express = require("express");
-// Load Cors Library
-const cors = require("cors");
-// Load bcrypt Library
-const bcrypt = require("bcrypt");
-// Init dotenv Library
-require("dotenv").config();
-// Load jsonwebtoken Library
-const jwt = require("jsonwebtoken");
-// Create an Express Application
+import express from "express";
+import cors from "cors";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import db from "./db/database.js";
+import authenticateToken from "./middlewares/authMiddleware.js";
+
+// Load environment variables
+dotenv.config();
+
+// Create Express App
 const app = express();
-// Load the Express Middleware for JSON Parsing
 app.use(express.json());
-// Enabling CORS
 app.use(cors());
-// Define Port Number with a Default Value
+
+// Define Port
 const PORT = process.env.API_PORT || 3000;
 
-// Import routes
-const nutritionRoutes = require("./routes/nutrition"); // ✅ Add this line
+// Import Routes
+import usersRoutes from "./routes/users.js"; 
+import nutritionRoutes from "./routes/nutrition.js";
+import chatRoutes from "./routes/chat.js";
+import preferencesRoutes from "./routes/preferences.js";
 
-// Register routes
-app.use("/api/nutrition", nutritionRoutes); // ✅ Now nutrition routes are active
+// Register Routes
+app.use("/api/users", authenticateToken, usersRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/preferences", preferencesRoutes);
+app.use("/api/nutrition", nutritionRoutes);
 
-// Define user array
-const users = [];
-
-// Create Register Route
+// 🔹 **Register User**
 app.post("/auth/register", (req, res) => {
-  const { email, password, passwordRetype } = req.body;
-  if (password !== passwordRetype) {
-    return res.status(400).send({ errors: "Passwords do not match" });
+  const { username, email, password, passwordRetype } = req.body;
+
+  if (!email || !password || !username) {
+    return res.status(400).json({ error: "All fields are required" });
   }
+  if (password !== passwordRetype) {
+    return res.status(400).json({ error: "Passwords do not match" });
+  }
+
+  // Check if user exists
+  const checkUser = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+  if (checkUser) {
+    return res.status(400).json({ error: "User already exists" });
+  }
+
+  // Hash Password and Insert User
   const hashedPassword = bcrypt.hashSync(password, 12);
-  users.push({ email, password: hashedPassword });
-  res.send({ message: "User successfully registered" });
+  const insertUser = db.prepare(
+    "INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
+  );
+  const { lastInsertRowid } = insertUser.run(username, email, hashedPassword);
+
+  res.json({
+    userId: lastInsertRowid,
+    email,
+    username,
+    message: `User ${username} successfully registered!`,
+  });
 });
 
-// Create Login Route
+// **Login User**
 app.post("/auth/login", (req, res) => {
   const { email, password } = req.body;
-  console.log(`User: ${email} Password: ${password}`);
-  const user = users.find((user) => user.email === email);
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
   if (!user) {
-    return res.status(400).send({ errors: "User not found" });
+    return res.status(400).json({ error: "User not found" });
   }
+
   if (!bcrypt.compareSync(password, user.password)) {
-    return res.status(400).send({ errors: "Password is incorrect" });
+    return res.status(400).json({ error: "Incorrect password" });
   }
-  const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-    expiresIn: "15min",
-  });
 
-  res.send({ message: "User successfully logged in", token });
+  // Generate Token
+  const token = jwt.sign(
+    { userId: user.id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+
+  res.json({ message: "Login successful", token });
 });
 
-// Get all Users Route with authentication
-app.get("/users", (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).send({ errors: "No token provided" });
+// **Get All Users (Protected)**
+app.get("/api/users", authenticateToken, (req, res) => {
+  try {
+    const users = db.prepare("SELECT id, username, email FROM users").all();
+    res.json(users);
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: "Failed to retrieve users" });
   }
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(403).send({ errors: "Failed to authenticate token" });
-    }
-    res.send(users);
-  });
 });
 
-// Start the server
+// Debugging: Show registered routes
+console.log("Registered Routes:");
+console.log(app._router.stack.filter((r) => r.route).map((r) => r.route.path));
+
+// Start Server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });

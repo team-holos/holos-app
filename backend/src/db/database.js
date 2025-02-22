@@ -10,7 +10,7 @@ console.log("Using database at:", dbPath);
 
 const db = new Database(dbPath);
 
-db.exec(`
+db.exec(`    
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
@@ -19,6 +19,24 @@ db.exec(`
         birthday TEXT,
         weight REAL,
         gender TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS chat_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        role TEXT NOT NULL, -- 'user' or 'assistant'
+        content TEXT NOT NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS user_preferences (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      pref_key TEXT NOT NULL,
+      pref_value TEXT NOT NULL,
+      UNIQUE(user_id, pref_key),
+      FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
     CREATE TABLE IF NOT EXISTS exercises (
@@ -54,35 +72,4 @@ db.exec(`
 
 console.log("Database initialized successfully.");
 
-// Insert default nutrition plans if they don't exist
-const checkPlans = db.prepare("SELECT COUNT(*) AS count FROM nutrition").get();
-if (checkPlans.count === 0) {
-    const insertPlan = db.prepare(
-        "INSERT INTO nutrition (name, description, meals) VALUES (?, ?, ?)"
-    );
-
-    insertPlan.run(
-        "Low Carb Plan",
-        "A low-carb diet for weight loss.",
-        JSON.stringify(["Omelette", "Chicken Salad", "Steak & Veggies"])
-    );
-
-    insertPlan.run(
-        "Muscle Gain Plan",
-        "High protein for muscle building.",
-        JSON.stringify(["Protein Shake", "Grilled Chicken", "Rice & Veggies"])
-    );
-
-    insertPlan.run(
-        "Balanced Plan",
-        "A well-balanced diet with all macronutrients.",
-        JSON.stringify(["Oatmeal", "Grilled Fish", "Quinoa & Veggies"])
-    );
-
-    console.log("Inserted default nutrition plans into database.");
-}
-
-// ✅ Export `db` directly, not inside an object
 export default db;
-
-

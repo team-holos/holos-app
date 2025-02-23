@@ -18,16 +18,32 @@ app.use(cors());
 const PORT = process.env.API_PORT || 3000;
 
 // Import Routes
-import usersRoutes from "./routes/users.js"; 
+import usersRoutes from "./routes/users.js";
 import nutritionRoutes from "./routes/nutrition.js";
 import chatRoutes from "./routes/chat.js";
 import preferencesRoutes from "./routes/preferences.js";
+import journalRoutes from "./routes/journal.js";
 
 // Register Routes
 app.use("/api/users", authenticateToken, usersRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/preferences", preferencesRoutes);
 app.use("/api/nutrition", nutritionRoutes);
+app.use("/api/journal", journalRoutes);
+
+// Debugging: Show registered routes
+console.log("Registered API Routes:");
+app._router.stack.forEach((middleware) => {
+  if (middleware.route) {
+    console.log(middleware.route.path);
+  } else if (middleware.name === "router") {
+    middleware.handle.stack.forEach((handler) => {
+      if (handler.route) {
+        console.log(handler.route.path);
+      }
+    });
+  }
+});
 
 // 🔹 **Register User**
 app.post("/auth/register", (req, res) => {
@@ -99,11 +115,8 @@ app.get("/api/users", authenticateToken, (req, res) => {
   }
 });
 
-// Debugging: Show registered routes
-console.log("Registered Routes:");
-console.log(app._router.stack.filter((r) => r.route).map((r) => r.route.path));
-
 // Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
+

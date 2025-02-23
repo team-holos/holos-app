@@ -10,6 +10,7 @@ console.log("Using database at:", dbPath);
 
 const db = new Database(dbPath);
 
+// Create tables with improvements
 db.exec(`    
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,6 +25,7 @@ db.exec(`
     CREATE TABLE IF NOT EXISTS chat_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
+        session_id TEXT DEFAULT NULL,
         role TEXT NOT NULL, -- 'user' or 'assistant'
         content TEXT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -31,12 +33,15 @@ db.exec(`
     );
 
     CREATE TABLE IF NOT EXISTS user_preferences (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      user_id INTEGER NOT NULL,
-      pref_key TEXT NOT NULL,
-      pref_value TEXT NOT NULL,
-      UNIQUE(user_id, pref_key),
-      FOREIGN KEY (user_id) REFERENCES users(id)
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        pref_key TEXT NOT NULL,
+        pref_value TEXT NOT NULL,
+        notifications_enabled BOOLEAN DEFAULT TRUE,
+        theme TEXT DEFAULT 'light',
+        language TEXT DEFAULT 'de',
+        UNIQUE(user_id, pref_key),
+        FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
     CREATE TABLE IF NOT EXISTS exercises (
@@ -56,9 +61,11 @@ db.exec(`
 
     CREATE TABLE IF NOT EXISTS nutrition (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
         name TEXT NOT NULL,
         description TEXT NOT NULL,
-        meals TEXT NOT NULL 
+        meals TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
     CREATE TABLE IF NOT EXISTS journal_entries (
@@ -68,6 +75,9 @@ db.exec(`
         content TEXT DEFAULT '',
         FOREIGN KEY(user_id) REFERENCES users(id)
     );
+
+    -- Auto-delete old chat history (keep only last 30 days)
+    DELETE FROM chat_history WHERE timestamp < datetime('now', '-30 days');
 `);
 
 console.log("Database initialized successfully.");

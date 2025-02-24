@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 
-function AIChat() {
+function AIChat({ closeChat }) {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
@@ -83,20 +83,27 @@ function AIChat() {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center">
-      <h2 className="text-2xl font-bold mb-4">Holos AI Chat</h2>
+    <div className="fixed bottom-[90px] right-6 w-[350px] bg-white shadow-xl rounded-lg border border-gray-300 p-4 flex flex-col z-50">
+      <button
+        onClick={closeChat}
+        className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-xl focus:outline-none"
+      >
+        ✖
+      </button>
+
+      <h2 className="text-lg font-bold mb-2 text-center">Holos AI Chat</h2>
 
       <input
         type="text"
         value={prompt}
         onChange={handleInputChange}
         onKeyDown={fetchResponse}
-        placeholder="Type your question and press Enter..."
+        placeholder="Type your question..."
         disabled={loading}
-        className="w-full max-w-lg p-3 border border-gray-300 rounded-md text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+        className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
-      <div className="w-full max-w-lg min-h-[150px] max-h-[400px] overflow-y-auto p-4 bg-white border border-gray-300 rounded-md shadow-sm text-gray-800">
+      <div className="w-full min-h-[80px] max-h-[200px] overflow-y-auto p-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-800 mt-2">
         {loading ? (
           <p className="text-gray-500">Loading...</p>
         ) : (
@@ -107,7 +114,7 @@ function AIChat() {
       <button
         onClick={resetChat}
         disabled={loading}
-        className={`mt-4 px-6 py-2 text-lg font-semibold rounded-md text-white transition ${
+        className={`mt-3 w-full px-4 py-2 text-sm font-semibold rounded-md text-white transition ${
           loading
             ? "bg-gray-400 cursor-not-allowed"
             : "bg-blue-500 hover:bg-blue-600"
@@ -115,6 +122,11 @@ function AIChat() {
       >
         Reset
       </button>
+
+      <p className="mt-3 text-xs text-gray-600 text-center">
+        Holi is your AI assistant, ready to help with nutrition, fitness, and
+        journaling.
+      </p>
     </div>
   );
 }

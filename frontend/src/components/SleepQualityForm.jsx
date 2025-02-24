@@ -1,23 +1,23 @@
-import { useState } from "react";
+import React, { useState } from 'react';
 
-function SleepQualityForm() {
-    const [myMood, setMyMood] = useState("durchgeschlafen");
-  
-    const handleChange = (event) => {
-      setMyMood(event.target.value)
-    }
-  
-    return (
-      <form>
-        <label>Wie war Deine Schlafqualität:</label>
-        <select value={myMood} onChange={handleChange} className="m-4 border rounded bg-[#FFF2F2]">
-          <option value="sleepthrough">durchgeschlafen</option>
-          <option value="sleepbreaks">mit Unterbrechungen</option>
-          <option value="restless">unruhig</option>
-          <option value="sleepless">schlaflos</option>
-        </select>
-      </form>
-    )
-  }
+function SleepQualityForm({ onQualityChange }) {
+  const [sleepQuality, setSleepQuality] = useState('durchgeschlafen');
 
-  export default SleepQualityForm;
+  const handleChange = (event) => {
+    setSleepQuality(event.target.value);
+    onQualityChange(event.target.value);
+  };
+
+  return (
+    <form>
+      <label>Wie war Deine Schlafqualität:</label>
+      <select value={sleepQuality} onChange={handleChange} className="m-4 border rounded bg-[#FFF2F2]">
+        <option value="durchgeschlafen">durchgeschlafen</option>
+        <option value="unruhig">unruhig</option>
+        <option value="oft aufgewacht">oft aufgewacht</option>
+      </select>
+    </form>
+  );
+}
+
+export default SleepQualityForm;

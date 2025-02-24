@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import NutritionPlan from '../components/NutritionPlan';
-import NutritionPlanData from '../components/NutritionPlanData';
 
 function NutritionPage() {
     const [plan, setPlan] = useState(NutritionPlanData);

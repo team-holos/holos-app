@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from "./Layout/Layout";
 import DashboardPage from "./pages/DashboardPage";
 import FitnessPage from "./pages/FitnessPage";

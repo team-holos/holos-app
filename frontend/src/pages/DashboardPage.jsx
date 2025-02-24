@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate, } from "react-router-dom";
+import { UserContext } from "../components/UserContext";
 import WaterTracker from "../components/WaterTracker";
 import SleepTracker from '../components/SleepTracker';
 import StepsTracker from "../components/StepsTracker";

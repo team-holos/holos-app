@@ -17,6 +17,8 @@ function MentalHealthPage() {
 
   // Fetch journal entry for the selected date
   useEffect(() => {
+    let isMounted = true;
+
     if (!token) {
       console.warn("No token found. User is not authenticated.");
       return;
@@ -37,16 +39,25 @@ function MentalHealthPage() {
           console.error("Unauthorized. Token might be expired.");
           return;
         }
+        if (res.status === 404) {
+          console.warn(`No journal entry found for ${localDate}, setting empty content.`);
+          if (isMounted) setContent("");
+          return;
+        }
         if (!res.ok) throw new Error(`Error: ${res.status}`);
         return res.json();
       })
       .then((data) => {
-        if (data) {
+        if (data && isMounted) {
           console.log("Received data:", data);
           setContent(data.content || "");
         }
       })
       .catch((err) => console.error("Error fetching journal entry:", err));
+
+    return () => {
+      isMounted = false;
+    };
   }, [date, token]);
 
   // Fetch saved journal entry dates

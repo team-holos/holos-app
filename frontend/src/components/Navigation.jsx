@@ -14,14 +14,15 @@ function Navigation() {
         </label>
         <select id="uebersicht" name="uebersicht" onChange={handleNavigation} className="bg-[#7886C7]">
           <option value="">Select a page...</option>
-          <option value="/nutrion" className="inline-block">
+          <option value="/nutrition" className="inline-block">
             Ernährung
           </option>
           <option value="/fitness">Fitness</option>
           <option value="/mentalhealth">Mentale Gesundheit</option>
           <option value="/relaxation">Entspannung</option>
           <option value="/settings">Einstellungen</option>
-          <option value="/">Dashboard</option>
+          <option value="/dashboard">Dashboard</option>
+          <option value="/home">Login</option>
         </select>
       </form>
     </div>

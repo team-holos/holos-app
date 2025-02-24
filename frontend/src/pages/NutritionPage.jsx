@@ -1,41 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import NutritionPlan from '../components/NutritionPlan';
 
+
 function NutritionPage() {
-  const [nutritionData, setNutritionData] = useState([]); // nutritionData folgt im Backenend als nutritionData.json
-  const [selectedPlanId, setSelectedPlanId] = useState(null);
+    const [plan, setPlan] = useState([]);
+    const [showPlan, setShowPlan] = useState(false);
 
-  useEffect(() => {
-    fetch('nutritionData.json')
-      .then(res => res.json())
-      .then(data => setNutritionData(data))
-      .catch(error => console.error("Daten konnten nicht geladen werden:", error));
-  }, []);
+    const togglePlanVisibility = () => {
+        setShowPlan(!showPlan);
+    };
 
-  if (nutritionData.length === 0) {
-    return <div>Lädt...</div>;
-  }
-
-  const planId = selectedPlanId !== null ? selectedPlanId : nutritionData[0].id;
-  const ausgewählterPlan = nutritionData.find(plan => plan.id === planId);
-
-  return (
-    <div className="text-[#A9B5DF] p-4 my-4">
-      <h1 className="text-2xl mb-4">Ernährung</h1>
-
-      <select value={planId} onChange={e => setSelectedPlanId(parseInt(e.target.value, 10))}>
-        {nutritionData.map(plan => (
-          <option key={plan.id} value={plan.id}>{plan.name}</option>
-        ))}
-      </select>
-
-      {ausgewählterPlan ? (
-        <NutritionPlan plan={ausgewählterPlan} />
-      ) : (
-        <div>Bitte wähle einen Ernährungsplan aus.</div>
-      )}
-    </div>
-  );
+    return (
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            marginTop: '5em'
+        }}>
+            <h1 style={{
+                fontSize: '3em'
+            }}>
+                Alles rund um deine Ernährung
+            </h1>
+            <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                marginTop: '20px' // Abstand zwischen Überschrift und Buttons
+            }}>
+                <button
+                    style={{
+                        backgroundColor: '#A9B5DF',
+                        color: 'white',
+                        padding: '10px 20px',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        marginBottom: '10px' // Abstand zwischen den Buttons
+                    }}
+                    onClick={togglePlanVisibility}
+                >
+                    {showPlan ? 'Ernährungsplan ausblenden' : 'Erstelle deinen Ernährungsplan'}
+                </button>
+                <button
+                    style={{
+                        backgroundColor: '#A9B5DF',
+                        color: 'white',
+                        padding: '10px 20px',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    Ernährungstipps
+                </button>
+            </div>
+            {showPlan && <NutritionPlan plan={plan} />}
+        </div>
+    );
 }
 
 export default NutritionPage;

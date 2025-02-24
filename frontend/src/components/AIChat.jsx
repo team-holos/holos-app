@@ -6,14 +6,52 @@ function AIChat({ onClose }) {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
 
-  // Check authentication
+  // Define fetchChatHistory BEFORE using it in useEffect
+  const fetchChatHistory = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setIsAuthenticated(false);
+        return;
+      }
+
+      const historyRes = await fetch(
+        "http://localhost:3000/api/chat/history/5",
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (historyRes.ok) {
+        const historyData = await historyRes.json();
+        const formattedHistory = historyData.history.map((msg) => ({
+          role: msg.role,
+          content: msg.content,
+        }));
+        setChatHistory(formattedHistory);
+      } else {
+        console.error("Failed to fetch chat history:", historyRes.status);
+      }
+    } catch (err) {
+      console.error("Error fetching chat history:", err);
+    }
+  };
+
+  // UseEffect that checks authentication & fetches history
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
+
+    if (token) {
+      fetchChatHistory();
+    }
   }, []);
 
-  // Redirect if not authenticated
+  // Hide chat if not authenticated
   if (!isAuthenticated) return null;
 
   const handleInputChange = (e) => setPrompt(e.target.value);
@@ -25,28 +63,21 @@ function AIChat({ onClose }) {
     setResponse("");
 
     try {
-      const historyRes = await fetch(
-        "http://localhost:3000/api/chat/history/5",
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
-      const historyData = await historyRes.json();
+      const token = localStorage.getItem("token");
 
-      const conversation = historyData.history.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      }));
+      // Create a copy of chat history & append new user message
+      const updatedConversation = [
+        ...chatHistory,
+        { role: "user", content: prompt },
+      ];
 
-      conversation.push({ role: "user", content: prompt });
-
+      // Send updated chat history to AI
       const res = await fetch("http://127.0.0.1:1234/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "qwen2.5-7b-instruct-1m",
-          messages: conversation,
+          messages: updatedConversation,
           temperature: 0.3,
           max_tokens: 200,
         }),
@@ -67,17 +98,21 @@ function AIChat({ onClose }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           user_id: 5,
           messages: [
-            { role: "user", content: prompt },
+            ...updatedConversation,
             { role: "assistant", content: responseContent },
           ],
         }),
       });
 
+      setChatHistory([
+        ...updatedConversation,
+        { role: "assistant", content: responseContent },
+      ]);
       setResponse(responseContent);
     } catch (err) {
       console.error("Error fetching or parsing response:", err);
@@ -90,20 +125,38 @@ function AIChat({ onClose }) {
   const resetChat = () => {
     setPrompt("");
     setResponse("");
+    setChatHistory([]);
   };
 
   return (
     <div className="fixed bottom-16 right-8 w-80 bg-white p-4 rounded-lg shadow-lg border border-gray-200">
       {/* Close Button */}
       <button
-        className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
-        onClick={onClose} // Call onClose when X is clicked
+        className="absolute top-2 right-2 text-gray-600 hover:text-red-500"
+        onClick={onClose}
       >
         ❌
       </button>
 
       {/* Chat Header */}
       <h2 className="text-lg font-bold mb-2 text-center">Holos AI Chat</h2>
+
+      {/* Chat Messages */}
+      <div className="w-full min-h-[100px] max-h-[300px] overflow-y-auto p-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-800">
+        {chatHistory.map((msg, index) => (
+          <div
+            key={index}
+            className={`mb-2 p-2 rounded-md ${
+              msg.role === "user"
+                ? "bg-blue-100 text-right"
+                : "bg-gray-100 text-left"
+            }`}
+          >
+            <ReactMarkdown>{msg.content}</ReactMarkdown>
+          </div>
+        ))}
+        {loading && <p className="text-gray-500">Loading...</p>}
+      </div>
 
       {/* Input Box */}
       <input
@@ -113,17 +166,8 @@ function AIChat({ onClose }) {
         onKeyDown={fetchResponse}
         placeholder="Type your question..."
         disabled={loading}
-        className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2"
       />
-
-      {/* Chat Response Box */}
-      <div className="w-full min-h-[100px] max-h-[300px] overflow-y-auto p-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-800 mt-2">
-        {loading ? (
-          <p className="text-gray-500">Loading...</p>
-        ) : (
-          <ReactMarkdown>{response}</ReactMarkdown>
-        )}
-      </div>
 
       {/* Reset Button */}
       <button
@@ -148,4 +192,3 @@ function AIChat({ onClose }) {
 }
 
 export default AIChat;
-

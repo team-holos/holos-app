@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 
-function AIChat({ closeChat }) {
+function AIChat({ onClose }) {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check authentication
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+  }, []);
+
+  // Redirect if not authenticated
+  if (!isAuthenticated) return null;
 
   const handleInputChange = (e) => setPrompt(e.target.value);
 
@@ -83,16 +93,19 @@ function AIChat({ closeChat }) {
   };
 
   return (
-    <div className="fixed bottom-[90px] right-6 w-[350px] bg-white shadow-xl rounded-lg border border-gray-300 p-4 flex flex-col z-50">
+    <div className="fixed bottom-16 right-8 w-80 bg-white p-4 rounded-lg shadow-lg border border-gray-200">
+      {/* Close Button */}
       <button
-        onClick={closeChat}
-        className="absolute top-2 right-2 text-gray-600 hover:text-gray-800 text-xl focus:outline-none"
+        className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+        onClick={onClose} // Call onClose when X is clicked
       >
-        ✖
+        ❌
       </button>
 
+      {/* Chat Header */}
       <h2 className="text-lg font-bold mb-2 text-center">Holos AI Chat</h2>
 
+      {/* Input Box */}
       <input
         type="text"
         value={prompt}
@@ -103,7 +116,8 @@ function AIChat({ closeChat }) {
         className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
-      <div className="w-full min-h-[80px] max-h-[200px] overflow-y-auto p-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-800 mt-2">
+      {/* Chat Response Box */}
+      <div className="w-full min-h-[100px] max-h-[300px] overflow-y-auto p-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-800 mt-2">
         {loading ? (
           <p className="text-gray-500">Loading...</p>
         ) : (
@@ -111,10 +125,11 @@ function AIChat({ closeChat }) {
         )}
       </div>
 
+      {/* Reset Button */}
       <button
         onClick={resetChat}
         disabled={loading}
-        className={`mt-3 w-full px-4 py-2 text-sm font-semibold rounded-md text-white transition ${
+        className={`mt-2 w-full px-4 py-2 text-sm font-semibold rounded-md text-white transition ${
           loading
             ? "bg-gray-400 cursor-not-allowed"
             : "bg-blue-500 hover:bg-blue-600"
@@ -123,7 +138,8 @@ function AIChat({ closeChat }) {
         Reset
       </button>
 
-      <p className="mt-3 text-xs text-gray-600 text-center">
+      {/* Holi Description */}
+      <p className="mt-2 text-xs text-gray-600 text-center">
         Holi is your AI assistant, ready to help with nutrition, fitness, and
         journaling.
       </p>
@@ -132,3 +148,4 @@ function AIChat({ closeChat }) {
 }
 
 export default AIChat;
+

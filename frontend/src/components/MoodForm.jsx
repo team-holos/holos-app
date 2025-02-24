@@ -31,8 +31,7 @@ function RelaxationPage() {
   };
 
   const generateSleepPhases = (fallAsleep, wakeup) => {
-    // Hier die Logik zur Generierung der Schlafphasen basierend auf den Eingaben einfügen
-    // Beispiel (Standardverteilung):
+   
     const phases = [];
     let currentTime = parseInt(fallAsleep);
     const endTime = parseInt(wakeup);

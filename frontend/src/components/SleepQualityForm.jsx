@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function SleepQualityForm({ onQualityChange }) {
-  const [sleepQuality, setSleepQuality] = useState('durchgeschlafen');
+  const [sleepQuality, setSleepQuality] = useState("durchgeschlafen");
 
   const handleChange = (event) => {
     setSleepQuality(event.target.value);

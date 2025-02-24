@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 function MoodForm({ onMoodChange }) {
-  const [mood, setMood] = useState('Erholt');
+  const [mood, setMood] = useState("Erholt");
 
   const handleChange = (event) => {
     setMood(event.target.value);

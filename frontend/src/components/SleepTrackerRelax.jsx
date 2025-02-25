@@ -2,12 +2,28 @@ import React, { useState } from "react";
 import { Bar } from "react-chartjs-2";
 
 function SleepTrackerRelax() {
-  const [fallAsleep, setFallAsleep] = useState('');
-  const [wakeup, setWakeup] = useState('');
+  const [fallAsleep, setFallAsleep] = useState("");
+  const [wakeup, setWakeup] = useState("");
   const [sleepData, setSleepData] = useState(null);
+  const [error, setError] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setError(""); 
+
+    if (!fallAsleep || !wakeup) {
+      setError("Bitte füllen Sie beide Felder aus.");
+      return;
+    }
+
+    const fallAsleepMinutes = timeToMinutes(fallAsleep);
+    const wakeupMinutes = timeToMinutes(wakeup);
+
+    if (wakeupMinutes <= fallAsleepMinutes) {
+      setError("Die Aufwachzeit muss nach der Einschlafzeit liegen.");
+      return;
+    }
+
     setSleepData({ fallAsleep, wakeup });
   };
 
@@ -44,14 +60,19 @@ function SleepTrackerRelax() {
 
   function parseTime(timeString) {
     if (!timeString) return 0;
-    const [hours, minutes] = timeString.split(':').map(Number);
+    const [hours, minutes] = timeString.split(":").map(Number);
     return hours + minutes / 60;
   }
 
   function formatTime(timeValue) {
     const hours = Math.floor(timeValue);
     const minutes = Math.round((timeValue - hours) * 60);
-    return `<span class="math-inline">\{hours\}\:</span>{minutes < 10 ? '0' : ''}${minutes}`;
+    return `${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
+  }
+
+  function timeToMinutes(timeString) {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    return hours * 60 + minutes;
   }
 
   return (
@@ -76,6 +97,7 @@ function SleepTrackerRelax() {
         </label>
         <button type="submit">Diagramm anzeigen</button>
       </form>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       {chartData && <Bar data={chartData} options={chartOptions} />}
     </div>
   );

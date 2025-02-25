@@ -8,6 +8,8 @@ function RelaxationPage() {
     mood: "",
   });
   const [sleepPhases, setSleepPhases] = useState([]);
+  const [alarmTime, setAlarmTime] = useState("");
+  const [alarmSet, setAlarmSet] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -41,14 +43,14 @@ function RelaxationPage() {
       end: minutesToTime(currentTime + Math.round(leichtschlafMinutes / 2)),
       type: "Einschlafphase",
     });
-    currentTime += Math.round(leichtschlafMinutes / 2); // Korrektur 1
+    currentTime += Math.round(leichtschlafMinutes / 2);
 
     phases.push({
       start: minutesToTime(currentTime),
       end: minutesToTime(currentTime + tiefschlafMinutes),
       type: "Tiefschlaf",
     });
-    currentTime += tiefschlafMinutes; // Korrektur 2
+    currentTime += tiefschlafMinutes;
 
     phases.push({
       start: minutesToTime(currentTime),
@@ -69,6 +71,29 @@ function RelaxationPage() {
     const hours = Math.floor(minutes / 60) % 24;
     const mins = minutes % 60;
     return `${hours < 10 ? "0" : hours}:${mins < 10 ? "0" : mins}`;
+  };
+
+  const handleAlarmChange = (event) => {
+    setAlarmTime(event.target.value);
+  };
+
+  const setAlarm = () => {
+    if (!alarmTime) return;
+
+    const now = new Date();
+    const alarmDate = new Date(now.toDateString() + " " + alarmTime);
+
+    if (alarmDate <= now) {
+      alarmDate.setDate(alarmDate.getDate() + 1);
+    }
+    const timeUntilAlarm = alarmDate - now;
+
+    setTimeout(() => {
+      alert("Weckzeit!");
+      setAlarmSet(false);
+    }, timeUntilAlarm);
+
+    setAlarmSet(true);
   };
 
   return (
@@ -112,6 +137,34 @@ function RelaxationPage() {
                 className="mt-1 block w-full rounded-md border-[#A9B2D8] shadow-sm focus:border-[#7886C7] focus:ring focus:ring-[#A9B2D8] focus:ring-opacity-50"
               />
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label
+                  htmlFor="alarmTime"
+                  className="block text-sm font-medium text-[#2D336B]"
+                >
+                  Weckzeit stellen
+                </label>
+                <input
+                  type="time"
+                  name="alarmTime"
+                  id="alarmTime"
+                  value={alarmTime}
+                  onChange={handleAlarmChange}
+                  className="mt-1 block w-full rounded-md border-[#A9B2D8] shadow-sm focus:border-[#7886C7] focus:ring focus:ring-[#A9B2D8] focus:ring-opacity-50"
+                />
+              </div>
+              <div>
+                <button
+                  type="button"
+                  onClick={setAlarm}
+                  className="mt-6 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+                >
+                  {alarmSet ? "Wecker gestellt" : "Wecker stellen"}
+                </button>
+              </div>
+            </div>
+
             <div>
               <label
                 htmlFor="sleepQuality"

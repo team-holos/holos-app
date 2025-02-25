@@ -84,21 +84,24 @@ const WorkoutTrackerCalendarPage = () => {
     });
   };
 
-  const tileClassName = ({ date }) => {
+  const tileClassName = ({ date, view }) => {
+    if (view !== "month") return "";
+  
     const dateKey = date.toISOString().split("T")[0];
-    const dayName = new Intl.DateTimeFormat("en-US", {
-      weekday: "long",
-    }).format(date);
+    const dayName = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(date);
     const plannedWorkout = trainingPlan[dayName];
-
+  
     if (workoutLogs[dateKey]) {
-      return "bg-green-300 text-white font-bold";
+      return "bg-green-300 text-black font-bold";
     }
     if (plannedWorkout && plannedWorkout !== "Rest") {
-      return "bg-blue-300 text-white font-bold";
+      return "bg-blue-300 text-black font-bold";
     }
-    return "";
+    return "text-black";
   };
+  
+  
+  
 
   return (
     <div className="container mx-auto p-4 flex flex-col md:flex-row gap-6">

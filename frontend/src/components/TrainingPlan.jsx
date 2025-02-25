@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 
+const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
 const TrainingPlan = ({ trainingPlan, setTrainingPlan }) => {
   const [plan, setPlan] = useState(trainingPlan || {});
 
@@ -54,7 +56,7 @@ const TrainingPlan = ({ trainingPlan, setTrainingPlan }) => {
     <div className="border p-4 rounded-lg shadow-md bg-white w-full">
       <h2 className="text-xl mb-2 font-semibold">Your Training Plan</h2>
       <div className="space-y-2">
-        {Object.keys(plan).map((day) => (
+        {dayOrder.map((day) => (
           <div key={day} className="flex justify-between items-center">
             <span className="font-bold">{day}:</span>
             <select

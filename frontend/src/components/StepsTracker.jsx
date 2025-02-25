@@ -28,15 +28,6 @@ function SleepTrackerRelax() {
 
     setSleepData({ fallAsleep, wakeup });
     setSleepDuration(calculateSleepDuration(fallAsleepMinutes, wakeupMinutes));
-
-    console.log("handleSubmit: sleepData", sleepData);
-    console.log("handleSubmit: sleepDuration", sleepDuration);
-    console.log("handleSubmit: parseTime(sleepData.fallAsleep)", parseTime(sleepData.fallAsleep));
-    console.log("handleSubmit: parseTime(sleepData.wakeup)", parseTime(sleepData.wakeup));
-    console.log("handleSubmit: timeToMinutes(fallAsleep)", timeToMinutes(fallAsleep));
-    console.log("handleSubmit: timeToMinutes(wakeup)", timeToMinutes(wakeup));
-    console.log("handleSubmit: calculateSleepDuration(fallAsleepMinutes, wakeupMinutes)", calculateSleepDuration(fallAsleepMinutes, wakeupMinutes));
-    console.log("handleSubmit: formatSleepDuration(sleepDuration)", formatSleepDuration(sleepDuration));
   };
 
   const chartData = sleepData
@@ -85,24 +76,18 @@ function SleepTrackerRelax() {
   function parseTime(timeString) {
     if (!timeString) return 0;
     const [hours, minutes] = timeString.split(":").map(Number);
-    const parsedTime = hours + minutes / 60;
-    console.log("parseTime: timeString", timeString, "parsedTime", parsedTime);
-    return parsedTime;
+    return hours + minutes / 60;
   }
 
   function formatTime(timeValue) {
     const hours = Math.floor(timeValue);
     const minutes = Math.round((timeValue - hours) * 60);
-    const formattedTime = `${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
-    console.log("formatTime: timeValue", timeValue, "formattedTime", formattedTime);
-    return formattedTime;
+    return `${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
   }
 
   function timeToMinutes(timeString) {
     const [hours, minutes] = timeString.split(":").map(Number);
-    const minutesValue = hours * 60 + minutes;
-    console.log("timeToMinutes: timeString", timeString, "minutesValue", minutesValue);
-    return minutesValue;
+    return hours * 60 + minutes;
   }
 
   function calculateSleepDuration(fallAsleepMinutes, wakeupMinutes) {
@@ -110,20 +95,14 @@ function SleepTrackerRelax() {
     if (duration < 0) {
       duration += 24 * 60;
     }
-    console.log("calculateSleepDuration: fallAsleepMinutes", fallAsleepMinutes, "wakeupMinutes", wakeupMinutes, "duration", duration);
     return duration;
   }
 
   function formatSleepDuration(durationMinutes) {
     const hours = Math.floor(durationMinutes / 60);
     const minutes = durationMinutes % 60;
-    const formattedDuration = `${hours} Stunden und ${minutes} Minuten`;
-    console.log("formatSleepDuration: durationMinutes", durationMinutes, "formattedDuration", formattedDuration);
-    return formattedDuration;
+    return `${hours} Stunden und ${minutes} Minuten`;
   }
-
-  console.log("render: chartData", chartData);
-  console.log("render: chartOptions", chartOptions);
 
   return (
     <div style={{ padding: "20px" }}>

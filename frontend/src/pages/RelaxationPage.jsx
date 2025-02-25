@@ -1,81 +1,125 @@
 import React, { useState } from "react";
-import SleepQualityForm from "../components/SleepQualityForm";
-import MoodForm from "../components/MoodForm";
-import SleepPhasesChart from "../components/SleepPhasesChart";
-import SleepTrackerRelax from "../components/SleepTrackerRelax";
 
 function RelaxationPage() {
-  const [inputs, setInputs] = useState({ fallAsleep: '', wakeup: '' });
+  const [inputs, setInputs] = useState({
+    fallAsleep: "",
+    wakeup: "",
+    sleepQuality: "",
+    mood: "",
+  });
   const [sleepPhases, setSleepPhases] = useState([]);
-  const [sleepQuality, setSleepQuality] = useState('');
-  const [mood, setMood] = useState('');
 
   const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setInputs((values) => ({ ...values, [name]: value }));
-  };
-
-  const handleSleepQualityChange = (quality) => {
-    setSleepQuality(quality);
-  };
-
-  const handleMoodChange = (moodValue) => {
-    setMood(moodValue);
+    const { name, value } = event.target;
+    setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const generatedSleepPhases = generateSleepPhases(inputs.fallAsleep, inputs.wakeup);
-    setSleepPhases(generatedSleepPhases);
-    console.log("Sleep Phases:", generatedSleepPhases);
-    console.log(inputs, sleepQuality, mood);
+    console.log("Eingaben:", inputs);
+    const phases = generateSleepPhases(inputs.fallAsleep, inputs.wakeup);
+    setSleepPhases(phases);
+    console.log("Schlafphasen:", phases);
   };
 
   const generateSleepPhases = (fallAsleep, wakeup) => {
+    if (!fallAsleep || !wakeup) return [];
 
+    const fallAsleepMinutes = timeToMinutes(fallAsleep);
+    const wakeupMinutes = timeToMinutes(wakeup);
+    let totalSleepMinutes = wakeupMinutes - fallAsleepMinutes;
+    if (totalSleepMinutes < 0) totalSleepMinutes += 24 * 60;
+
+    const leichtschlafMinutes = Math.round(totalSleepMinutes * 0.5);
+    const tiefschlafMinutes = Math.round(totalSleepMinutes * 0.2);
+    const remMinutes = Math.round(totalSleepMinutes * 0.3);
+
+    let currentTime = fallAsleepMinutes;
     const phases = [];
-    let currentTime = parseInt(fallAsleep);
-    const endTime = parseInt(wakeup);
-    const totalSleepTime = endTime - currentTime;
-    const leichtschlafTime = totalSleepTime * 0.5;
-    const tiefschlafTime = totalSleepTime * 0.2;
-    const remTime = totalSleepTime * 0.3;
 
-    phases.push({ start: `${currentTime}:00`, end: `${currentTime + leichtschlafTime / 2}:00`, type: 'Leichtschlaf' });
-    currentTime += leichtschlafTime / 2;
-    phases.push({ start: `${currentTime}:00`, end: `${currentTime + tiefschlafTime}:00`, type: 'Tiefschlaf' });
-    currentTime += tiefschlafTime;
-    phases.push({ start: `${currentTime}:00`, end: `${currentTime + remTime}:00`, type: 'REM-Schlaf' });
-    currentTime += remTime;
-    phases.push({ start: `${currentTime}:00`, end: `${endTime}:00`, type: 'Leichtschlaf' });
+    phases.push({
+      start: minutesToTime(currentTime),
+      end: minutesToTime(currentTime + Math.round(leichtschlafMinutes / 2)),
+      type: "Leichtschlaf",
+    });
+    currentTime += Math.round(leichtschlafMinutes / 2);
+
+    phases.push({
+      start: minutesToTime(currentTime),
+      end: minutesToTime(currentTime + tiefschlafMinutes),
+      type: "Tiefschlaf",
+    });
+    currentTime += tiefschlafMinutes;
+
+    phases.push({
+      start: minutesToTime(currentTime),
+      end: minutesToTime(currentTime + remMinutes),
+      type: "REM-Schlaf",
+    });
+    currentTime += remMinutes;
+
+    phases.push({
+      start: minutesToTime(currentTime),
+      end: wakeup,
+      type: "Leichtschlaf",
+    });
 
     return phases;
   };
 
+  const timeToMinutes = (timeString) => {
+    const [hours, minutes] = timeString.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const minutesToTime = (minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours < 10 ? "0" : hours}:${mins < 10 ? "0" : mins}`;
+  };
+
   return (
-    <div className="text-[#2D336B] p-4 my-4">
-      <h1 className="text-2xl mb-2">Erholung</h1>
-      <h3 className="font-bold">Schlafanalyse-Dashboard</h3>
-      <form onSubmit={handleSubmit} className="p-2 my-2 flex flex-col">
-        <label>
-          Einschlafzeit:
-          <input type="number" name="fallAsleep" value={inputs.fallAsleep || ''} onChange={handleChange} className="border rounded m-4 p-1" /> Uhr
-        </label>
-        <label>
-          Aufwachzeit:
-          <input type="number" name="wakeup" value={inputs.wakeup || ''} onChange={handleChange} className="border rounded m-4 p-1" /> Uhr
-        </label>
-      </form>
-      <div className="p-2 my-4">
-        <SleepTrackerRelax />
-        <SleepQualityForm onQualityChange={handleSleepQualityChange} />
-        <MoodForm onMoodChange={handleMoodChange} />
-        <button onClick={handleSubmit}>
-          <input type="submit" className="p-2 my-2 mt-10 border rounded cursor-pointer" />
-        </button>
+    <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
+      {/* ... (vorhandener Code) */}
+      <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-20">
+        {/* ... (vorhandener Code) */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* ... (vorhandener Code) */}
+          <div>
+            <button
+              type="submit"
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+            >
+              Daten speichern
+            </button>
+          </div>
+        </form>
+        {sleepPhases.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold text-[#2D336B] mb-4">
+              Schlafphasen
+            </h2>
+            <table className="w-full">
+              <thead>
+                <tr>
+                  <th className="text-left">Phase</th>
+                  <th className="text-left">Start</th>
+                  <th className="text-left">Ende</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sleepPhases.map((phase, index) => (
+                  <tr key={index}>
+                    <td>{phase.type}</td>
+                    <td>{phase.start}</td>
+                    <td>{phase.end}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
-      {sleepPhases.length > 0 && <SleepPhasesChart sleepPhases={sleepPhases} />}
     </div>
   );
 }

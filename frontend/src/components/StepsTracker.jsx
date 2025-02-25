@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Footprints } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Footprints } from "lucide-react";
 
 function StepsTracker({ goalSteps }) {
     const [steps, setSteps] = useState(0);

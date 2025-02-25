@@ -1,5 +1,5 @@
 import express from "express";
-import db from "../db/database.js";
+import database from "../db/database.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -12,7 +12,7 @@ router.post("/register", async (req, res) => {
     const { email, username, password, birthday, weight, selectedGender } =
       req.body;
 
-    const checkStatement = db.prepare(
+    const checkStatement = database.db.prepare(
       "SELECT COUNT(*) AS count FROM users WHERE email = ?"
     );
     const result = checkStatement.get(email);
@@ -21,7 +21,7 @@ router.post("/register", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const insertStatement = db.prepare(
+    const insertStatement = database.db.prepare(
       "INSERT INTO users (email, username, password, birthday, weight, gender) VALUES (?, ?, ?, ?, ?, ?)"
     );
     const info = insertStatement.run(
@@ -49,9 +49,10 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const statement = db.prepare("SELECT * FROM users WHERE email = ?");
+    const statement = database.db.prepare("SELECT * FROM users WHERE email = ?");
     const user = statement.get(email);
-
+    console.log("login");
+    
     if (!user) {
       return res
         .status(401)

@@ -8,19 +8,15 @@ import NutritionPage from "./pages/NutritionPage";
 import RelaxationPage from "./pages/RelaxationPage";
 import SettingsPage from "./pages/SettingsPage";
 import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/HomePage";
 import PWResetPage from "./pages/PWResetPage";
-import AIChat from "./components/AIChat";
-import NotFoundPage from "./pages/NotFoundPage";
-import WorkoutTrackerCalendarPage from "./pages/WorkoutTracker";
+import LoginPage from './pages/LoginPage';
 
 function App() {
   return (
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/fitness" element={<FitnessPage />} />
           <Route path="/mentalhealth" element={<MentalHealthPage />} />

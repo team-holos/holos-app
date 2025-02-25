@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Bar } from "react-chartjs-2";
 
-function SleepTracker() {
+function SleepTrackerRelax() {
   const [fallAsleep, setFallAsleep] = useState('');
   const [wakeup, setWakeup] = useState('');
   const [sleepData, setSleepData] = useState(null);
@@ -81,4 +81,4 @@ function SleepTracker() {
   );
 }
 
-export default SleepTracker;
+export default SleepTrackerRelax;

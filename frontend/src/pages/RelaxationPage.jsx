@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SleepQualityForm from "../components/SleepQualityForm";
 import MoodForm from "../components/MoodForm";
 import SleepPhasesChart from "../components/SleepPhasesChart";
-import SleepTrackerRelax from "../SleepTrackerRelax";
+import SleepTrackerRelax from "../components/SleepTrackerRelax";
 
 function RelaxationPage() {
   const [inputs, setInputs] = useState({ fallAsleep: '', wakeup: '' });

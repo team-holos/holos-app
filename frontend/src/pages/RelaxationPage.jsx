@@ -97,8 +97,8 @@ function RelaxationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
-      <div className="relative py-3 sm:max-w-xl sm:mx-auto">
+    <div className="min-h-screen bg-gray-100 py-6 flex flex-col sm:flex-row justify-center sm:py-12">
+      <div className="relative py-3 sm:max-w-xl sm:mx-auto flex-1">
         <div className="absolute inset-0 bg-gradient-to-r from-[#A9B2D8] to-[#7886C7] shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
         <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-20">
           <h1 className="text-2xl font-semibold text-center text-[#2D336B] mb-8">
@@ -136,42 +136,6 @@ function RelaxationPage() {
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border-[#A9B2D8] shadow-sm focus:border-[#7886C7] focus:ring focus:ring-[#A9B2D8] focus:ring-opacity-50"
               />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="alarmTime"
-                  className="block text-sm font-medium text-[#2D336B]"
-                >
-                </label>
-              </div>
-              <div className="mt-8 flex justify-start">
-                <div className="mr-4">
-                  <label
-                    htmlFor="alarmTime"
-                    className="block text-sm font-medium text-[#2D336B]"
-                  >
-                    Weckzeit stellen
-                  </label>
-                  <input
-                    type="time"
-                    name="alarmTime"
-                    id="alarmTime"
-                    value={alarmTime}
-                    onChange={handleAlarmChange}
-                    className="mt-1 block w-full rounded-md border-[#A9B2D8] shadow-sm focus:border-[#7886C7] focus:ring focus:ring-[#A9B2D8] focus:ring-opacity-50"
-                  />
-                </div>
-                <div>
-                  <button
-                    type="button"
-                    onClick={setAlarm}
-                    className="mt-6 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
-                  >
-                    {alarmSet ? "Wecker gestellt" : "Wecker stellen"}
-                  </button>
-                </div>
-              </div>
             </div>
             <div>
               <label
@@ -247,6 +211,40 @@ function RelaxationPage() {
               </table>
             </div>
           )}
+        </div>
+      </div>
+      <div className="relative py-3 sm:max-w-xs sm:mx-auto mt-8 sm:mt-0 flex-1">
+        <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-10">
+          <h2 className="text-2xl font-semibold text-center text-[#2D336B] mb-8">
+            Wecker
+          </h2>
+          <div className="space-y-6">
+            <div>
+              <label
+                htmlFor="alarmTime"
+                className="block text-sm font-medium text-[#2D336B]"
+              >
+                Weckzeit stellen
+              </label>
+              <input
+                type="time"
+                name="alarmTime"
+                id="alarmTime"
+                value={alarmTime}
+                onChange={handleAlarmChange}
+                className="mt-1 block w-full rounded-md border-[#A9B2D8] shadow-sm focus:border-[#7886C7] focus:ring focus:ring-[#A9B2D8] focus:ring-opacity-50"
+              />
+            </div>
+            <div>
+              <button
+                type="button"
+                onClick={setAlarm}
+                className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+              >
+                {alarmSet ? "Wecker gestellt" : "Wecker stellen"}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

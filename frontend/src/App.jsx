@@ -9,7 +9,10 @@ import RelaxationPage from "./pages/RelaxationPage";
 import SettingsPage from "./pages/SettingsPage";
 import RegisterPage from "./pages/RegisterPage";
 import PWResetPage from "./pages/PWResetPage";
-import LoginPage from './pages/LoginPage';
+import LoginPage from "./pages/LoginPage";
+import WorkoutTracker from "./pages/WorkoutTracker";
+import AIChat from "./components/AIChat";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -20,7 +23,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/fitness" element={<FitnessPage />} />
           <Route path="/mentalhealth" element={<MentalHealthPage />} />
-          <Route path="/workout" element={<WorkoutTrackerCalendarPage />} />
+          <Route path="/workout" element={<WorkoutTracker />} />
           <Route path="/nutrition" element={<NutritionPage />} />
           <Route path="/relaxation" element={<RelaxationPage />} />
           <Route path="/settings" element={<SettingsPage />} />
@@ -36,4 +39,3 @@ function App() {
 }
 
 export default App;
-

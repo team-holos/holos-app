@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Bar } from 'react-chartjs-2';
+import React, { useState } from "react";
+import { Bar } from "react-chartjs-2";
 
 function SleepTracker() {
   const [fallAsleep, setFallAsleep] = useState('');
@@ -13,17 +13,17 @@ function SleepTracker() {
 
   const chartData = sleepData
     ? {
-        labels: ['Schlafzeiten'],
+        labels: ["Schlafzeiten"],
         datasets: [
           {
-            label: 'Einschlafzeit',
+            label: "Einschlafzeit",
             data: [parseTime(sleepData.fallAsleep)],
-            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            backgroundColor: "rgba(54, 162, 235, 0.5)",
           },
           {
-            label: 'Aufwachzeit',
+            label: "Aufwachzeit",
             data: [parseTime(sleepData.wakeup)],
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            backgroundColor: "rgba(255, 99, 132, 0.5)",
           },
         ],
       }

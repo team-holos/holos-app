@@ -16,17 +16,30 @@ const WorkoutTrackerCalendarPage = () => {
   const [workoutLogs, setWorkoutLogs] = useState({});
   const [trainingPlan, setTrainingPlan] = useState({});
   const [currentWorkout, setCurrentWorkout] = useState([]);
+  const userId = 1;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const savedPlan = JSON.parse(localStorage.getItem("trainingPlan"));
-    if (savedPlan) setTrainingPlan(savedPlan);
+    fetch(`http://localhost:3000/api/training/training-plan/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setTrainingPlan(data))
+      .catch((err) => console.error("Error fetching training plan:", err));
 
-    const savedLogs = JSON.parse(localStorage.getItem("workoutLogs")) || {};
-    setWorkoutLogs(savedLogs);
-  }, []);
+    // Fetch workout logs from backend
+    fetch(`http://localhost:3000/api/training/workout-log/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setWorkoutLogs(data))
+      .catch((err) => console.error("Error fetching workout logs:", err));
+  }, [userId, token]);
 
   useEffect(() => {
-    const dayName = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(selectedDate);
+    const dayName = new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+    }).format(selectedDate);
     const workoutType = trainingPlan[dayName] || "Rest";
     setCurrentWorkout(exercisesData[workoutType] || []);
   }, [selectedDate, trainingPlan]);
@@ -36,20 +49,46 @@ const WorkoutTrackerCalendarPage = () => {
     setWorkoutLogs((prevLogs) => {
       const updatedLogs = { ...prevLogs };
       if (!updatedLogs[dateKey]) updatedLogs[dateKey] = {};
-      if (!updatedLogs[dateKey][exercise]) updatedLogs[dateKey][exercise] = { sets: "", reps: "", weight: "" };
+      if (!updatedLogs[dateKey][exercise])
+        updatedLogs[dateKey][exercise] = { sets: "", reps: "", weight: "" };
       updatedLogs[dateKey][exercise][field] = value;
       return updatedLogs;
     });
   };
 
   const saveWorkout = () => {
-    localStorage.setItem("workoutLogs", JSON.stringify(workoutLogs));
-    alert("Workout saved!");
+    const dateKey = selectedDate.toISOString().split("T")[0];
+    const workouts = workoutLogs[dateKey];
+
+    if (!workouts) return alert("No workout data to save!");
+
+    Object.entries(workouts).forEach(([exercise, details]) => {
+      fetch("http://localhost:3000/api/training/workout-log", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          date: dateKey,
+          exercise,
+          sets: details.sets,
+          reps: details.reps,
+          weight: details.weight,
+        }),
+      })
+        .then((res) => res.json())
+        .then(() => alert("Workout saved successfully!"))
+        .catch((err) => console.error("Error saving workout:", err));
+    });
   };
 
   const tileClassName = ({ date }) => {
     const dateKey = date.toISOString().split("T")[0];
-    const dayName = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(date);
+    const dayName = new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+    }).format(date);
     const plannedWorkout = trainingPlan[dayName];
 
     if (workoutLogs[dateKey]) {
@@ -74,7 +113,12 @@ const WorkoutTrackerCalendarPage = () => {
         <div className="mt-6 border p-4 rounded-lg shadow-md bg-white">
           <h2 className="text-xl mb-2">
             Workout for {selectedDate.toISOString().split("T")[0]} (
-            {trainingPlan[new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(selectedDate)] || "Rest"})
+            {trainingPlan[
+              new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
+                selectedDate
+              )
+            ] || "Rest"}
+            )
           </h2>
 
           {currentWorkout.length > 0 ? (
@@ -95,24 +139,42 @@ const WorkoutTrackerCalendarPage = () => {
                       <input
                         type="number"
                         className="w-12 border px-1"
-                        value={workoutLogs[selectedDate.toISOString().split("T")[0]]?.[exercise]?.sets || ""}
-                        onChange={(e) => updateWorkoutLog(exercise, "sets", e.target.value)}
+                        value={
+                          workoutLogs[
+                            selectedDate.toISOString().split("T")[0]
+                          ]?.[exercise]?.sets || ""
+                        }
+                        onChange={(e) =>
+                          updateWorkoutLog(exercise, "sets", e.target.value)
+                        }
                       />
                     </td>
                     <td className="border px-2 py-1">
                       <input
                         type="number"
                         className="w-12 border px-1"
-                        value={workoutLogs[selectedDate.toISOString().split("T")[0]]?.[exercise]?.reps || ""}
-                        onChange={(e) => updateWorkoutLog(exercise, "reps", e.target.value)}
+                        value={
+                          workoutLogs[
+                            selectedDate.toISOString().split("T")[0]
+                          ]?.[exercise]?.reps || ""
+                        }
+                        onChange={(e) =>
+                          updateWorkoutLog(exercise, "reps", e.target.value)
+                        }
                       />
                     </td>
                     <td className="border px-2 py-1">
                       <input
                         type="number"
                         className="w-16 border px-1"
-                        value={workoutLogs[selectedDate.toISOString().split("T")[0]]?.[exercise]?.weight || ""}
-                        onChange={(e) => updateWorkoutLog(exercise, "weight", e.target.value)}
+                        value={
+                          workoutLogs[
+                            selectedDate.toISOString().split("T")[0]
+                          ]?.[exercise]?.weight || ""
+                        }
+                        onChange={(e) =>
+                          updateWorkoutLog(exercise, "weight", e.target.value)
+                        }
                       />
                     </td>
                   </tr>
@@ -120,7 +182,9 @@ const WorkoutTrackerCalendarPage = () => {
               </tbody>
             </table>
           ) : (
-            <p className="mt-4 text-gray-500">No workout planned for this day.</p>
+            <p className="mt-4 text-gray-500">
+              No workout planned for this day.
+            </p>
           )}
 
           <button
@@ -133,7 +197,10 @@ const WorkoutTrackerCalendarPage = () => {
       </div>
 
       <div className="md:w-1/3">
-        <TrainingPlan trainingPlan={trainingPlan} setTrainingPlan={setTrainingPlan} />
+        <TrainingPlan
+          trainingPlan={trainingPlan}
+          setTrainingPlan={setTrainingPlan}
+        />
       </div>
     </div>
   );

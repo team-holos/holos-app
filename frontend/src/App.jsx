@@ -13,7 +13,7 @@ import HomePage from "./pages/HomePage";
 import PWResetPage from "./pages/PWResetPage";
 import AIChat from "./components/AIChat";
 import NotFoundPage from "./pages/NotFoundPage";
-import WorkoutTrackerCalendarPage from "./pages/WorkoutTrackerCalendarPage";
+import WorkoutTrackerCalendarPage from "./pages/WorkoutTracker";
 
 function App() {
   return (

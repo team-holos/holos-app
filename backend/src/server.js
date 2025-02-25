@@ -23,25 +23,101 @@ import nutritionRoutes from "./routes/nutrition.js";
 import chatRoutes from "./routes/chat.js";
 import preferencesRoutes from "./routes/preferences.js";
 import journalRoutes from "./routes/journal.js";
+import trainingRoutes from "./routes/training.js";
 
 // Register Routes
 app.use("/api/users", authenticateToken, usersRoutes);
-app.use("/api/chat", authenticateToken, chatRoutes); // 🔹 Now protected
+app.use("/api/chat", authenticateToken, chatRoutes);
 app.use("/api/preferences", authenticateToken, preferencesRoutes);
 app.use("/api/nutrition", authenticateToken, nutritionRoutes);
 app.use("/api/journal", authenticateToken, journalRoutes);
+app.use("/api/training", authenticateToken, trainingRoutes);
 
-// Debugging: Show registered routes
-console.log("Registered API Routes:");
-app._router.stack.forEach((middleware) => {
-  if (middleware.route) {
-    console.log(middleware.route.path);
-  } else if (middleware.name === "router") {
-    middleware.handle.stack.forEach((handler) => {
-      if (handler.route) {
-        console.log(handler.route.path);
-      }
-    });
+// 🔹 **Save Training Plan**
+app.post("/api/training-plan", authenticateToken, (req, res) => {
+  const { user_id, trainingPlan } = req.body;
+
+  if (!user_id || !trainingPlan) {
+    return res.status(400).json({ error: "Missing user_id or trainingPlan" });
+  }
+
+  const stmt = db.prepare(`
+      INSERT INTO training_plans (user_id, day, workout_type) 
+      VALUES (?, ?, ?) 
+      ON CONFLICT(user_id, day) DO UPDATE SET workout_type=excluded.workout_type
+  `);
+
+  try {
+    db.transaction(() => {
+      Object.entries(trainingPlan).forEach(([day, workout]) => {
+        stmt.run(user_id, day, workout);
+      });
+    })();
+
+    res.json({ message: "Training plan saved successfully." });
+  } catch (error) {
+    res.status(500).json({ error: "Database error", details: error.message });
+  }
+});
+
+// 🔹 **Fetch Training Plan**
+app.get("/api/training-plan/:user_id", authenticateToken, (req, res) => {
+  const { user_id } = req.params;
+
+  try {
+    const results = db.prepare("SELECT day, workout_type FROM training_plans WHERE user_id = ?").all(user_id);
+    
+    const trainingPlan = results.reduce((plan, row) => {
+      plan[row.day] = row.workout_type;
+      return plan;
+    }, {});
+
+    res.json(trainingPlan);
+  } catch (error) {
+    res.status(500).json({ error: "Database error", details: error.message });
+  }
+});
+
+// 🔹 **Log a Workout**
+app.post("/api/workout-log", authenticateToken, (req, res) => {
+  const { user_id, date, exercise, sets, reps, weight } = req.body;
+
+  if (!user_id || !date || !exercise) {
+    return res.status(400).json({ error: "Missing required workout details" });
+  }
+
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO workout_logs (user_id, date, exercise, sets, reps, weight) 
+      VALUES (?, ?, ?, ?, ?, ?) 
+      ON CONFLICT(user_id, date, exercise) 
+      DO UPDATE SET sets=excluded.sets, reps=excluded.reps, weight=excluded.weight
+    `);
+    
+    stmt.run(user_id, date, exercise, sets || 0, reps || 0, weight || 0);
+
+    res.json({ message: "Workout logged successfully." });
+  } catch (error) {
+    res.status(500).json({ error: "Database error", details: error.message });
+  }
+});
+
+// 🔹 **Fetch Workout Logs**
+app.get("/api/workout-log/:user_id", authenticateToken, (req, res) => {
+  const { user_id } = req.params;
+
+  try {
+    const results = db.prepare("SELECT date, exercise, sets, reps, weight FROM workout_logs WHERE user_id = ?").all(user_id);
+    
+    const workoutLogs = results.reduce((logs, row) => {
+      if (!logs[row.date]) logs[row.date] = {};
+      logs[row.date][row.exercise] = { sets: row.sets, reps: row.reps, weight: row.weight };
+      return logs;
+    }, {});
+
+    res.json(workoutLogs);
+  } catch (error) {
+    res.status(500).json({ error: "Database error", details: error.message });
   }
 });
 
@@ -56,25 +132,16 @@ app.post("/auth/register", (req, res) => {
     return res.status(400).json({ error: "Passwords do not match" });
   }
 
-  // Check if user exists
   const checkUser = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
   if (checkUser) {
     return res.status(400).json({ error: "User already exists" });
   }
 
-  // Hash Password and Insert User
   const hashedPassword = bcrypt.hashSync(password, 12);
-  const insertUser = db.prepare(
-    "INSERT INTO users (username, email, password) VALUES (?, ?, ?)"
-  );
+  const insertUser = db.prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
   const { lastInsertRowid } = insertUser.run(username, email, hashedPassword);
 
-  res.json({
-    userId: lastInsertRowid,
-    email,
-    username,
-    message: `User ${username} successfully registered!`,
-  });
+  res.json({ userId: lastInsertRowid, email, username, message: `User ${username} successfully registered!` });
 });
 
 // 🔹 **Login User**
@@ -94,70 +161,12 @@ app.post("/auth/login", (req, res) => {
     return res.status(400).json({ error: "Incorrect password" });
   }
 
-  // Generate Token
-  const token = jwt.sign(
-    { userId: user.id, email: user.email },
-    process.env.JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+  const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
   res.json({ message: "Login successful", token });
-});
-
-// 🔹 **Save Chat History**
-app.post("/api/chat/save", authenticateToken, (req, res) => {
-  const { messages } = req.body;
-  const userId = req.user.userId;
-
-  if (!messages || !Array.isArray(messages) || messages.length === 0) {
-    return res.status(400).json({ error: "Invalid chat messages." });
-  }
-
-  try {
-    const insertStmt = db.prepare(
-      "INSERT INTO chat_history (user_id, role, content) VALUES (?, ?, ?)"
-    );
-
-    messages.forEach(msg => {
-      insertStmt.run(userId, msg.role, msg.content);
-    });
-
-    res.json({ message: "Chat history saved successfully." });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// 🔹 **Fetch Chat History**
-app.get("/api/chat/history", authenticateToken, (req, res) => {
-  const userId = req.user.userId;
-
-  try {
-    const history = db
-      .prepare("SELECT role, content FROM chat_history WHERE user_id = ? ORDER BY timestamp ASC")
-      .all(userId);
-
-    res.json({ history });
-  } catch (error) {
-    console.error("Error fetching chat history:", error);
-    res.status(500).json({ error: "Failed to retrieve chat history" });
-  }
-});
-
-// 🔹 **Get All Users (Protected)**
-app.get("/api/users", authenticateToken, (req, res) => {
-  try {
-    const users = db.prepare("SELECT id, username, email FROM users").all();
-    res.json(users);
-  } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Failed to retrieve users" });
-  }
 });
 
 // Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
-
-

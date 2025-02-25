@@ -1,33 +1,53 @@
 import React, { useState, useEffect } from "react";
 
-const defaultPlan = {
-  Monday: "Push",
-  Tuesday: "Pull",
-  Wednesday: "Rest",
-  Thursday: "Legs",
-  Friday: "Push",
-  Saturday: "Pull",
-  Sunday: "Rest",
-};
-
 const TrainingPlan = ({ trainingPlan, setTrainingPlan }) => {
-  const [plan, setPlan] = useState(trainingPlan || defaultPlan);
+  const [plan, setPlan] = useState(trainingPlan || {});
 
+  // Fetch training plan from backend
   useEffect(() => {
-    const savedPlan = JSON.parse(localStorage.getItem("trainingPlan"));
-    if (savedPlan) {
-      setPlan(savedPlan);
-    }
-  }, []);
+    const fetchTrainingPlan = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/training/training-plan/1", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        if (!response.ok) throw new Error("Failed to fetch training plan");
 
+        const data = await response.json();
+        setPlan(data);
+        setTrainingPlan(data);
+      } catch (error) {
+        console.error("Error loading training plan:", error);
+      }
+    };
+
+    fetchTrainingPlan();
+  }, [setTrainingPlan]);
+
+  // Update state when user changes dropdown
   const handleChange = (day, newWorkout) => {
     setPlan((prevPlan) => ({ ...prevPlan, [day]: newWorkout }));
   };
 
-  const saveTrainingPlan = () => {
-    localStorage.setItem("trainingPlan", JSON.stringify(plan));
-    alert("Training Plan Saved!");
-    setTrainingPlan(plan);
+  // Save training plan to backend
+  const saveTrainingPlan = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/training/training-plan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ user_id: 1, trainingPlan: plan }),
+      });
+
+      if (!response.ok) throw new Error("Failed to save training plan");
+
+      alert("Training Plan Saved!");
+      setTrainingPlan(plan);
+    } catch (error) {
+      console.error("Error saving training plan:", error);
+      alert("Failed to save training plan.");
+    }
   };
 
   return (
@@ -38,7 +58,7 @@ const TrainingPlan = ({ trainingPlan, setTrainingPlan }) => {
           <div key={day} className="flex justify-between items-center">
             <span className="font-bold">{day}:</span>
             <select
-              value={plan[day]}
+              value={plan[day] || "Rest"}
               onChange={(e) => handleChange(day, e.target.value)}
               className="border rounded px-2 py-1"
             >

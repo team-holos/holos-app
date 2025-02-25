@@ -76,6 +76,29 @@ db.exec(`
         FOREIGN KEY(user_id) REFERENCES users(id)
     );
 
+    -- Store user-specific training plans
+    CREATE TABLE IF NOT EXISTS training_plans (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        day TEXT NOT NULL, -- Monday, Tuesday, etc.
+        workout_type TEXT NOT NULL, -- Push, Pull, Legs, etc.
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        UNIQUE(user_id, day)
+    );
+
+    -- Store user workout logs with completed sets, reps, weights
+    CREATE TABLE IF NOT EXISTS workout_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        date TEXT NOT NULL, -- Format: YYYY-MM-DD
+        exercise TEXT NOT NULL,
+        sets INTEGER DEFAULT 0,
+        reps INTEGER DEFAULT 0,
+        weight REAL DEFAULT 0,
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        UNIQUE(user_id, date, exercise)
+    );
+
     -- Auto-delete old chat history (keep only last 30 days)
     DELETE FROM chat_history WHERE timestamp < datetime('now', '-30 days');
 `);

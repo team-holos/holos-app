@@ -32,26 +32,31 @@ function RelaxationPage() {
     let totalSleepMinutes = wakeupMinutes - fallAsleepMinutes;
     if (totalSleepMinutes < 0) totalSleepMinutes += 24 * 60;
 
-    const leichtschlafMinutes = Math.round(totalSleepMinutes * 0.7);
-    const tiefschlafMinutes = Math.round(totalSleepMinutes * 0.3);
+    const cycleMinutes = 60; // Typical sleep cycle duration without REM
+    const numCycles = Math.floor(totalSleepMinutes / cycleMinutes);
 
     let currentTime = fallAsleepMinutes;
     const phases = [];
 
-    phases.push({
-      start: minutesToTime(currentTime),
-      end: minutesToTime(currentTime + Math.round(leichtschlafMinutes / 2)),
-      type: "Einschlafphase",
-    });
-    currentTime += Math.round(leichtschlafMinutes / 2);
+    for (let i = 0; i < numCycles; i++) {
+      // Leichtschlafphase
+      phases.push({
+        start: minutesToTime(currentTime),
+        end: minutesToTime(currentTime + 30),
+        type: "Leichtschlaf",
+      });
+      currentTime += 30;
 
-    phases.push({
-      start: minutesToTime(currentTime),
-      end: minutesToTime(currentTime + tiefschlafMinutes),
-      type: "Tiefschlaf",
-    });
-    currentTime += tiefschlafMinutes;
+      // Tiefschlafphase
+      phases.push({
+        start: minutesToTime(currentTime),
+        end: minutesToTime(currentTime + 30),
+        type: "Tiefschlaf",
+      });
+      currentTime += 30;
+    }
 
+    // Aufwachphase
     phases.push({
       start: minutesToTime(currentTime),
       end: wakeup,

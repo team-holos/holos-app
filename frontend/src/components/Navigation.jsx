@@ -22,7 +22,7 @@ function Navigation() {
           <option value="/relaxation">Entspannung</option>
           <option value="/settings">Einstellungen</option>
           <option value="/dashboard">Dashboard</option>
-          <option value="/home">Login</option>
+          <option value="/login">Login</option>
         </select>
       </form>
     </div>

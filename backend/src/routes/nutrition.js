@@ -1,11 +1,11 @@
 import express from "express";
-import db from "../db/database.js";
+import database from "../db/database.js";
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
   try {
-    const nutritionPlans = db.prepare("SELECT * FROM nutrition").all();
+    const nutritionPlans = database.db.prepare("SELECT * FROM nutrition").all();
     res.json(nutritionPlans);
   } catch (error) {
     console.error("Error fetching nutrition data:", error);
@@ -14,4 +14,6 @@ router.get("/", (req, res) => {
 });
 
 export default router;
+
+
 

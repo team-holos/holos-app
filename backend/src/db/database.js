@@ -10,7 +10,8 @@ console.log("Using database at:", dbPath);
 
 const db = new Database(dbPath);
 
-db.exec(`
+// Create tables with improvements
+db.exec(`    
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
@@ -19,6 +20,28 @@ db.exec(`
         birthday TEXT,
         weight REAL,
         gender TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS chat_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        session_id TEXT DEFAULT NULL,
+        role TEXT NOT NULL, -- 'user' or 'assistant'
+        content TEXT NOT NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS user_preferences (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        pref_key TEXT NOT NULL,
+        pref_value TEXT NOT NULL,
+        notifications_enabled BOOLEAN DEFAULT TRUE,
+        theme TEXT DEFAULT 'light',
+        language TEXT DEFAULT 'de',
+        UNIQUE(user_id, pref_key),
+        FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
     CREATE TABLE IF NOT EXISTS exercises (
@@ -36,79 +59,50 @@ db.exec(`
         FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
-
     CREATE TABLE IF NOT EXISTS nutrition (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
         name TEXT NOT NULL,
         description TEXT NOT NULL,
-        meals TEXT NOT NULL 
+        meals TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     );
+
+    CREATE TABLE IF NOT EXISTS journal_entries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        date TEXT NOT NULL UNIQUE,
+        content TEXT DEFAULT '',
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    );
+
+    -- Store user-specific training plans
+    CREATE TABLE IF NOT EXISTS training_plans (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        day TEXT NOT NULL, -- Monday, Tuesday, etc.
+        workout_type TEXT NOT NULL, -- Push, Pull, Legs, etc.
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        UNIQUE(user_id, day)
+    );
+
+    -- Store user workout logs with completed sets, reps, weights
+    CREATE TABLE IF NOT EXISTS workout_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        date TEXT NOT NULL, -- Format: YYYY-MM-DD
+        exercise TEXT NOT NULL,
+        sets INTEGER DEFAULT 0,
+        reps INTEGER DEFAULT 0,
+        weight REAL DEFAULT 0,
+        FOREIGN KEY (user_id) REFERENCES users(id),
+        UNIQUE(user_id, date, exercise)
+    );
+
+    -- Auto-delete old chat history (keep only last 30 days)
+    DELETE FROM chat_history WHERE timestamp < datetime('now', '-30 days');
 `);
 
+console.log("Database initialized successfully.");
 
-const checkPlans = db.prepare("SELECT COUNT(*) AS count FROM nutrition").get();
-
-if (checkPlans.count === 0) {
-  const insertPlan = db.prepare(
-    "INSERT INTO nutrition (name, description, meals) VALUES (?, ?, ?)"
-  );
-
-  insertPlan.run(
-    "Low Carb Plan",
-    "A low-carb diet for weight loss.",
-    JSON.stringify(["Omelette", "Chicken Salad", "Steak & Veggies"])
-  );
-
-  insertPlan.run(
-    "Muscle Gain Plan",
-    "High protein for muscle building.",
-    JSON.stringify(["Protein Shake", "Grilled Chicken", "Rice & Veggies"])
-  );
-
-  insertPlan.run(
-    "Balanced Plan",
-    "A well-balanced diet with all macronutrients.",
-    JSON.stringify(["Oatmeal", "Grilled Fish", "Quinoa & Veggies"])
-  );
-
-  console.log("Inserted default nutrition plans into database.");
-}
-
-function getExercises(filters = {}) {
-  let query = 'SELECT * FROM exercises';
-  let whereClause = [];
-  let params = [];
-
-  if (filters.category && filters.category !== 'all') {
-    whereClause.push('category = ?');
-    params.push(filters.category);
-  }
-  if (filters.goal && filters.goal !== 'all') {
-    whereClause.push('goal = ?');
-    params.push(filters.goal);
-  }
-  if (filters.level && filters.level !== 'all') {
-    whereClause.push('level = ?');
-    params.push(filters.level);
-  }
-
-  if (whereClause.length > 0) {
-    query += ' WHERE ' + whereClause.join(' AND ');
-  }
-
-  return db.prepare(query).all(params);
-}
-
-function exercises(userId) {
-  return db.prepare('SELECT * FROM exercises WHERE user_id = ?').all(userId);
-}
-
-function getNutritionPlans() {
-  return db.prepare('SELECT * FROM nutrition').all();
-}
-
-export default {
-  db,
-  getExercises,
-  getNutritionPlans,
-};
+export default db;

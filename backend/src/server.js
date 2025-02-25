@@ -1,69 +1,172 @@
-// Load Express Library
-const express = require("express");
-// Load Cors Library
-const cors = require("cors");
-// Load bcrypt Library
-const bcrypt = require("bcrypt");
-// Init dotenv Library
-require("dotenv").config();
-// Load jsonwebtoken Library
-const jwt = require("jsonwebtoken");
-// Create an Express Application
+import express from "express";
+import cors from "cors";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import db from "./db/database.js";
+import authenticateToken from "./middlewares/authMiddleware.js";
+
+// Load environment variables
+dotenv.config();
+
+// Create Express App
 const app = express();
-// Load the Express Middleware for JSON Parsing
 app.use(express.json());
-// Enabling CORS
 app.use(cors());
-// Define Port Number with a Default Value
+
+// Define Port
 const PORT = process.env.API_PORT || 3000;
 
-//define user array
-const users = [];
+// Import Routes
+import usersRoutes from "./routes/users.js";
+import nutritionRoutes from "./routes/nutrition.js";
+import chatRoutes from "./routes/chat.js";
+import preferencesRoutes from "./routes/preferences.js";
+import journalRoutes from "./routes/journal.js";
+import trainingRoutes from "./routes/training.js";
 
-// Create Register Route
-app.post("/auth/register", (req, res) => {
-  const { email, password, passwordRetype } = req.body;
-  if (password !== passwordRetype) {
-    return res.status(400).send({ errors: "Passwords do not match" });
+// Register Routes
+app.use("/api/users", authenticateToken, usersRoutes);
+app.use("/api/chat", authenticateToken, chatRoutes);
+app.use("/api/preferences", authenticateToken, preferencesRoutes);
+app.use("/api/nutrition", authenticateToken, nutritionRoutes);
+app.use("/api/journal", authenticateToken, journalRoutes);
+app.use("/api/training", authenticateToken, trainingRoutes);
+
+// 🔹 **Save Training Plan**
+app.post("/api/training-plan", authenticateToken, (req, res) => {
+  const { user_id, trainingPlan } = req.body;
+
+  if (!user_id || !trainingPlan) {
+    return res.status(400).json({ error: "Missing user_id or trainingPlan" });
   }
-  const hashedPassword = bcrypt.hashSync(password, 12);
-  users.push({ email, password: hashedPassword });
-  res.send({ message: "User successfully registered" });
+
+  const stmt = db.prepare(`
+      INSERT INTO training_plans (user_id, day, workout_type) 
+      VALUES (?, ?, ?) 
+      ON CONFLICT(user_id, day) DO UPDATE SET workout_type=excluded.workout_type
+  `);
+
+  try {
+    db.transaction(() => {
+      Object.entries(trainingPlan).forEach(([day, workout]) => {
+        stmt.run(user_id, day, workout);
+      });
+    })();
+
+    res.json({ message: "Training plan saved successfully." });
+  } catch (error) {
+    res.status(500).json({ error: "Database error", details: error.message });
+  }
 });
 
-// Create Login Route
+// 🔹 **Fetch Training Plan**
+app.get("/api/training-plan/:user_id", authenticateToken, (req, res) => {
+  const { user_id } = req.params;
+
+  try {
+    const results = db.prepare("SELECT day, workout_type FROM training_plans WHERE user_id = ?").all(user_id);
+    
+    const trainingPlan = results.reduce((plan, row) => {
+      plan[row.day] = row.workout_type;
+      return plan;
+    }, {});
+
+    res.json(trainingPlan);
+  } catch (error) {
+    res.status(500).json({ error: "Database error", details: error.message });
+  }
+});
+
+// 🔹 **Log a Workout**
+app.post("/api/workout-log", authenticateToken, (req, res) => {
+  const { user_id, date, exercise, sets, reps, weight } = req.body;
+
+  if (!user_id || !date || !exercise) {
+    return res.status(400).json({ error: "Missing required workout details" });
+  }
+
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO workout_logs (user_id, date, exercise, sets, reps, weight) 
+      VALUES (?, ?, ?, ?, ?, ?) 
+      ON CONFLICT(user_id, date, exercise) 
+      DO UPDATE SET sets=excluded.sets, reps=excluded.reps, weight=excluded.weight
+    `);
+    
+    stmt.run(user_id, date, exercise, sets || 0, reps || 0, weight || 0);
+
+    res.json({ message: "Workout logged successfully." });
+  } catch (error) {
+    res.status(500).json({ error: "Database error", details: error.message });
+  }
+});
+
+// 🔹 **Fetch Workout Logs**
+app.get("/api/workout-log/:user_id", authenticateToken, (req, res) => {
+  const { user_id } = req.params;
+
+  try {
+    const results = db.prepare("SELECT date, exercise, sets, reps, weight FROM workout_logs WHERE user_id = ?").all(user_id);
+    
+    const workoutLogs = results.reduce((logs, row) => {
+      if (!logs[row.date]) logs[row.date] = {};
+      logs[row.date][row.exercise] = { sets: row.sets, reps: row.reps, weight: row.weight };
+      return logs;
+    }, {});
+
+    res.json(workoutLogs);
+  } catch (error) {
+    res.status(500).json({ error: "Database error", details: error.message });
+  }
+});
+
+// 🔹 **Register User**
+app.post("/auth/register", (req, res) => {
+  const { username, email, password, passwordRetype } = req.body;
+
+  if (!email || !password || !username) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+  if (password !== passwordRetype) {
+    return res.status(400).json({ error: "Passwords do not match" });
+  }
+
+  const checkUser = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+  if (checkUser) {
+    return res.status(400).json({ error: "User already exists" });
+  }
+
+  const hashedPassword = bcrypt.hashSync(password, 12);
+  const insertUser = db.prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+  const { lastInsertRowid } = insertUser.run(username, email, hashedPassword);
+
+  res.json({ userId: lastInsertRowid, email, username, message: `User ${username} successfully registered!` });
+});
+
+// 🔹 **Login User**
 app.post("/auth/login", (req, res) => {
   const { email, password } = req.body;
-  console.log(`User: ${email} Password: ${password}`);
-  const user = users.find((user) => user.email === email);
+
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password are required" });
+  }
+
+  const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
   if (!user) {
-    return res.status(400).send({ errors: "User not found" });
+    return res.status(400).json({ error: "User not found" });
   }
+
   if (!bcrypt.compareSync(password, user.password)) {
-    return res.status(400).send({ errors: "Password is incorrect" });
+    return res.status(400).json({ error: "Incorrect password" });
   }
-  const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-    expiresIn: "15min",
-  });
 
-  res.send({ message: "User successfully logged in", token });
+  const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+  res.json({ message: "Login successful", token });
 });
 
-
-// Get all Users Route with authentication
-app.get("/users", (req, res) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).send({ errors: "No token provided" });
-  }
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(403).send({ errors: "Failed to authenticate token" });
-    }
-    res.send(users);
-  });
-});
+// Start Server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });

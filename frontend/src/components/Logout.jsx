@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "./store/authstore";
 
 const Logout = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken"); // Remove token from storage
+    useAuthStore.getState().clearToken(); // Clear token
     navigate("/"); // Redirect to login page
   };
 

@@ -36,6 +36,7 @@ function SettingsPage() {
         <li>{t("personalData")}</li>
         <li>{t("healthGoals")}</li>
         <li>{t("notificationSettings")}</li>
+        <li>{t("passwordChange")}</li>
       </ul>
 
       <div className="mt-6">
@@ -67,7 +68,37 @@ function SettingsPage() {
           <option value="en">English</option>
         </select>
       </div>
-
+      <div>
+        <section>
+          <h2 className="text-xl mb-4 max-w-sm and mx-auto">Passwort ändern</h2>
+          <form className="mt-4 space-y-4 lg:mt-5 md:space-y-5">
+            <div>
+              <label for="old-password">Altes Passwort</label>
+              <input
+                type="password"
+                id="old-password"
+                className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-[#FFF2F2] bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label for="new-password">Neues Passwort</label>
+              <input
+                type="password"
+                id="new-password"
+                className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-[#FFF2F2] bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label for="confirm-password">Passwort bestätigen</label>
+              <input
+                type="password"
+                id="confirm-password"
+                className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-[#FFF2F2] bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+              />
+            </div>
+          </form>
+        </section>
+      </div>
       <div className="mt-6 flex space-x-4">
         <button
           onClick={handleSave}

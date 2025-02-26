@@ -32,53 +32,39 @@ function RelaxationPage() {
     let totalSleepMinutes = wakeupMinutes - fallAsleepMinutes;
     if (totalSleepMinutes < 0) totalSleepMinutes += 24 * 60;
 
-    const cycleDuration = 90; // 90 Minuten pro Schlafzyklus
-    const numCycles = Math.floor(totalSleepMinutes / cycleDuration);
+    const leichtschlafMinutes = Math.round(totalSleepMinutes * 0.45); // Reduziert Leichtschlaf, um Platz für REM zu schaffen
+    const tiefschlafMinutes = Math.round(totalSleepMinutes * 0.3);
+    const remMinutes = Math.round(totalSleepMinutes * 0.25); // REM-Phase
+
     let currentTime = fallAsleepMinutes;
     const phases = [];
 
-    for (let i = 0; i < numCycles; i++) {
-      // Einschlafphase (Annahme: 10 Minuten)
-      phases.push({
-        start: minutesToTime(currentTime),
-        end: minutesToTime(currentTime + 10),
-        type: "Einschlafphase",
-      });
-      currentTime += 10;
+    phases.push({
+      start: minutesToTime(currentTime),
+      end: minutesToTime(currentTime + Math.round(leichtschlafMinutes / 2)),
+      type: "Einschlafphase",
+    });
+    currentTime += Math.round(leichtschlafMinutes / 2);
 
-      // Leichtschlaf (Annahme: 30 Minuten)
-      phases.push({
-        start: minutesToTime(currentTime),
-        end: minutesToTime(currentTime + 30),
-        type: "Leichtschlaf",
-      });
-      currentTime += 30;
+    phases.push({
+      start: minutesToTime(currentTime),
+      end: minutesToTime(currentTime + tiefschlafMinutes),
+      type: "Tiefschlaf",
+    });
+    currentTime += tiefschlafMinutes;
 
-      // Tiefschlaf (Annahme: 20 Minuten)
-      phases.push({
-        start: minutesToTime(currentTime),
-        end: minutesToTime(currentTime + 20),
-        type: "Tiefschlaf",
-      });
-      currentTime += 20;
+    phases.push({
+      start: minutesToTime(currentTime),
+      end: minutesToTime(currentTime + remMinutes),
+      type: "REM-Phase",
+    });
+    currentTime += remMinutes;
 
-      // REM-Schlaf (Annahme: 30 Minuten)
-      phases.push({
-        start: minutesToTime(currentTime),
-        end: minutesToTime(currentTime + 30),
-        type: "REM-Schlaf",
-      });
-      currentTime += 30;
-    }
-
-    // Aufwachphase (Restzeit)
-    if (currentTime < wakeupMinutes) {
-      phases.push({
-        start: minutesToTime(currentTime),
-        end: wakeup,
-        type: "Aufwachphase",
-      });
-    }
+    phases.push({
+      start: minutesToTime(currentTime),
+      end: wakeup,
+      type: "Aufwachphase",
+    });
 
     return phases;
   };

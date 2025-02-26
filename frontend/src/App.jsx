@@ -13,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import WorkoutTracker from "./pages/WorkoutTracker";
 import AIChat from "./components/AIChat";
 import NotFoundPage from "./pages/NotFoundPage";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
@@ -20,18 +21,75 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<LoginPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/fitness" element={<FitnessPage />} />
-          <Route path="/mentalhealth" element={<MentalHealthPage />} />
-          <Route path="/workout" element={<WorkoutTracker />} />
-          <Route path="/nutrition" element={<NutritionPage />} />
-          <Route path="/relaxation" element={<RelaxationPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/reset" element={<PWResetPage />} />
-          <Route path="/chat" element={<AIChat />} />
           <Route path="*" element={<NotFoundPage />} />
+
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <DashboardPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/fitness"
+            element={
+              <PrivateRoute>
+                <FitnessPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/mentalhealth"
+            element={
+              <PrivateRoute>
+                <MentalHealthPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/workout"
+            element={
+              <PrivateRoute>
+                <WorkoutTracker />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/nutrition"
+            element={
+              <PrivateRoute>
+                <NutritionPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/relaxation"
+            element={
+              <PrivateRoute>
+                <RelaxationPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <PrivateRoute>
+                <SettingsPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <PrivateRoute>
+                <AIChat />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Layout>
     </BrowserRouter>

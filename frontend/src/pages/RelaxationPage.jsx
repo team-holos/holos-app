@@ -8,6 +8,18 @@ function RelaxationPage() {
   const waterRunningByAudio = useRef(null);
   const windQuietCreaksAudio = useRef(null);
 
+  const [daytimeForrestPlaying, setDaytimeForrestPlaying] = useState(false);
+  const [thunderBirdsPlaying, setThunderBirdsPlaying] = useState(false);
+  const [waterLappingPlaying, setWaterLappingPlaying] = useState(false);
+  const [waterRunningPlaying, setWaterRunningPlaying] = useState(false);
+  const [windQuietPlaying, setWindQuietPlaying] = useState(false);
+
+  const [daytimeForrestVolume, setDaytimeForrestVolume] = useState(0.5);
+  const [thunderBirdsVolume, setThunderBirdsVolume] = useState(0.5);
+  const [waterLappingVolume, setWaterLappingVolume] = useState(0.5);
+  const [waterRunningVolume, setWaterRunningVolume] = useState(0.5);
+  const [windQuietVolume, setWindQuietVolume] = useState(0.5);
+
   const [inputs, setInputs] = useState({
     fallAsleep: "",
     wakeup: "",

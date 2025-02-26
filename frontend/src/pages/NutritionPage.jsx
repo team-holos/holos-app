@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import DailyNutritionProgress from "../components/DailyNutritionProgress";
 
 function NutritionPage() {
   const [meals, setMeals] = useState([]);
@@ -40,13 +41,7 @@ function NutritionPage() {
   };
 
   const addMeal = async () => {
-    if (
-      !meal.name ||
-      !meal.calories ||
-      !meal.protein ||
-      !meal.carbs ||
-      !meal.fats
-    ) {
+    if (!meal.name || !meal.calories || !meal.protein || !meal.carbs || !meal.fats) {
       setError("Please fill in all fields");
       return;
     }
@@ -93,77 +88,55 @@ function NutritionPage() {
   };
 
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
-      <h1>Nutrition Tracker</h1>
+    <div className="p-6 max-w-4xl mx-auto text-center">
+      <h1 className="text-2xl font-bold mb-4">Nutrition Tracker</h1>
 
-      <div style={{ marginBottom: "20px" }}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Meal Name"
-          value={meal.name}
-          onChange={handleInputChange}
-        />
-        <input
-          type="number"
-          name="calories"
-          placeholder="Calories"
-          value={meal.calories}
-          onChange={handleInputChange}
-        />
-        <input
-          type="number"
-          name="protein"
-          placeholder="Protein (g)"
-          value={meal.protein}
-          onChange={handleInputChange}
-        />
-        <input
-          type="number"
-          name="carbs"
-          placeholder="Carbs (g)"
-          value={meal.carbs}
-          onChange={handleInputChange}
-        />
-        <input
-          type="number"
-          name="fats"
-          placeholder="Fats (g)"
-          value={meal.fats}
-          onChange={handleInputChange}
-        />
-        <button onClick={addMeal}>Add Meal</button>
+      <DailyNutritionProgress meals={meals} />
+
+      <div className="bg-white p-4 shadow-md rounded-lg mb-6">
+        <h2 className="text-lg font-semibold mb-2">Log Your Meal</h2>
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <input className="p-2 border rounded" type="text" name="name" placeholder="Meal Name" value={meal.name} onChange={handleInputChange} />
+          <input className="p-2 border rounded" type="number" name="calories" placeholder="Calories" value={meal.calories} onChange={handleInputChange} />
+          <input className="p-2 border rounded" type="number" name="protein" placeholder="Protein (g)" value={meal.protein} onChange={handleInputChange} />
+          <input className="p-2 border rounded" type="number" name="carbs" placeholder="Carbs (g)" value={meal.carbs} onChange={handleInputChange} />
+          <input className="p-2 border rounded" type="number" name="fats" placeholder="Fats (g)" value={meal.fats} onChange={handleInputChange} />
+        </div>
+        <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={addMeal}>Add Meal</button>
       </div>
 
       {loading && <p>Loading meals...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
 
-      <table border="1" style={{ margin: "auto", width: "80%" }}>
-        <thead>
-          <tr>
-            <th>Meal</th>
-            <th>Calories</th>
-            <th>Protein (g)</th>
-            <th>Carbs (g)</th>
-            <th>Fats (g)</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {meals.map((meal) => (
-            <tr key={meal.id}>
-              <td>{meal.name}</td>
-              <td>{meal.calories}</td>
-              <td>{meal.protein}</td>
-              <td>{meal.carbs}</td>
-              <td>{meal.fats}</td>
-              <td>
-                <button onClick={() => deleteMeal(meal.id)}>Delete</button>
-              </td>
+      <div className="bg-white p-4 shadow-md rounded-lg">
+        <h2 className="text-lg font-semibold mb-2">Logged Meals</h2>
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="p-2 border">Meal</th>
+              <th className="p-2 border">Calories</th>
+              <th className="p-2 border">Protein (g)</th>
+              <th className="p-2 border">Carbs (g)</th>
+              <th className="p-2 border">Fats (g)</th>
+              <th className="p-2 border">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {meals.map((meal) => (
+              <tr key={meal.id} className="border">
+                <td className="p-2 border">{meal.name}</td>
+                <td className="p-2 border">{meal.calories}</td>
+                <td className="p-2 border">{meal.protein}</td>
+                <td className="p-2 border">{meal.carbs}</td>
+                <td className="p-2 border">{meal.fats}</td>
+                <td className="p-2 border">
+                  <button className="text-red-500" onClick={() => deleteMeal(meal.id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

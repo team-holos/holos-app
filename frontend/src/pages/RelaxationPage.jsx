@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
 
 function RelaxationPage() {
-
   const daytimeForrestBonfireAudio = useRef(null);
   const thunderWithBirdsAndFliesAudio = useRef(null);
   const waterLappingWind1Audio = useRef(null);
@@ -120,6 +119,18 @@ function RelaxationPage() {
     setAlarmSet(true);
   };
 
+  const playSound = (audioRef, setPlaying) => {
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play();
+        setPlaying(true);
+      } else {
+        audioRef.current.pause();
+        setPlaying(false);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-6 flex flex-col sm:flex-row justify-center sm:py-12">
       <div className="relative py-3 sm:max-w-xl sm:mx-auto flex-1">
@@ -235,6 +246,41 @@ function RelaxationPage() {
               </table>
             </div>
           )}
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold text-[#2D336B] mb-4">
+              Natursounds
+            </h2>
+            <button
+              onClick={() => playSound(daytimeForrestBonfireAudio, setDaytimeForrestPlaying)}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+            >
+              {daytimeForrestPlaying ? "Stop Daytime Forrest Bonfire" : "Play Daytime Forrest Bonfire"}
+            </button>
+            <button
+              onClick={() => playSound(thunderWithBirdsAndFliesAudio, setThunderBirdsPlaying)}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7] mt-4"
+            >
+              {thunderBirdsPlaying ? "Stop Thunder with Birds and Flies" : "Play Thunder with Birds and Flies"}
+            </button>
+            <button
+              onClick={() => playSound(waterLappingWind1Audio, setWaterLappingPlaying)}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7] mt-4"
+            >
+              {waterLappingPlaying ? "Stop Water Lapping Wind" : "Play Water Lapping Wind"}
+            </button>
+            <button
+              onClick={() => playSound(waterRunningByAudio, setWaterRunningPlaying)}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7] mt-4"
+            >
+              {waterRunningPlaying ? "Stop Water Running By" : "Play Water Running By"}
+            </button>
+            <button
+              onClick={() => playSound(windQuietCreaksAudio, setWindQuietPlaying)}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7] mt-4"
+            >
+              {windQuietPlaying ? "Stop Wind Quiet Creaks" : "Play Wind Quiet Creaks"}
+            </button>
+          </div>
         </div>
       </div>
       <div className="relative py-3 sm:max-w-xs sm:mx-auto mt-8 sm:mt-0 flex-1">
@@ -271,6 +317,11 @@ function RelaxationPage() {
           </div>
         </div>
       </div>
+      <audio ref={daytimeForrestBonfireAudio} src="/audio/Daytime Forrest Bonfire.mp3" loop />
+      <audio ref={thunderWithBirdsAndFliesAudio} src="/audio/Thunder with Birds and Flies.mp3" loop />
+      <audio ref={waterLappingWind1Audio} src="/audio/Water Lapping Wind (1).mp3" loop />
+      <audio ref={waterRunningByAudio} src="/audio/Water Running By.mp3" loop />
+      <audio ref={windQuietCreaksAudio} src="/audio/Wind Quiet Creaks.mp3" loop />
     </div>
   );
 }

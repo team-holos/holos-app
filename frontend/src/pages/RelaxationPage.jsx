@@ -303,6 +303,7 @@ function RelaxationPage() {
               value={daytimeForrestVolume}
               onChange={(e) => setDaytimeForrestVolume(parseFloat(e.target.value))}
               className="mt-2 w-full"
+              style={{ accentColor: '#7886C7' }}
             />
           </div>
           <div className="mt-4">
@@ -320,6 +321,7 @@ function RelaxationPage() {
               value={thunderBirdsVolume}
               onChange={(e) => setThunderBirdsVolume(parseFloat(e.target.value))}
               className="mt-2 w-full"
+              style={{ accentColor: '#7886C7' }}
             />
           </div>
           <div className="mt-4">
@@ -337,6 +339,7 @@ function RelaxationPage() {
               value={waterLappingVolume}
               onChange={(e) => setWaterLappingVolume(parseFloat(e.target.value))}
               className="mt-2 w-full"
+              style={{ accentColor: '#7886C7' }}
             />
           </div>
           <div className="mt-4">
@@ -354,6 +357,7 @@ function RelaxationPage() {
               value={waterRunningVolume}
               onChange={(e) => setWaterRunningVolume(parseFloat(e.target.value))}
               className="mt-2 w-full"
+              style={{ accentColor: '#7886C7' }}
             />
           </div>
           <div className="mt-4">
@@ -371,6 +375,7 @@ function RelaxationPage() {
               value={windQuietVolume}
               onChange={(e) => setWindQuietVolume(parseFloat(e.target.value))}
               className="mt-2 w-full"
+              style={{ accentColor: '#7886C7' }}
             />
           </div>
         </div>

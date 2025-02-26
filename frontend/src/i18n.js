@@ -9,7 +9,7 @@ const resources = {
       personalData: "Persönliche Daten",
       healthGoals: "Gesundheitsziele",
       notificationSettings: "Benachrichtigungseinstellungen",
-      passwordChange: "Passwort ändern",
+      //passwordChange: "Passwort ändern",
       theme: "Theme",
       language: "Sprache",
       light: "Hell",

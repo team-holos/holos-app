@@ -375,11 +375,11 @@ function RelaxationPage() {
           </div>
         </div>
       </div>
-      <audio ref={daytimeForrestBonfireAudio} src="/audio/Daytime Forrest Bonfire.mp3" loop />
-      <audio ref={thunderWithBirdsAndFliesAudio} src="/audio/Thunder with Birds and Flies.mp3" loop />
-      <audio ref={waterLappingWind1Audio} src="/audio/Water Lapping Wind (1).mp3" loop />
-      <audio ref={waterRunningByAudio} src="/audio/Water Running By.mp3" loop />
-      <audio ref={windQuietCreaksAudio} src="/audio/Wind Quiet Creaks.mp3" loop />
+      <audio ref={daytimeForrestBonfireAudio} src="/audio/DaytimeForrestBonfire.mp3" loop />
+      <audio ref={thunderWithBirdsAndFliesAudio} src="/audio/ThunderwithBirdsandFlies.mp3" loop />
+      <audio ref={waterLappingWind1Audio} src="/audio/WaterLappingWind (1).mp3" loop />
+      <audio ref={waterRunningByAudio} src="/audio/WaterRunningBy.mp3" loop />
+      <audio ref={windQuietCreaksAudio} src="/audio/WindQuietCreaks.mp3" loop />
     </div>
   );
 }

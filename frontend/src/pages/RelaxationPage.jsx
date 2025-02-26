@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 function RelaxationPage() {
   const [inputs, setInputs] = useState({
@@ -10,6 +10,24 @@ function RelaxationPage() {
   const [sleepPhases, setSleepPhases] = useState([]);
   const [alarmTime, setAlarmTime] = useState("");
   const [alarmSet, setAlarmSet] = useState(false);
+
+  const daytimeForrestBonfireAudio = useRef(null);
+  const thunderWithBirdsAndFliesAudio = useRef(null);
+  const waterLappingWindAudio = useRef(null);
+  const waterRunningByAudio = useRef(null);
+  const windQuietCreaksAudio = useRef(null);
+
+  const [daytimeForrestPlaying, setDaytimeForrestPlaying] = useState(false);
+  const [thunderBirdsPlaying, setThunderBirdsPlaying] = useState(false);
+  const [waterLappingPlaying, setWaterLappingPlaying] = useState(false);
+  const [waterRunningPlaying, setWaterRunningPlaying] = useState(false);
+  const [windQuietPlaying, setWindQuietPlaying] = useState(false);
+
+  const [daytimeForrestVolume, setDaytimeForrestVolume] = useState(0.5);
+  const [thunderBirdsVolume, setThunderBirdsVolume] = useState(0.5);
+  const [waterLappingVolume, setWaterLappingVolume] = useState(0.5);
+  const [waterRunningVolume, setWaterRunningVolume] = useState(0.5);
+  const [windQuietVolume, setWindQuietVolume] = useState(0.5);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -104,14 +122,124 @@ function RelaxationPage() {
     setAlarmSet(true);
   };
 
+  const playSound = (audioRef, setPlaying, volume) => {
+    if (audioRef.current) {
+      if (audioRef.current.paused) {
+        audioRef.current.play();
+        setPlaying(true);
+      } else {
+        audioRef.current.pause();
+        setPlaying(false);
+      }
+      if (volume !== undefined) {
+        audioRef.current.volume = volume;
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 py-6 flex flex-col sm:flex-row justify-center sm:py-12">
-      <div className="relative py-3 sm:max-w-xl sm:mx-auto flex-1">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#A9B2D8] to-[#7886C7] shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
-        <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-20">
-          <h1 className="text-2xl font-semibold text-center text-[#2D336B] mb-8">
-            Erholung
-          </h1>
+
+    <div className="relative py-3 sm:max-w-xs sm:mx-auto mt-8 sm:mt-0 flex-1">
+      <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-10">
+        <h2 className="text-2xl font-semibold text-center text-[#2D336B] mb-8">
+          Naturgeräusche
+        </h2>
+        <div className="space-y-4">
+          <div>
+            <button
+              onClick={() => playSound(daytimeForrestBonfireAudio, setDaytimeForrestPlaying, daytimeForrestVolume)}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+            >
+              {daytimeForrestPlaying ? "Wald Lagerfeuer Pause" : "Wald Lagerfeuer Start"}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={daytimeForrestVolume}
+              onChange={(e) => setDaytimeForrestVolume(parseFloat(e.target.value))}
+            />
+            <audio ref={daytimeForrestBonfireAudio} src="/audio/DaytimeForrestBonfire.mp3" loop />
+          </div>
+          <div>
+            <button
+              onClick={() => playSound(thunderWithBirdsAndFliesAudio, setThunderBirdsPlaying, thunderBirdsVolume)}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+            >
+              {thunderBirdsPlaying ? "Gewitter Vogelgezwitscher Pause" : "Gewitter Vogelgezwitscher Start"}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={thunderBirdsVolume}
+              onChange={(e) => setThunderBirdsVolume(parseFloat(e.target.value))}
+            />
+            <audio ref={thunderWithBirdsAndFliesAudio} src="/audio/ThunderwithBirdsandFlies.mp3" loop />
+          </div>
+          <div>
+            <button
+              onClick={() => playSound(waterLappingWindAudio, setWaterLappingPlaying, waterLappingVolume)}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+            >
+              {waterLappingPlaying ? "Wasser Ufer Pause" : "Wasser Ufer Start"}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={waterLappingVolume}
+              onChange={(e) => setWaterLappingVolume(parseFloat(e.target.value))}
+            />
+            <audio ref={waterLappingWindAudio} src="/audio/WaterLappingWind (1).mp3" loop />
+          </div>
+          <div>
+            <button
+              onClick={() => playSound(waterRunningByAudio, setWaterRunningPlaying, waterRunningVolume)}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+            >
+              {waterRunningPlaying ? "Bachlauf Pause" : "Bachlauf Start"}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={waterRunningVolume}
+              onChange={(e) => setWaterRunningVolume(parseFloat(e.target.value))}
+            />
+            <audio ref={waterRunningByAudio} src="/audio/WaterRunningBy.mp3" loop />
+          </div>
+          <div>
+            <button
+              onClick={() => playSound(windQuietCreaksAudio, setWindQuietPlaying, windQuietVolume)}
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+            >
+              {windQuietPlaying ? "Wind Knarren Pause" : "Wind Knarren Start"}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value={windQuietVolume}
+              onChange={(e) => setWindQuietVolume(parseFloat(e.target.value))}
+            />
+            <audio ref={windQuietCreaksAudio} src="/audio/Wind Quiet Creaks.mp3" loop />
+          </div>
+        </div>
+      </div>
+      <div className="min-h-screen bg-gray-100 py-6 flex flex-col sm:flex-row justify-center sm:py-12">
+        <div className="relative py-3 sm:max-w-xl sm:mx-auto flex-1">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#A9B2D8] to-[#7886C7] shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
+          <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-20">
+            <h1 className="text-2xl font-semibold text-center text-[#2D336B] mb-8">
+              Erholung
+            </h1>
+          </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label

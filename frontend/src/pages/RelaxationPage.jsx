@@ -1,24 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
 function RelaxationPage() {
-  const daytimeForrestBonfireAudio = useRef(null);
-  const thunderWithBirdsAndFliesAudio = useRef(null);
-  const waterLappingWind1Audio = useRef(null);
-  const waterRunningByAudio = useRef(null);
-  const windQuietCreaksAudio = useRef(null);
-
-  const [daytimeForrestPlaying, setDaytimeForrestPlaying] = useState(false);
-  const [thunderBirdsPlaying, setThunderBirdsPlaying] = useState(false);
-  const [waterLappingPlaying, setWaterLappingPlaying] = useState(false);
-  const [waterRunningPlaying, setWaterRunningPlaying] = useState(false);
-  const [windQuietPlaying, setWindQuietPlaying] = useState(false);
-
-  const [daytimeForrestVolume, setDaytimeForrestVolume] = useState(0.5);
-  const [thunderBirdsVolume, setThunderBirdsVolume] = useState(0.5);
-  const [waterLappingVolume, setWaterLappingVolume] = useState(0.5);
-  const [waterRunningVolume, setWaterRunningVolume] = useState(0.5);
-  const [windQuietVolume, setWindQuietVolume] = useState(0.5);
-
   const [inputs, setInputs] = useState({
     fallAsleep: "",
     wakeup: "",
@@ -50,14 +32,21 @@ function RelaxationPage() {
     let totalSleepMinutes = wakeupMinutes - fallAsleepMinutes;
     if (totalSleepMinutes < 0) totalSleepMinutes += 24 * 60;
 
-    const cycleMinutes = 60; // Typical sleep cycle duration without REM
-    const numCycles = Math.floor(totalSleepMinutes / cycleMinutes);
-
+    const cycleDuration = 90; // 90 Minuten pro Schlafzyklus
+    const numCycles = Math.floor(totalSleepMinutes / cycleDuration);
     let currentTime = fallAsleepMinutes;
     const phases = [];
 
     for (let i = 0; i < numCycles; i++) {
-      // Leichtschlafphase
+      // Einschlafphase (Annahme: 10 Minuten)
+      phases.push({
+        start: minutesToTime(currentTime),
+        end: minutesToTime(currentTime + 10),
+        type: "Einschlafphase",
+      });
+      currentTime += 10;
+
+      // Leichtschlaf (Annahme: 30 Minuten)
       phases.push({
         start: minutesToTime(currentTime),
         end: minutesToTime(currentTime + 30),
@@ -65,21 +54,31 @@ function RelaxationPage() {
       });
       currentTime += 30;
 
-      // Tiefschlafphase
+      // Tiefschlaf (Annahme: 20 Minuten)
+      phases.push({
+        start: minutesToTime(currentTime),
+        end: minutesToTime(currentTime + 20),
+        type: "Tiefschlaf",
+      });
+      currentTime += 20;
+
+      // REM-Schlaf (Annahme: 30 Minuten)
       phases.push({
         start: minutesToTime(currentTime),
         end: minutesToTime(currentTime + 30),
-        type: "Tiefschlaf",
+        type: "REM-Schlaf",
       });
       currentTime += 30;
     }
 
-    // Aufwachphase
-    phases.push({
-      start: minutesToTime(currentTime),
-      end: wakeup,
-      type: "Aufwachphase",
-    });
+    // Aufwachphase (Restzeit)
+    if (currentTime < wakeupMinutes) {
+      phases.push({
+        start: minutesToTime(currentTime),
+        end: wakeup,
+        type: "Aufwachphase",
+      });
+    }
 
     return phases;
   };
@@ -117,21 +116,6 @@ function RelaxationPage() {
     }, timeUntilAlarm);
 
     setAlarmSet(true);
-  };
-
-  const playSound = (audioRef, setPlaying, volume) => {
-    if (audioRef.current) {
-      if (audioRef.current.paused) {
-        audioRef.current.play();
-        setPlaying(true);
-      } else {
-        audioRef.current.pause();
-        setPlaying(false);
-      }
-      if (volume !== undefined) {
-        audioRef.current.volume = volume;
-      }
-    }
   };
 
   return (
@@ -284,107 +268,7 @@ function RelaxationPage() {
             </div>
           </div>
         </div>
-        <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-10 mt-8">
-          <h2 className="text-2xl font-semibold text-center text-[#2D336B] mb-8">
-            Natursounds
-          </h2>
-          <div className="mt-4">
-            <button
-              onClick={() => playSound(daytimeForrestBonfireAudio, setDaytimeForrestPlaying, daytimeForrestVolume)}
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
-            >
-              {daytimeForrestPlaying ? "Stop Daytime Forrest Bonfire" : "Play Daytime Forrest Bonfire"}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={daytimeForrestVolume}
-              onChange={(e) => setDaytimeForrestVolume(parseFloat(e.target.value))}
-              className="mt-2 w-full"
-              style={{ accentColor: '#7886C7' }}
-            />
-          </div>
-          <div className="mt-4">
-            <button
-              onClick={() => playSound(thunderWithBirdsAndFliesAudio, setThunderBirdsPlaying, thunderBirdsVolume)}
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7] mt-4"
-            >
-              {thunderBirdsPlaying ? "Stop Thunder with Birds and Flies" : "Play Thunder with Birds and Flies"}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={thunderBirdsVolume}
-              onChange={(e) => setThunderBirdsVolume(parseFloat(e.target.value))}
-              className="mt-2 w-full"
-              style={{ accentColor: '#7886C7' }}
-            />
-          </div>
-          <div className="mt-4">
-            <button
-              onClick={() => playSound(waterLappingWind1Audio, setWaterLappingPlaying, waterLappingVolume)}
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7] mt-4"
-            >
-              {waterLappingPlaying ? "Stop Water Lapping Wind" : "Play Water Lapping Wind"}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={waterLappingVolume}
-              onChange={(e) => setWaterLappingVolume(parseFloat(e.target.value))}
-              className="mt-2 w-full"
-              style={{ accentColor: '#7886C7' }}
-            />
-          </div>
-          <div className="mt-4">
-            <button
-              onClick={() => playSound(waterRunningByAudio, setWaterRunningPlaying, waterRunningVolume)}
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7] mt-4"
-            >
-              {waterRunningPlaying ? "Stop Water Running By" : "Play Water Running By"}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={waterRunningVolume}
-              onChange={(e) => setWaterRunningVolume(parseFloat(e.target.value))}
-              className="mt-2 w-full"
-              style={{ accentColor: '#7886C7' }}
-            />
-          </div>
-          <div className="mt-4">
-            <button
-              onClick={() => playSound(windQuietCreaksAudio, setWindQuietPlaying, windQuietVolume)}
-              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7] mt-4"
-            >
-              {windQuietPlaying ? "Stop Wind Quiet Creaks" : "Play Wind Quiet Creaks"}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={windQuietVolume}
-              onChange={(e) => setWindQuietVolume(parseFloat(e.target.value))}
-              className="mt-2 w-full"
-              style={{ accentColor: '#7886C7' }}
-            />
-          </div>
-        </div>
       </div>
-      <audio ref={daytimeForrestBonfireAudio} src="/audio/DaytimeForrestBonfire.mp3" loop />
-      <audio ref={thunderWithBirdsAndFliesAudio} src="/audio/ThunderwithBirdsandFlies.mp3" loop />
-      <audio ref={waterLappingWind1Audio} src="/audio/WaterLappingWind (1).mp3" loop />
-      <audio ref={waterRunningByAudio} src="/audio/WaterRunningBy.mp3" loop />
-      <audio ref={windQuietCreaksAudio} src="/audio/WindQuietCreaks.mp3" loop />
     </div>
   );
 }

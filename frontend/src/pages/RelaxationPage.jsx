@@ -1,6 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 function RelaxationPage() {
+
+  const daytimeForrestBonfireAudio = useRef(null);
+  const thunderWithBirdsAndFliesAudio = useRef(null);
+  const waterLappingWind1Audio = useRef(null);
+  const waterRunningByAudio = useRef(null);
+  const windQuietCreaksAudio = useRef(null);
+
   const [inputs, setInputs] = useState({
     fallAsleep: "",
     wakeup: "",

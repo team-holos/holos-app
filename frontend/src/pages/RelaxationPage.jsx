@@ -3,7 +3,6 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import SleepTrackerRelax from "../components/SleepTrackerRelax";
 import AlarmClock from "../components/AlarmClock";
-import SoundPlayer from "../components/SoundPlayer";
 
 const RelaxationPage = () => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -43,9 +42,7 @@ const RelaxationPage = () => {
             <div className="p-6 bg-purple-50 rounded-xl shadow-md md:col-start-2">
               <AlarmClock />
             </div>
-            <div className="p-6 bg-blue-50 rounded-xl shadow-md">
-              <SoundPlayer />
-            </div>
+
             <div className="col-span-3 p-6 bg-green-50 rounded-xl shadow-md">
               <h2 className="text-xl font-semibold mb-4">Kalender</h2>
               <Calendar onClickDay={handleDateClick} />

@@ -6,22 +6,26 @@ import AlarmClock from "../components/AlarmClock";
 import SoundPlayer from "../components/SoundPlayer";
 
 const RelaxationPage = () => {
-  const [date, setDate] = useState(new Date());
-  const [entries, setEntries] = useState([]);
-  const [newEntry, setNewEntry] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [eventText, setEventText] = useState("");
+  const [events, setEvents] = useState({});
 
-  const handleDateChange = (date) => {
-    setDate(date);
+  const handleDateClick = (date) => {
+    setSelectedDate(date);
   };
 
-  const handleAddEntry = () => {
-    if (newEntry.trim() !== "") {
-      const entry = {
-        date: date.toDateString(),
-        text: newEntry,
-      };
-      setEntries([...entries, entry]);
-      setNewEntry("");
+  const handleEventTextChange = (event) => {
+    setEventText(event.target.value);
+  };
+
+  const addEvent = () => {
+    if (selectedDate && eventText.trim() !== "") {
+      const dateString = selectedDate.toDateString();
+      setEvents({
+        ...events,
+        [dateString]: [...(events[dateString] || []), eventText],
+      });
+      setEventText("");
     }
   };
 
@@ -36,7 +40,7 @@ const RelaxationPage = () => {
             <div className="p-6 bg-indigo-50 rounded-xl shadow-md">
               <SleepTrackerRelax />
             </div>
-            <div className="p-6 bg-purple-50 rounded-xl shadow-md">
+            <div className="p-6 bg-purple-50 rounded-xl shadow-md md:col-start-2">
               <AlarmClock />
             </div>
             <div className="p-6 bg-blue-50 rounded-xl shadow-md">
@@ -44,31 +48,32 @@ const RelaxationPage = () => {
             </div>
             <div className="col-span-3 p-6 bg-green-50 rounded-xl shadow-md">
               <h2 className="text-xl font-semibold mb-4">Kalender</h2>
-              <Calendar onChange={handleDateChange} value={date} />
-              <div className="mt-4">
-                <input
-                  type="text"
-                  value={newEntry}
-                  onChange={(e) => setNewEntry(e.target.value)}
-                  placeholder="Neuer Eintrag"
-                  className="border rounded p-2 w-full mb-2"
-                />
-                <button
-                  onClick={handleAddEntry}
-                  className="bg-indigo-600 text-white py-2 px-4 rounded"
-                >
-                  Eintrag hinzufügen
-                </button>
-              </div>
-              <ul className="mt-4">
-                {entries
-                  .filter((entry) => entry.date === date.toDateString())
-                  .map((entry, index) => (
-                    <li key={index} className="border rounded p-2 mb-2">
-                      {entry.text}
-                    </li>
-                  ))}
-              </ul>
+              <Calendar onClickDay={handleDateClick} />
+              {selectedDate && (
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold mb-2">Ereignis hinzufügen</h3>
+                  <p className="mb-2">Datum: {selectedDate.toDateString()}</p>
+                  <textarea
+                    value={eventText}
+                    onChange={handleEventTextChange}
+                    className="border rounded-md p-2 w-full mb-4"
+                    placeholder="Ereignis eingeben"
+                  />
+                  <button onClick={addEvent} className="px-4 py-2 bg-indigo-500 text-white rounded-md">
+                    Hinzufügen
+                  </button>
+                </div>
+              )}
+              {selectedDate && events[selectedDate.toDateString()] && (
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold mb-2">Ereignisse</h3>
+                  <ul>
+                    {events[selectedDate.toDateString()].map((event, index) => (
+                      <li key={index}>{event}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>

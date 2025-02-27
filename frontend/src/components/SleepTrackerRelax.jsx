@@ -1,164 +1,163 @@
-import React, { useState } from "react";
-import { Bar } from "react-chartjs-2";
+import React, { useState, useEffect } from "react";
 
-function SleepTrackerRelax() {
-  const [fallAsleep, setFallAsleep] = useState("");
-  const [wakeup, setWakeup] = useState("");
+const SleepTrackerRelax = () => {
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [sleepData, setSleepData] = useState(null);
-  const [error, setError] = useState("");
-  const [sleepDuration, setSleepDuration] = useState(null);
+  const [sleepQuality, setSleepQuality] = useState("");
+  const [mood, setMood] = useState("");
+  const [sleepHistory, setSleepHistory] = useState([]);
+  const [averageSleepDuration, setAverageSleepDuration] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setError("");
-    setSleepDuration(null);
-
-    if (!fallAsleep || !wakeup) {
-      setError("Bitte füllen Sie beide Felder aus.");
-      return;
-    }
-
-    const fallAsleepMinutes = timeToMinutes(fallAsleep);
-    const wakeupMinutes = timeToMinutes(wakeup);
-
-    if (wakeupMinutes <= fallAsleepMinutes) {
-      setError("Die Aufwachzeit muss nach der Einschlafzeit liegen.");
-      return;
-    }
-
-    setSleepData({ fallAsleep, wakeup });
-    setSleepDuration(calculateSleepDuration(fallAsleepMinutes, wakeupMinutes));
-
-    console.log("handleSubmit: sleepData", sleepData);
-    console.log("handleSubmit: sleepDuration", sleepDuration);
-    console.log("handleSubmit: parseTime(sleepData.fallAsleep)", parseTime(sleepData.fallAsleep));
-    console.log("handleSubmit: parseTime(sleepData.wakeup)", parseTime(sleepData.wakeup));
-    console.log("handleSubmit: timeToMinutes(fallAsleep)", timeToMinutes(fallAsleep));
-    console.log("handleSubmit: timeToMinutes(wakeup)", timeToMinutes(wakeup));
-    console.log("handleSubmit: calculateSleepDuration(fallAsleepMinutes, wakeupMinutes)", calculateSleepDuration(fallAsleepMinutes, wakeupMinutes));
-    console.log("handleSubmit: formatSleepDuration(sleepDuration)", formatSleepDuration(sleepDuration));
+  const handleStartTimeChange = (event) => {
+    setStartTime(event.target.value);
   };
 
-  const chartData = sleepData
-    ? {
-        labels: ["Schlafzeiten"],
-        datasets: [
-          {
-            label: "Einschlafzeit",
-            data: [parseTime(sleepData.fallAsleep)],
-            backgroundColor: "rgba(54, 162, 235, 0.8)",
-          },
-          {
-            label: "Aufwachzeit",
-            data: [parseTime(sleepData.wakeup)],
-            backgroundColor: "rgba(255, 99, 132, 0.8)",
-          },
-        ],
+  const handleEndTimeChange = (event) => {
+    setEndTime(event.target.value);
+  };
+
+  const calculateSleepData = () => {
+    if (startTime && endTime) {
+      const start = new Date(`2000-01-01T${startTime}`);
+      const end = new Date(`2000-01-01T${endTime}`);
+      let duration = end - start;
+
+      if (duration < 0) {
+        duration += 24 * 60 * 60 * 1000;
       }
-    : null;
 
-  const chartOptions = {
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          callback: function (value, index, values) {
-            return formatTime(value);
-          },
-        },
-      },
-      x: {
-        title: {
-          display: true,
-          text: "Zeit",
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: "top",
-      },
-    },
+      const hours = Math.floor(duration / (1000 * 60 * 60));
+      const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+
+      const newSleepData = {
+        startTime,
+        endTime,
+        duration: `${hours}h ${minutes}m`,
+        sleepQuality,
+        mood,
+      };
+
+      setSleepData(newSleepData);
+      setSleepHistory([...sleepHistory, newSleepData]);
+      calculateAverageSleepDuration([...sleepHistory, newSleepData]);
+    }
   };
 
-  function parseTime(timeString) {
-    if (!timeString) return 0;
-    const [hours, minutes] = timeString.split(":").map(Number);
-    const parsedTime = hours + minutes / 60;
-    console.log("parseTime: timeString", timeString, "parsedTime", parsedTime);
-    return parsedTime;
-  }
-
-  function formatTime(timeValue) {
-    const hours = Math.floor(timeValue);
-    const minutes = Math.round((timeValue - hours) * 60);
-    const formattedTime = `${hours}:${minutes < 10 ? "0" : ""}${minutes}`;
-    console.log("formatTime: timeValue", timeValue, "formattedTime", formattedTime);
-    return formattedTime;
-  }
-
-  function timeToMinutes(timeString) {
-    const [hours, minutes] = timeString.split(":").map(Number);
-    const minutesValue = hours * 60 + minutes;
-    console.log("timeToMinutes: timeString", timeString, "minutesValue", minutesValue);
-    return minutesValue;
-  }
-
-  function calculateSleepDuration(fallAsleepMinutes, wakeupMinutes) {
-    let duration = wakeupMinutes - fallAsleepMinutes;
-    if (duration < 0) {
-      duration += 24 * 60;
+  const calculateAverageSleepDuration = (history) => {
+    if (history.length > 0) {
+      let totalDuration = 0;
+      history.forEach((entry) => {
+        const [hours, minutes] = entry.duration.split("h ").map((str) => parseInt(str));
+        totalDuration += hours * 60 + minutes;
+      });
+      const averageMinutes = totalDuration / history.length;
+      const avgHours = Math.floor(averageMinutes / 60);
+      const avgMinutes = Math.round(averageMinutes % 60);
+      setAverageSleepDuration(`${avgHours}h ${avgMinutes}m`);
+    } else {
+      setAverageSleepDuration("");
     }
-    console.log("calculateSleepDuration: fallAsleepMinutes", fallAsleepMinutes, "wakeupMinutes", wakeupMinutes, "duration", duration);
-    return duration;
-  }
+  };
 
-  function formatSleepDuration(durationMinutes) {
-    const hours = Math.floor(durationMinutes / 60);
-    const minutes = durationMinutes % 60;
-    const formattedDuration = `${hours} Stunden und ${minutes} Minuten`;
-    console.log("formatSleepDuration: durationMinutes", durationMinutes, "formattedDuration", formattedDuration);
-    return formattedDuration;
-  }
+  const handleSleepQualityChange = (event) => {
+    setSleepQuality(event.target.value);
+  };
 
-  console.log("render: chartData", chartData);
-  console.log("render: chartOptions", chartOptions);
+  const handleMoodChange = (event) => {
+    setMood(event.target.value);
+  };
+
+  useEffect(() => {
+    calculateAverageSleepDuration(sleepHistory);
+  }, [sleepHistory]);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Schlaf-Tracker</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Einschlafzeit:
-          <input
-            type="time"
-            value={fallAsleep}
-            onChange={(e) => setFallAsleep(e.target.value)}
-            placeholder="--:--"
-          />
+    <div className="p-4 border rounded">
+      <h2 className="text-lg font-semibold mb-4">Schlaf-Tracker</h2>
+      <div className="mb-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Einschlafzeit
         </label>
-        <label>
-          Aufwachzeit:
-          <input
-            type="time"
-            value={wakeup}
-            onChange={(e) => setWakeup(e.target.value)}
-            placeholder="--:--"
-          />
+        <input
+          type="time"
+          value={startTime}
+          onChange={handleStartTimeChange}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div className="mb-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Aufwachzeit
         </label>
-        <button type="submit" style={{ margin: "10px" }}>
-          Diagramm anzeigen
-        </button>
-        <button type="submit">Senden</button>
-      </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {chartData && <Bar data={chartData} options={chartOptions} />}
-      {sleepDuration !== null && (
-        <p>Schlafdauer: {formatSleepDuration(sleepDuration)}</p>
+        <input
+          type="time"
+          value={endTime}
+          onChange={handleEndTimeChange}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        />
+      </div>
+      <button
+        onClick={calculateSleepData}
+        className="bg-[#7886C7] text-white py-2 px-4 rounded mb-4"
+      >
+        Schlafdauer berechnen
+      </button>
+      {sleepData && <p>Schlafdauer: {sleepData.duration}</p>}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Schlafqualität
+        </label>
+        <select
+          value={sleepQuality}
+          onChange={handleSleepQualityChange}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option value="">Auswählen...</option>
+          <option value="sehr gut">Sehr gut</option>
+          <option value="gut">Gut</option>
+          <option value="mittel">Mittel</option>
+          <option value="schlecht">Schlecht</option>
+          <option value="sehr schlecht">Sehr schlecht</option>
+        </select>
+      </div>
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Stimmung
+        </label>
+        <select
+          value={mood}
+          onChange={handleMoodChange}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option value="">Auswählen...</option>
+          <option value="sehr gut">Sehr gut</option>
+          <option value="gut">Gut</option>
+          <option value="neutral">Neutral</option>
+          <option value="schlecht">Schlecht</option>
+          <option value="sehr schlecht">Sehr schlecht</option>
+        </select>
+      </div>
+      {sleepHistory.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">Schlafhistorie</h3>
+          <ul>
+            {sleepHistory.map((entry, index) => (
+              <li key={index} className="border rounded p-2 mb-2">
+                Einschlafzeit: {entry.startTime}, Aufwachzeit: {entry.endTime}, Schlafdauer: {entry.duration}, Schlafqualität: {entry.sleepQuality}, Stimmung: {entry.mood}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {averageSleepDuration && (
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">Durchschnittliche Schlafdauer</h3>
+          <p>{averageSleepDuration}</p>
+        </div>
       )}
     </div>
   );
-}
+};
 
 export default SleepTrackerRelax;

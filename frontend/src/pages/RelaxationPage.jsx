@@ -1,254 +1,84 @@
 import React, { useState } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import SleepTrackerRelax from "../components/SleepTrackerRelax";
+import AlarmClock from "../components/AlarmClock";
 
-function RelaxationPage() {
-  const [inputs, setInputs] = useState({
-    fallAsleep: "",
-    wakeup: "",
-    sleepQuality: "",
-    mood: "",
-  });
-  const [sleepPhases, setSleepPhases] = useState([]);
-  const [alarmTime, setAlarmTime] = useState("");
-  const [alarmSet, setAlarmSet] = useState(false);
+const RelaxationPage = () => {
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [eventText, setEventText] = useState("");
+  const [events, setEvents] = useState({});
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setInputs((prevInputs) => ({ ...prevInputs, [name]: value }));
+  const handleDateClick = (date) => {
+    setSelectedDate(date);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Eingaben:", inputs);
-    const phases = generateSleepPhases(inputs.fallAsleep, inputs.wakeup);
-    setSleepPhases(phases);
-    console.log("Schlafphasen:", phases);
+  const handleEventTextChange = (event) => {
+    setEventText(event.target.value);
   };
 
-  const generateSleepPhases = (fallAsleep, wakeup) => {
-    if (!fallAsleep || !wakeup) return [];
-
-    let fallAsleepMinutes = timeToMinutes(fallAsleep);
-    let wakeupMinutes = timeToMinutes(wakeup);
-    let totalSleepMinutes = wakeupMinutes - fallAsleepMinutes;
-    if (totalSleepMinutes < 0) totalSleepMinutes += 24 * 60;
-
-    const leichtschlafMinutes = Math.round(totalSleepMinutes * 0.7);
-    const tiefschlafMinutes = Math.round(totalSleepMinutes * 0.3);
-
-    let currentTime = fallAsleepMinutes;
-    const phases = [];
-
-    phases.push({
-      start: minutesToTime(currentTime),
-      end: minutesToTime(currentTime + Math.round(leichtschlafMinutes / 2)),
-      type: "Einschlafphase",
-    });
-    currentTime += Math.round(leichtschlafMinutes / 2);
-
-    phases.push({
-      start: minutesToTime(currentTime),
-      end: minutesToTime(currentTime + tiefschlafMinutes),
-      type: "Tiefschlaf",
-    });
-    currentTime += tiefschlafMinutes;
-
-    phases.push({
-      start: minutesToTime(currentTime),
-      end: wakeup,
-      type: "Aufwachphase",
-    });
-
-    return phases;
-  };
-
-  const timeToMinutes = (timeString) => {
-    if (!timeString) return 0;
-    const [hours, minutes] = timeString.split(":").map(Number);
-    return hours * 60 + minutes;
-  };
-
-  const minutesToTime = (minutes) => {
-    const hours = Math.floor(minutes / 60) % 24;
-    const mins = minutes % 60;
-    return `${hours < 10 ? "0" : ""}${hours}:${mins < 10 ? "0" : ""}${mins}`;
-  };
-
-  const handleAlarmChange = (event) => {
-    setAlarmTime(event.target.value);
-  };
-
-  const setAlarm = () => {
-    if (!alarmTime) return;
-
-    const now = new Date();
-    const alarmDate = new Date(now.toDateString() + " " + alarmTime);
-
-    if (alarmDate <= now) {
-      alarmDate.setDate(alarmDate.getDate() + 1);
+  const addEvent = () => {
+    if (selectedDate && eventText.trim() !== "") {
+      const dateString = selectedDate.toDateString();
+      setEvents({
+        ...events,
+        [dateString]: [...(events[dateString] || []), eventText],
+      });
+      setEventText("");
     }
-    const timeUntilAlarm = alarmDate - now;
-
-    setTimeout(() => {
-      alert("Weckzeit!");
-      setAlarmSet(false);
-    }, timeUntilAlarm);
-
-    setAlarmSet(true);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-6 flex flex-col sm:flex-row justify-center sm:py-12">
-      <div className="relative py-3 sm:max-w-xl sm:mx-auto flex-1">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#A9B2D8] to-[#7886C7] shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
-        <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-20">
-          <h1 className="text-2xl font-semibold text-center text-[#2D336B] mb-8">
-            Erholung
-          </h1>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label
-                htmlFor="fallAsleep"
-                className="block text-sm font-medium text-[#2D336B]"
-              >
-                Einschlafzeit
-              </label>
-              <input
-                type="time"
-                name="fallAsleep"
-                id="fallAsleep"
-                value={inputs.fallAsleep}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-[#A9B2D8] shadow-sm focus:border-[#7886C7] focus:ring focus:ring-[#A9B2D8] focus:ring-opacity-50"
+    <div className="min-h-screen bg-gradient-to-b from-indigo-200 to-purple-200 p-8">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-semibold text-indigo-800">Entspannungsseite</h1>
+        </div>
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="bg-white rounded-2xl shadow-md p-8 border border-gray-200 flex-1">
+            <SleepTrackerRelax />
+          </div>
+          <div className="bg-white rounded-2xl shadow-md p-8 border border-gray-200 flex-1">
+            <AlarmClock />
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl shadow-md p-8 border border-gray-200 mt-8">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">Kalender</h2>
+          <Calendar onClickDay={handleDateClick} className="w-full" />
+          {selectedDate && (
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">Ereignis hinzufügen</h3>
+              <p className="mb-4 text-gray-600">Datum: {selectedDate.toDateString()}</p>
+              <textarea
+                value={eventText}
+                onChange={handleEventTextChange}
+                className="border rounded-md p-3 w-full mb-6 text-gray-700 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Ereignis eingeben"
               />
-            </div>
-            <div>
-              <label
-                htmlFor="wakeup"
-                className="block text-sm font-medium text-[#2D336B]"
-              >
-                Aufwachzeit
-              </label>
-              <input
-                type="time"
-                name="wakeup"
-                id="wakeup"
-                value={inputs.wakeup}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-[#A9B2D8] shadow-sm focus:border-[#7886C7] focus:ring focus:ring-[#A9B2D8] focus:ring-opacity-50"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="sleepQuality"
-                className="block text-sm font-medium text-[#2D336B]"
-              >
-                Schlafqualität
-              </label>
-              <select
-                name="sleepQuality"
-                id="sleepQuality"
-                value={inputs.sleepQuality}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-[#A9B2D8] shadow-sm focus:border-[#7886C7] focus:ring focus:ring-[#A9B2D8] focus:ring-opacity-50"
-              >
-                <option value="">Bitte wählen</option>
-                <option value="gut">Gut</option>
-                <option value="mittel">Mittel</option>
-                <option value="schlecht">Schlecht</option>
-              </select>
-            </div>
-            <div>
-              <label
-                htmlFor="mood"
-                className="block text-sm font-medium text-[#2D336B]"
-              >
-                Stimmung
-              </label>
-              <select
-                name="mood"
-                id="mood"
-                value={inputs.mood}
-                onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-[#A9B2D8] shadow-sm focus:border-[#7886C7] focus:ring focus:ring-[#A9B2D8] focus:ring-opacity-50"
-              >
-                <option value="">Bitte wählen</option>
-                <option value="gut">Gut</option>
-                <option value="neutral">Neutral</option>
-                <option value="schlecht">Schlecht</option>
-              </select>
-            </div>
-            <div>
               <button
-                type="submit"
-                className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+                onClick={addEvent}
+                className="px-6 py-3 bg-[#7886C7] text-white rounded-md hover:bg-[#5A69A7] transition duration-300"
               >
-                Daten speichern
+                Hinzufügen
               </button>
             </div>
-          </form>
-          {sleepPhases.length > 0 && (
+          )}
+          {selectedDate && events[selectedDate.toDateString()] && (
             <div className="mt-8">
-              <h2 className="text-xl font-semibold text-[#2D336B] mb-4">
-                Schlafphasen
-              </h2>
-              <table className="w-full table-auto">
-                <thead>
-                  <tr>
-                    <th className="text-left py-2 px-4">Phase</th>
-                    <th className="text-left py-2 px-4">Start</th>
-                    <th className="text-left py-2 px-4">Ende</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sleepPhases.map((phase, index) => (
-                    <tr key={index} className="border-t">
-                      <td className="py-2 px-4">{phase.type}</td>
-                      <td className="py-2 px-4">{phase.start}</td>
-                      <td className="py-2 px-4">{phase.end}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">Ereignisse</h3>
+              <ul className="list-disc list-inside text-gray-600">
+                {events[selectedDate.toDateString()].map((event, index) => (
+                  <li key={index} className="mb-2">
+                    {event}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </div>
       </div>
-      <div className="relative py-3 sm:max-w-xs sm:mx-auto mt-8 sm:mt-0 flex-1">
-        <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-10">
-          <h2 className="text-2xl font-semibold text-center text-[#2D336B] mb-8">
-            Wecker
-          </h2>
-          <div className="space-y-6">
-            <div>
-              <label
-                htmlFor="alarmTime"
-                className="block text-sm font-medium text-[#2D336B]"
-              >
-                Weckzeit stellen
-              </label>
-              <input
-                type="time"
-                name="alarmTime"
-                id="alarmTime"
-                value={alarmTime}
-                onChange={handleAlarmChange}
-                className="mt-1 block w-full rounded-md border-[#A9B2D8] shadow-sm focus:border-[#7886C7] focus:ring focus:ring-[#A9B2D8] focus:ring-opacity-50"
-              />
-            </div>
-            <div>
-              <button
-                type="button"
-                onClick={setAlarm}
-                className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
-              >
-                {alarmSet ? "Wecker gestellt" : "Wecker stellen"}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
-}
+};
 
 export default RelaxationPage;

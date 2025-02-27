@@ -20,12 +20,12 @@ const AlarmClock = () => {
 
         setAlarmInterval(
           setTimeout(() => {
-            alert("Aufwachen!");
+            alert("Wecker!");
             setAlarmActive(false);
           }, timeUntilAlarm)
         );
       } else {
-        alert("Bitte eine Zeit in der Zukunft wählen.");
+        alert("Bitte stelle deinen Wecker.");
       }
     }
   };

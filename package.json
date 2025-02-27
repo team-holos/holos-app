@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "react-timer-hook": "^3.0.8",
+    "use-sound": "^5.0.0"
+  }
+}

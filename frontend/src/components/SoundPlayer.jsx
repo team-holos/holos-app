@@ -13,7 +13,7 @@ const SoundPlayer = () => {
   const [playSound, { stop }] = useSound(null);
 
   const handlePlaySound = (url) => {
-    stop(); // Aktuellen Sound stoppen, falls vorhanden
+    stop(); 
     playSound(url);
   };
 

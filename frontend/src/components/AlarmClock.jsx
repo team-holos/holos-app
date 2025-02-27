@@ -25,7 +25,7 @@ const AlarmClock = () => {
           }, timeUntilAlarm)
         );
       } else {
-        alert("Bitte stelle deinen Wecker.");
+        alert("Bitte eine Zeit in der Zukunft wählen.");
       }
     }
   };
@@ -48,27 +48,29 @@ const AlarmClock = () => {
   return (
     <div className="p-4 border rounded">
       <h2 className="text-lg font-semibold mb-4">Wecker</h2>
-      <input
-        type="time"
-        value={alarmTime}
-        onChange={handleAlarmTimeChange}
-        className="border rounded p-2"
-      />
-      {alarmActive ? (
-        <button
-          className="bg-red-600 text-white py-2 px-4 rounded ml-2"
-          onClick={handleCancelAlarm}
-        >
-          Alarm abbrechen
-        </button>
-      ) : (
-        <button
-          className="bg-indigo-600 text-white py-2 px-4 rounded ml-2"
-          onClick={handleSetAlarm}
-        >
-          Alarm stellen
-        </button>
-      )}
+      <div className="flex flex-col">
+        <input
+          type="time"
+          value={alarmTime}
+          onChange={handleAlarmTimeChange}
+          className="border rounded p-2 mb-2"
+        />
+        {alarmActive ? (
+          <button
+            className="bg-gray-500 text-white py-2 px-4 rounded" 
+            onClick={handleCancelAlarm}
+          >
+            Alarm abbrechen
+          </button>
+        ) : (
+          <button
+            className="bg-[#7886C7] text-white py-2 px-4 rounded"
+            onClick={handleSetAlarm}
+          >
+            Alarm stellen
+          </button>
+        )}
+      </div>
     </div>
   );
 };

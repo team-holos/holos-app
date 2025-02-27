@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import SleepTracker from "../components/SleepTracker";
+import SleepTrackerRelax from "../components/SleepTrackerRelax";
 import AlarmClock from "../components/AlarmClock";
 import SoundPlayer from "../components/SoundPlayer";
 
@@ -34,7 +34,7 @@ const RelaxationPage = () => {
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-6 bg-indigo-50 rounded-xl shadow-md">
-              <SleepTracker />
+              <SleepTrackerRelax />
             </div>
             <div className="p-6 bg-purple-50 rounded-xl shadow-md">
               <AlarmClock />

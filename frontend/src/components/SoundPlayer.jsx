@@ -7,7 +7,7 @@ const SoundPlayer = () => {
     { id: 2, name: "Thunder with Birds and Flies", url: "/audio/ThunderwithBirdsandFlies.mp3" },
     { id: 3, name: "Water Lapping Wind", url: "/audio/WaterLappingWind (1).mp3" },
     { id: 4, name: "Water Running By", url: "/audio/WaterRunningBy.mp3" },
-    { id: 5, name: "Wind Quiet Creaks", url: "/audio/Wind Quiet Creaks.mp3" },
+    { id: 5, name: "Wind Quiet Creaks", url: "/audio/WindQuietCreaks.mp3" },
   ];
 
   const [playSound, { stop }] = useSound(null);

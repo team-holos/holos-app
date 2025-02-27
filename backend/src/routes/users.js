@@ -15,4 +15,20 @@ router.get("/", authenticateToken, (req, res) => {
   }
 });
 
+// **Get Logged-In User Profile**
+router.get("/profile", authenticateToken, (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const user = db.prepare("SELECT username FROM users WHERE id = ?").get(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default router;

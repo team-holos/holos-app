@@ -48,17 +48,23 @@ router.get("/training-plan/:user_id", authenticateToken, (req, res) => {
       .prepare("SELECT day, workout_type FROM training_plans WHERE user_id = ?")
       .all(user_id);
 
+    console.log("🔍 Raw DB Results:", results); // Log raw data from SQLite
+
     const trainingPlan = results.reduce((plan, row) => {
       plan[row.day] = row.workout_type;
       return plan;
     }, {});
 
+    console.log("📌 Formatted Training Plan:", trainingPlan); // Log final structure
+
     res.json(trainingPlan);
   } catch (error) {
-    console.error("Error fetching training plan:", error);
+    console.error("🚨 Error fetching training plan:", error);
     res.status(500).json({ error: "Database error", details: error.message });
   }
 });
+
+
 
 /** 
  * 🔹 Log a Workout 

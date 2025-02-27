@@ -48,6 +48,7 @@ function LoginPage() {
       const data = await response.json();
       setSuccessMessage("Login erfolgreich");
       setToken(data.token);
+      localStorage.setItem("user_id", data.user_id);
       navigate("/dashboard");
     } catch (error) {
       setErrorMessage("Es gab ein Problem mit der Verbindung.");

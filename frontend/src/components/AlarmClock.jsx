@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
+import useSound from "use-sound";
+import SoundPlayer from "./SoundPlayer";
+import alarmSound from "/sounds/DaytimeForrestBonfire.mp3";
 
 const AlarmClock = () => {
   const [alarmTime, setAlarmTime] = useState("");
   const [alarmActive, setAlarmActive] = useState(false);
   const [alarmInterval, setAlarmInterval] = useState(null);
+  const [selectedSound, setSelectedSound] = useState(null);
+  const [playAlarmSound] = useSound(alarmSound);
 
   const handleAlarmTimeChange = (event) => {
     setAlarmTime(event.target.value);
@@ -20,6 +25,7 @@ const AlarmClock = () => {
 
         setAlarmInterval(
           setTimeout(() => {
+            playAlarmSound();
             alert("Wecker!");
             setAlarmActive(false);
           }, timeUntilAlarm)

@@ -77,7 +77,6 @@ function SettingsPage() {
         <li>{t("personalData")}</li>
         <li>{t("healthGoals")}</li>
         <li>{t("notificationSettings")}</li>
-        <li>{t("passwordChange")}</li>
       </ul>
 
       <div className="mt-6">

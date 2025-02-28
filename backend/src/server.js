@@ -27,7 +27,7 @@ import journalRoutes from "./routes/journal.js";
 import trainingRoutes from "./routes/training.js";
 
 // Register Routes
-app.use("/auth", authRoutes); 
+app.use("/api/auth", authRoutes);
 app.use("/api/users", authenticateToken, usersRoutes);
 app.use("/api/chat", authenticateToken, chatRoutes);
 app.use("/api/preferences", authenticateToken, preferencesRoutes);

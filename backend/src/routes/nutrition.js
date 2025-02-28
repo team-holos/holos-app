@@ -4,10 +4,29 @@ import authenticateToken from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
+/**
+ * 🔹 GET /api/nutrition/plan - Fetch user's logged meals
+ */
+router.get("/plan", authenticateToken, (req, res) => {
+  const userId = req.user.id;
 
+  try {
+    const stmt = db.prepare("SELECT * FROM nutrition WHERE user_id = ? ORDER BY date DESC");
+    const meals = stmt.all(userId);
+
+    res.json(meals);
+  } catch (error) {
+    console.error("Error fetching meals:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+/**
+ * 🔹 GET /api/nutrition/total - Fetch user's total daily nutrition intake
+ */
 router.get("/total", authenticateToken, (req, res) => {
   const userId = req.user.id;
-  const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
 
   try {
     const query = db.prepare(`
@@ -28,18 +47,34 @@ router.get("/total", authenticateToken, (req, res) => {
   }
 });
 
-
+/**
+ * 🔹 PUT /api/nutrition/goals - Update user's nutrition goals
+ */
 router.put("/goals", authenticateToken, (req, res) => {
   const { calorie_target, protein_target, carbs_target, fats_target } = req.body;
   const userId = req.user.id;
 
   try {
-    const updateQuery = db.prepare(`
-      UPDATE nutrition_goals 
-      SET calorie_target = ?, protein_target = ?, carbs_target = ?, fats_target = ?
-      WHERE user_id = ?
-    `);
-    updateQuery.run(calorie_target, protein_target, carbs_target, fats_target, userId);
+    // Check if user has existing nutrition goals
+    const checkStmt = db.prepare("SELECT COUNT(*) AS count FROM nutrition_goals WHERE user_id = ?");
+    const { count } = checkStmt.get(userId);
+
+    if (count > 0) {
+      // Update existing goals
+      const updateQuery = db.prepare(`
+        UPDATE nutrition_goals 
+        SET calorie_target = ?, protein_target = ?, carbs_target = ?, fats_target = ?
+        WHERE user_id = ?
+      `);
+      updateQuery.run(calorie_target, protein_target, carbs_target, fats_target, userId);
+    } else {
+      // Insert default goals if they don't exist
+      const insertQuery = db.prepare(`
+        INSERT INTO nutrition_goals (user_id, calorie_target, protein_target, carbs_target, fats_target)
+        VALUES (?, ?, ?, ?, ?)
+      `);
+      insertQuery.run(userId, calorie_target, protein_target, carbs_target, fats_target);
+    }
 
     res.json({ message: "Nutrition targets updated successfully!" });
   } catch (error) {
@@ -48,7 +83,9 @@ router.put("/goals", authenticateToken, (req, res) => {
   }
 });
 
-
+/**
+ * 🔹 POST /api/nutrition/plan - Log a new meal
+ */
 router.post("/plan", authenticateToken, (req, res) => {
   const { name, calories, protein, carbs, fats } = req.body;
   const userId = req.user.id;
@@ -71,7 +108,9 @@ router.post("/plan", authenticateToken, (req, res) => {
   }
 });
 
-
+/**
+ * 🔹 DELETE /api/nutrition/plan/:id - Delete a meal
+ */
 router.delete("/plan/:id", authenticateToken, (req, res) => {
   const { id } = req.params;
   const userId = req.user.id;

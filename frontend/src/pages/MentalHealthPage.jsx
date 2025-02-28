@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import MyTimer from "../components/MyTimer";
+import SoundForm from "../components/SoundForm";
 
 // Helper function to ensure dates stay in local time
 const getLocalDateString = (date) => {
@@ -14,6 +16,9 @@ function MentalHealthPage() {
   const [content, setContent] = useState("");
   const [savedDates, setSavedDates] = useState([]);
   const token = localStorage.getItem("token");
+  const time = new Date();
+  time.setSeconds(time.getSeconds() + 600); // 10 minutes timer
+  // time.setSeconds(time.getSeconds() + 3); // 3 seconds timer to try sound effect
 
   // Fetch journal entry for the selected date
   useEffect(() => {
@@ -40,7 +45,9 @@ function MentalHealthPage() {
           return;
         }
         if (res.status === 404) {
-          console.warn(`No journal entry found for ${localDate}, setting empty content.`);
+          console.warn(
+            `No journal entry found for ${localDate}, setting empty content.`
+          );
           if (isMounted) setContent("");
           return;
         }
@@ -129,40 +136,53 @@ function MentalHealthPage() {
   };
 
   return (
-    <div className="text-[#2D336B] p-4 my-4">
-      <h1 className="text-2xl mb-4">Mentale Gesundheit</h1>
-      <ul className="list-disc list-inside">
-        <li>Journaling</li>
-        <li>Meditations-Bereich</li>
-      </ul>
-
-      {/* Journaling Section */}
-      <div className="mt-6 border p-4 rounded-lg shadow-md bg-white">
-        <h2 className="text-xl mb-2">Tägliches Journal</h2>
-        <Calendar
-          onChange={setDate}
-          value={date}
-          tileClassName={({ date }) =>
-            savedDates.includes(getLocalDateString(date)) ? "bg-blue-300" : ""
-          }
-        />
-        <textarea
-          className="w-full mt-4 p-2 border rounded-md"
-          rows="5"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Schreibe deine Gedanken hier..."
-        ></textarea>
-        <button
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
-          onClick={saveJournal}
-        >
-          Speichern
-        </button>
+    <div className="min-h-screen text-[#2D336B] bg-gray-100 py-6 flex flex-col sm:flex-row justify-center sm:py-12">
+      <div className="relative py-3 sm:max-w-xl sm:mx-auto flex-1">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#A9B2D8] to-[#7886C7] shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl"></div>
+        <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-20">
+          {/* Journaling Section */}
+          <div>
+            <h2 className="text-2xl font-semibold text-center mb-8">
+              Tägliches Journal
+            </h2>
+            <Calendar
+              className="rounded"
+              onChange={setDate}
+              value={date}
+              tileClassName={({ date }) =>
+                savedDates.includes(getLocalDateString(date))
+                  ? "bg-[#7886C7]"
+                  : ""
+              }
+            />
+            <textarea
+              className="w-full mt-4 p-2 border rounded-md"
+              rows="5"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Schreibe deine Gedanken hier..."
+            ></textarea>
+            <button
+              // className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md"
+              className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]"
+              onClick={saveJournal}
+            >
+              Speichern
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="relative py-3 sm:max-w-xs sm:mx-auto mt-8 sm:mt-0 flex-1">
+        <div className="relative px-4 py-10 bg-[#E8E8E8] shadow-lg sm:rounded-3xl sm:p-10">
+          <h2 className="text-2xl font-semibold text-center text-[#2D336B] mb-8">
+            Meditations-Bereich
+          </h2>
+          <MyTimer expiryTimestamp={time} />
+          <SoundForm />
+        </div>
       </div>
     </div>
   );
 }
 
 export default MentalHealthPage;
-

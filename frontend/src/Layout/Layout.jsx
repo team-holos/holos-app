@@ -14,7 +14,7 @@ function Layout({ children }) {
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-[#FFF2F2] font-sans">
+    <div className="w-full min-h-screen bg-[#FFF2F2] font-family-roboto">
       <Header />
       {children}
       <Footer />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const SleepTrackerRelax = () => {
+const SleepTrackerRelax = ({ onSleepDataSaved }) => {
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
     const [sleepData, setSleepData] = useState(null);
@@ -41,6 +41,10 @@ const SleepTrackerRelax = () => {
             setSleepData(newSleepData);
             setSleepHistory([...sleepHistory, newSleepData]);
             calculateAverageSleepDuration([...sleepHistory, newSleepData]);
+
+            if (onSleepDataSaved) {
+                onSleepDataSaved(newSleepData);
+            }
         }
     };
 

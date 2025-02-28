@@ -21,7 +21,7 @@ function DashboardPage() {
 
   return (
     <div className="font-roboto text-[#2D336B] p-4 my-4 bg-white rounded-lg shadow-md"> 
-      <h1 className="text-3xl font-bold mb-4 text-center">Willkommen, Benutzer!</h1> 
+      <h1 className="text-3xl font-bold mb-4 text-center">Willkommen, Benutzer! </h1> 
 
       <div className="grid grid-cols-1 gap-4"> 
 

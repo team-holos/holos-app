@@ -5,7 +5,6 @@ const API_URL = import.meta.env.VITE_API_URL.endsWith("/")
   ? import.meta.env.VITE_API_URL.slice(0, -1)
   : import.meta.env.VITE_API_URL;
 
-
 function SettingsPage() {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState("light");
@@ -108,51 +107,51 @@ function SettingsPage() {
           <option value="en">English</option>
         </select>
       </div>
-      <div>
-        <section>
-          <h2 className="text-xl mb-4 max-w-sm and mx-auto">{t("passwordChange")}</h2>
-          <form className="mt-4 space-y-4 lg:mt-5 md:space-y-5" onSubmit={handlePasswordChange}>
+      <div className="mt-8">
+        <section className="max-w-md mx-auto bg-[#FFF2F2] p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-6 text-[#2D336B]">{t("Passwortänderung")}</h2>
+          <form className="space-y-6" onSubmit={handlePasswordChange}>
             <div>
-              <label htmlFor="old-password">{t("Altes Passwort")}</label>
+              <label htmlFor="old-password" className="block text-sm font-medium text-[#2D336B]">{t("Altes Passwort")}</label>
               <input
                 type="password"
                 id="old-password"
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
-                className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-[#FFF2F2] bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                className="mt-1 block w-full px-4 py-2 border border-[#A9B5DF] rounded-md shadow-sm focus:ring-[#2D336B] focus:border-[#2D336B] sm:text-sm"
               />
             </div>
             <div>
-              <label htmlFor="new-password">{t("Neues Passwort")}</label>
+              <label htmlFor="new-password" className="block text-sm font-medium text-[#2D336B]">{t("Neues Passwort")}</label>
               <input
                 type="password"
                 id="new-password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-[#FFF2F2] bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                className="mt-1 block w-full px-4 py-2 border border-[#A9B5DF] rounded-md shadow-sm focus:ring-[#2D336B] focus:border-[#2D336B] sm:text-sm"
               />
             </div>
             <div>
-              <label htmlFor="confirm-password">{t("Passwort bestätigen")}</label>
+              <label htmlFor="confirm-password" className="block text-sm font-medium text-[#2D336B]">{t("Passwort bestätigen")}</label>
               <input
                 type="password"
                 id="confirm-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="form-control block w-full px-4 py-2 text-xl font-normal text-gray-700 bg-[#FFF2F2] bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                className="mt-1 block w-full px-4 py-2 border border-[#A9B5DF] rounded-md shadow-sm focus:ring-[#2D336B] focus:border-[#2D336B] sm:text-sm"
               />
             </div>
-            <div className="mt-6 flex space-x-4">
+            <div className="mt-6 flex justify-end space-x-4">
               <button
                 type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                className="bg-[#2D336B] text-white px-4 py-2 rounded-md hover:bg-[#7886C7] transition"
               >
                 {t("save")}
               </button>
               <button
                 type="button"
                 onClick={handleReset}
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
+                className="bg-[#A9B5DF] text-[#2D336B] px-4 py-2 rounded-md hover:bg-[#7886C7] transition"
               >
                 {t("reset")}
               </button>

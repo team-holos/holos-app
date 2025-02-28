@@ -128,7 +128,7 @@ const AlarmClock = () => {
                 </div>
                 {isPlaying && (
                     <button
-                        className="bg-gray-500 text-white py-2 px-4 rounded mt-2"
+                        className="bg-gray-500 text-white py-2 px-4 rounded mt-2 hover:bg-gray-600 transition duration-300"
                         onClick={handleStopSound}
                     >
                         Stop
@@ -136,14 +136,14 @@ const AlarmClock = () => {
                 )}
                 {alarmActive ? (
                     <button
-                        className="bg-gray-500 text-white py-2 px-4 rounded mt-2"
+                        className="bg-gray-500 text-white py-2 px-4 rounded mt-2 hover:bg-gray-600 transition duration-300"
                         onClick={handleCancelAlarm}
                     >
                         Alarm abbrechen
                     </button>
                 ) : (
                     <button
-                        className="bg-[#7886C7] text-white py-2 px-4 rounded mt-2"
+                        className="bg-[#7886C7] text-white py-2 px-4 rounded mt-2 hover:bg-[#5A69A7] transition duration-300"
                         onClick={handleSetAlarm}
                     >
                         Alarm stellen

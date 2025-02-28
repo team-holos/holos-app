@@ -18,6 +18,7 @@ app.use(cors());
 const PORT = process.env.API_PORT || 3000;
 
 // Import Routes
+import authRoutes from "./routes/auth.js";
 import usersRoutes from "./routes/users.js";
 import nutritionRoutes from "./routes/nutrition.js";
 import chatRoutes from "./routes/chat.js";
@@ -26,6 +27,7 @@ import journalRoutes from "./routes/journal.js";
 import trainingRoutes from "./routes/training.js";
 
 // Register Routes
+app.use("/auth", authRoutes); 
 app.use("/api/users", authenticateToken, usersRoutes);
 app.use("/api/chat", authenticateToken, chatRoutes);
 app.use("/api/preferences", authenticateToken, preferencesRoutes);
@@ -121,7 +123,7 @@ app.get("/api/workout-log/:user_id", authenticateToken, (req, res) => {
   }
 });
 
-// 🔹 **Register User**
+/* // 🔹 **Register User**
 app.post("/auth/register", (req, res) => {
   const { username, email, password, passwordRetype } = req.body;
 
@@ -147,24 +149,59 @@ app.post("/auth/register", (req, res) => {
 // 🔹 **Login User**
 app.post("/auth/login", (req, res) => {
   const { email, password } = req.body;
-
+  
   if (!email || !password) {
     return res.status(400).json({ error: "Email and password are required" });
   }
-
+  
   const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
   if (!user) {
     return res.status(400).json({ error: "User not found" });
   }
-
+  
   if (!bcrypt.compareSync(password, user.password)) {
     return res.status(400).json({ error: "Incorrect password" });
   }
-
+  
   const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
+  
   res.json({ message: "Login successful", token });
 });
+
+app.post("/auth/changePassword", async (req, res) => {
+  
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+    
+    const statement = database.db.prepare("SELECT * FROM users WHERE id = ?");
+    console.log("user", userId);
+    const user = statement.get(userId);
+     
+     if (!user) {
+       return res.status(404).json({ message: "Benutzer nicht gefunden" });
+      }
+      
+      const isValidPassword = await bcrypt.compare(oldPassword, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ message: "Altes Passwort ist falsch" });
+      }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    const updateStatement = database.db.prepare(
+      "UPDATE users SET password = ? WHERE id = ?"
+    );
+    updateStatement.run(hashedPassword, userId);
+
+    res.status(200).json({ message: "Passwort erfolgreich geändert" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Fehler beim Ändern des Passworts", error: error.message });
+  }
+}); */
 
 // Start Server
 app.listen(PORT, () => {

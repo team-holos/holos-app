@@ -61,7 +61,7 @@ function MyTimer({ expiryTimestamp }) {
         <span>{minutes}</span>:
         <span>{seconds}</span>
       </div>
-      <p className="text-xs">{isRunning ? "Running" : "Not running"}</p>
+      <p className="text-xs">{isRunning ? "Timer läuft" : "Timer aus"}</p>
       <div></div>
       <div className="text-[#FFF2F2] text-xs">
         <button onClick={handleStart} className="p-2 border rounded  text-white bg-[#7886C7] hover:bg-[#6875B2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7886C7]">

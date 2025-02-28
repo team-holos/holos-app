@@ -10,13 +10,15 @@ const RelaxationPage = () => {
     const [events, setEvents] = useState({});
 
     useEffect(() => {
+        // Daten aus localStorage laden, falls vorhanden
         const storedEvents = localStorage.getItem("calendarEvents");
         if (storedEvents) {
             setEvents(JSON.parse(storedEvents));
         }
-    }, []);
+    }, []); // Leeres Abhängigkeitsarray, um diesen Effekt nur beim Mounten auszuführen
 
     useEffect(() => {
+        // Daten in localStorage speichern, wenn sich events ändern
         localStorage.setItem("calendarEvents", JSON.stringify(events));
     }, [events]);
 

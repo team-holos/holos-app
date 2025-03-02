@@ -23,12 +23,15 @@ const DailyNutritionProgress = ({ meals }) => {
 
   return (
     <div className="bg-white p-4 shadow-md rounded-lg mb-6">
-      <h2 className="text-lg font-semibold mb-2">Daily Progress</h2>
+      <h2 className="text-lg font-semibold mb-2">Täglicher Fortschritt</h2>
 
       {Object.keys(dailyGoals).map((key) => (
         <div key={key} className="mb-3">
-          <p className="text-sm font-medium capitalize">
-            {key}: {total[key]} / {dailyGoals[key]}
+          <p className="text-sm font-medium">
+            {key === "calories" && "Kalorien"} 
+            {key === "protein" && "Protein (g)"} 
+            {key === "carbs" && "Kohlenhydrate (g)"} 
+            {key === "fats" && "Fette (g)"}: {total[key]} / {dailyGoals[key]}
           </p>
           <div className="w-full bg-gray-200 rounded h-4">
             <div

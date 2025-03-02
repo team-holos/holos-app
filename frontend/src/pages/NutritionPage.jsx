@@ -23,14 +23,14 @@ function NutritionPage() {
       const response = await fetch("http://localhost:3000/api/nutrition/plan", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-
-      if (!response.ok) throw new Error("Failed to fetch meals");
-
+  
+      if (!response.ok) throw new Error("Fehler beim Laden der Mahlzeiten");
+  
       const data = await response.json();
       setMeals(data);
     } catch (err) {
       console.error(err);
-      setError("Error loading meals");
+      setError("Fehler beim Laden der Mahlzeiten");
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ function NutritionPage() {
       !meal.carbs ||
       !meal.fats
     ) {
-      setError("Please fill in all fields");
+      setError("Bitte alle Felder ausfüllen");
       return;
     }
 
@@ -68,14 +68,14 @@ function NutritionPage() {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to add meal");
+      if (!response.ok) throw new Error("Fehler beim Hinzufügen der Mahlzeit");
 
       fetchMeals();
       setMeal({ name: "", calories: "", protein: "", carbs: "", fats: "" });
       setError(null);
     } catch (err) {
       console.error(err);
-      setError("Error adding meal");
+      setError("Fehler beim Hinzufügen der Mahlzeit");
     }
   };
 
@@ -89,23 +89,23 @@ function NutritionPage() {
       fetchMeals();
     } catch (err) {
       console.error(err);
-      setError("Error deleting meal");
+      setError("Fehler beim Löschen der Mahlzeit");
     }
   };
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-6">Nutrition Tracker</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">Ernährungstracker</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 shadow-md rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">Log Your Meal</h2>
+          <h2 className="text-lg font-semibold mb-4">Mahlzeit eintragen</h2>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <input
               className="p-2 border rounded"
               type="text"
               name="name"
-              placeholder="Meal Name"
+              placeholder="Mahlzeitenname"
               value={meal.name}
               onChange={handleInputChange}
             />
@@ -113,7 +113,7 @@ function NutritionPage() {
               className="p-2 border rounded"
               type="number"
               name="calories"
-              placeholder="Calories"
+              placeholder="Kalorien"
               value={meal.calories}
               onChange={handleInputChange}
             />
@@ -129,7 +129,7 @@ function NutritionPage() {
               className="p-2 border rounded"
               type="number"
               name="carbs"
-              placeholder="Carbs (g)"
+              placeholder="Kohlenhydrate (g)"
               value={meal.carbs}
               onChange={handleInputChange}
             />
@@ -137,7 +137,7 @@ function NutritionPage() {
               className="p-2 border rounded col-span-2"
               type="number"
               name="fats"
-              placeholder="Fats (g)"
+              placeholder="Fette (g)"
               value={meal.fats}
               onChange={handleInputChange}
             />
@@ -146,7 +146,7 @@ function NutritionPage() {
             className="bg-blue-500 text-white px-4 py-2 rounded w-full"
             onClick={addMeal}
           >
-            Add Meal
+            Mahlzeit hinzufügen
           </button>
         </div>
 
@@ -154,16 +154,16 @@ function NutritionPage() {
       </div>
 
       <div className="bg-white p-6 shadow-md rounded-lg mt-6">
-        <h2 className="text-lg font-semibold mb-2">Logged Meals</h2>
+        <h2 className="text-lg font-semibold mb-2">Eingetragene Mahlzeiten</h2>
         <table className="w-full border-collapse border border-gray-300">
           <thead>
             <tr className="bg-gray-200">
-              <th className="p-2 border">Meal</th>
-              <th className="p-2 border">Calories</th>
+              <th className="p-2 border">Mahlzeit</th>
+              <th className="p-2 border">Kalorien</th>
               <th className="p-2 border">Protein (g)</th>
-              <th className="p-2 border">Carbs (g)</th>
-              <th className="p-2 border">Fats (g)</th>
-              <th className="p-2 border">Actions</th>
+              <th className="p-2 border">Kohlenhydrate (g)</th>
+              <th className="p-2 border">Fette (g)</th>
+              <th className="p-2 border">Aktionen</th>
             </tr>
           </thead>
           <tbody>
@@ -179,7 +179,7 @@ function NutritionPage() {
                     className="text-red-500"
                     onClick={() => deleteMeal(meal.id)}
                   >
-                    Delete
+                    Löschen
                   </button>
                 </td>
               </tr>

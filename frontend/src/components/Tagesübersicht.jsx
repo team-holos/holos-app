@@ -14,37 +14,43 @@ function Tagesübersicht() {
     fetchWorkoutReminder();
   }, []);
 
-  // Fetch Nutrition Data
   const fetchNutritionSummary = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found");
+      setLoadingNutrition(false);
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:3000/api/nutrition/goals", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!response.ok) throw new Error("Error fetching nutrition data");
+      if (!response.ok) throw new Error("Failed to fetch nutrition goals");
 
       const data = await response.json();
-      console.log("Nutrition Data:", data);
       setNutritionSummary(data);
     } catch (error) {
-      console.error("Failed to load nutrition summary:", error);
+      console.error("Error fetching nutrition data:", error);
       setNutritionSummary({ error: "Fehler beim Laden der Daten" });
     } finally {
       setLoadingNutrition(false);
     }
   };
 
-  // Fetch Total Logged Nutrition Data for Today
   const fetchTotalNutrition = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
     try {
       const response = await fetch("http://localhost:3000/api/nutrition/total", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       if (!response.ok) throw new Error("Error fetching total nutrition");
-      
+
       const data = await response.json();
-      console.log("Today's Total Nutrition:", data);
       setTotalNutrition(data);
     } catch (error) {
       console.error("Failed to load total nutrition:", error);
@@ -54,32 +60,52 @@ function Tagesübersicht() {
   const fetchWorkoutReminder = async () => {
     try {
       const userId = localStorage.getItem("user_id");
-  
+      const token = localStorage.getItem("token");
+
       if (!userId) {
         console.error("User ID not found in localStorage");
         setWorkoutReminder("Fehler beim Laden des Trainings");
         return;
       }
-  
+
+      if (!token) {
+        console.error("JWT Token is missing in localStorage!");
+        setWorkoutReminder("Fehler: Nicht angemeldet.");
+        return;
+      }
+
+      console.log("Using Token:", token); // ✅ Debugging
+      console.log("Fetching training plan for user:", userId);
+
       const response = await fetch(`http://localhost:3000/api/training-plan/${userId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
-  
+
+      console.log("Workout API Response:", response); // ✅ Debugging
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
+
       const data = await response.json();
-      console.log("Workout Plan Data:", data); 
-  
+      console.log("Workout Plan Data:", data); // ✅ Debugging
+
       const today = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(new Date());
-      setWorkoutReminder(data[today] || "Kein Training geplant");
+      console.log("Today is:", today); // ✅ Debugging
+
+      if (data && data[today]) {
+        setWorkoutReminder(`Heute: ${data[today]}`);
+      } else {
+        setWorkoutReminder("Kein Training geplant");
+      }
     } catch (error) {
       console.error("Failed to load workout plan:", error);
       setWorkoutReminder("Fehler beim Laden des Trainings");
+    } finally {
+      setLoadingWorkout(false);
     }
   };
-  
+
   return (
     <div className="bg-white p-6 shadow-md rounded-lg text-center mb-6">
       <h2 className="text-xl font-bold mb-3">Tagesübersicht</h2>
@@ -104,7 +130,11 @@ function Tagesübersicht() {
       {/* Workout Reminder */}
       <div className="mb-4">
         <h3 className="font-medium">Heutiges Training</h3>
-        <p>{workoutReminder}</p>
+        {loadingWorkout ? (
+          <p className="text-gray-500">Lade Trainingsdaten...</p>
+        ) : (
+          <p>{workoutReminder}</p>
+        )}
       </div>
 
       {/* Journal Prompt */}

@@ -8,7 +8,7 @@ function AIChat({ onClose }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
 
-  // Define fetchChatHistory BEFORE using it in useEffect
+  // Abrufen des Chatverlaufs
   const fetchChatHistory = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -34,14 +34,14 @@ function AIChat({ onClose }) {
         }));
         setChatHistory(formattedHistory);
       } else {
-        console.error("Failed to fetch chat history:", historyRes.status);
+        console.error("Fehler beim Abrufen des Chatverlaufs:", historyRes.status);
       }
     } catch (err) {
-      console.error("Error fetching chat history:", err);
+      console.error("Fehler beim Laden des Chatverlaufs:", err);
     }
   };
 
-  // UseEffect that checks authentication & fetches history
+  // Überprüfung der Authentifizierung & Abrufen des Verlaufs
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
@@ -51,7 +51,7 @@ function AIChat({ onClose }) {
     }
   }, []);
 
-  // Hide chat if not authenticated
+  // Chat ausblenden, wenn nicht authentifiziert
   if (!isAuthenticated) return null;
 
   const handleInputChange = (e) => setPrompt(e.target.value);
@@ -65,34 +65,34 @@ function AIChat({ onClose }) {
     try {
       const token = localStorage.getItem("token");
 
-      // Create a copy of chat history & append new user message
+      // Kopie des Chatverlaufs erstellen und neue Nachricht hinzufügen
       const updatedConversation = [
         ...chatHistory,
         { role: "user", content: prompt },
       ];
 
-      // Send updated chat history to AI
+      // Chatverlauf an die KI senden
       const res = await fetch("http://127.0.0.1:1234/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "qwen2.5-7b-instruct-1m",
           messages: updatedConversation,
-          temperature: 0.3,
+          temperature: 0.1,
           max_tokens: 200,
         }),
       });
 
       if (!res.ok) {
-        console.error("HTTP Error:", res.status, res.statusText);
-        throw new Error(`Server Error (${res.status}): ${res.statusText}`);
+        console.error("HTTP-Fehler:", res.status, res.statusText);
+        throw new Error(`Serverfehler (${res.status}): ${res.statusText}`);
       }
 
       const data = await res.json();
-      console.log("API Response:", data);
+      console.log("API Antwort:", data);
 
       let responseContent =
-        data.choices?.[0]?.message?.content?.trim() || "No response available.";
+        data.choices?.[0]?.message?.content?.trim() || "Keine Antwort verfügbar.";
 
       await fetch("http://localhost:3000/api/chat/save", {
         method: "POST",
@@ -115,8 +115,8 @@ function AIChat({ onClose }) {
       ]);
       setResponse(responseContent);
     } catch (err) {
-      console.error("Error fetching or parsing response:", err);
-      setResponse("⚠️ Error: Unable to fetch a response from Holi.");
+      console.error("Fehler beim Abrufen oder Verarbeiten der Antwort:", err);
+      setResponse("⚠️ Fehler: Keine Antwort von Holi verfügbar.");
     } finally {
       setLoading(false);
     }
@@ -130,7 +130,7 @@ function AIChat({ onClose }) {
 
   return (
     <div className="fixed bottom-16 right-8 w-80 bg-white p-4 rounded-lg shadow-lg border border-gray-200">
-      {/* Close Button */}
+      {/* Schließen-Button */}
       <button
         className="absolute top-2 right-2 text-gray-600 hover:text-red-500"
         onClick={onClose}
@@ -138,10 +138,10 @@ function AIChat({ onClose }) {
         ❌
       </button>
 
-      {/* Chat Header */}
-      <h2 className="text-lg font-bold mb-2 text-center">Holos AI Chat</h2>
+      {/* Chat-Header */}
+      <h2 className="text-lg font-bold mb-2 text-center">Holos KI-Chat</h2>
 
-      {/* Chat Messages */}
+      {/* Chat-Nachrichten */}
       <div className="w-full min-h-[100px] max-h-[300px] overflow-y-auto p-2 bg-white border border-gray-300 rounded-md shadow-sm text-gray-800">
         {chatHistory.map((msg, index) => (
           <div
@@ -155,21 +155,21 @@ function AIChat({ onClose }) {
             <ReactMarkdown>{msg.content}</ReactMarkdown>
           </div>
         ))}
-        {loading && <p className="text-gray-500">Loading...</p>}
+        {loading && <p className="text-gray-500">Lädt...</p>}
       </div>
 
-      {/* Input Box */}
+      {/* Eingabefeld */}
       <input
         type="text"
         value={prompt}
         onChange={handleInputChange}
         onKeyDown={fetchResponse}
-        placeholder="Type your question..."
+        placeholder="Gib deine Frage ein..."
         disabled={loading}
         className="w-full p-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2"
       />
 
-      {/* Reset Button */}
+      {/* Zurücksetzen-Button */}
       <button
         onClick={resetChat}
         disabled={loading}
@@ -179,13 +179,12 @@ function AIChat({ onClose }) {
             : "bg-blue-500 hover:bg-blue-600"
         }`}
       >
-        Reset
+        Zurücksetzen
       </button>
 
-      {/* Holi Description */}
+      {/* Holi-Beschreibung */}
       <p className="mt-2 text-xs text-gray-600 text-center">
-        Holi is your AI assistant, ready to help with nutrition, fitness, and
-        journaling.
+        Holi ist dein KI-Assistent und hilft dir bei Ernährung, Fitness und Tagebuchführung.
       </p>
     </div>
   );

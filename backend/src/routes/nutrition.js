@@ -5,18 +5,24 @@ import authenticateToken from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 /**
- * 🔹 GET /api/nutrition/plan - Fetch user's logged meals
+ * 🔹 GET /api/nutrition/goals - Fetch user's nutrition goals
  */
-router.get("/plan", authenticateToken, (req, res) => {
+router.get("/goals", authenticateToken, (req, res) => {
   const userId = req.user.id;
 
   try {
-    const stmt = db.prepare("SELECT * FROM nutrition WHERE user_id = ? ORDER BY date DESC");
-    const meals = stmt.all(userId);
+    const query = db.prepare(
+      "SELECT calorie_target, protein_target, carbs_target, fats_target FROM nutrition_goals WHERE user_id = ?"
+    );
+    const goals = query.get(userId);
 
-    res.json(meals);
+    if (!goals) {
+      return res.status(404).json({ error: "No nutrition goals found" });
+    }
+
+    res.json(goals);
   } catch (error) {
-    console.error("Error fetching meals:", error);
+    console.error("❌ Error fetching nutrition goals:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -26,7 +32,9 @@ router.get("/plan", authenticateToken, (req, res) => {
  */
 router.get("/total", authenticateToken, (req, res) => {
   const userId = req.user.id;
-  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "UTC" }).format(new Date()); // Ensure YYYY-MM-DD format
+
+  console.log(`🟢 Fetching total nutrition for user ${userId} on ${today}`);
 
   try {
     const query = db.prepare(`
@@ -38,11 +46,13 @@ router.get("/total", authenticateToken, (req, res) => {
       FROM nutrition 
       WHERE user_id = ? AND date = ?
     `);
+    
     const result = query.get(userId, today);
+    console.log("🔹 Query Result:", result);
 
     res.json(result);
   } catch (error) {
-    console.error("Error fetching total nutrition:", error);
+    console.error("❌ Error fetching total nutrition:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
@@ -55,12 +65,12 @@ router.put("/goals", authenticateToken, (req, res) => {
   const userId = req.user.id;
 
   try {
-    // Check if user has existing nutrition goals
-    const checkStmt = db.prepare("SELECT COUNT(*) AS count FROM nutrition_goals WHERE user_id = ?");
+    const checkStmt = db.prepare(
+      "SELECT COUNT(*) AS count FROM nutrition_goals WHERE user_id = ?"
+    );
     const { count } = checkStmt.get(userId);
 
     if (count > 0) {
-      // Update existing goals
       const updateQuery = db.prepare(`
         UPDATE nutrition_goals 
         SET calorie_target = ?, protein_target = ?, carbs_target = ?, fats_target = ?
@@ -68,7 +78,6 @@ router.put("/goals", authenticateToken, (req, res) => {
       `);
       updateQuery.run(calorie_target, protein_target, carbs_target, fats_target, userId);
     } else {
-      // Insert default goals if they don't exist
       const insertQuery = db.prepare(`
         INSERT INTO nutrition_goals (user_id, calorie_target, protein_target, carbs_target, fats_target)
         VALUES (?, ?, ?, ?, ?)
@@ -78,13 +87,35 @@ router.put("/goals", authenticateToken, (req, res) => {
 
     res.json({ message: "Nutrition targets updated successfully!" });
   } catch (error) {
-    console.error("Error updating nutrition goals:", error);
+    console.error("❌ Error updating nutrition goals:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 /**
- * 🔹 POST /api/nutrition/plan - Log a new meal
+ * 🔹 GET /api/nutrition/plan - Fetch user's logged meals
+ */
+router.get("/plan", authenticateToken, (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const query = db.prepare(`
+      SELECT id, name, calories, protein, carbs, fats, date
+      FROM nutrition
+      WHERE user_id = ?
+      ORDER BY date DESC
+    `);
+    const meals = query.all(userId);
+
+    res.json(meals);
+  } catch (error) {
+    console.error("❌ Error fetching meals:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+/**
+ * 🔹 POST /api/nutrition/plan - Log a new meal (Fixes date storage)
  */
 router.post("/plan", authenticateToken, (req, res) => {
   const { name, calories, protein, carbs, fats } = req.body;
@@ -94,16 +125,28 @@ router.post("/plan", authenticateToken, (req, res) => {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "UTC" }).format(new Date()); // Ensure YYYY-MM-DD format
+
   try {
     const stmt = db.prepare(`
       INSERT INTO nutrition (user_id, name, calories, protein, carbs, fats, date)
-      VALUES (?, ?, ?, ?, ?, ?, DATE('now'))
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
-    stmt.run(userId, name.trim(), parseInt(calories), parseInt(protein), parseInt(carbs), parseInt(fats));
+    stmt.run(
+      userId,
+      name.trim(),
+      parseInt(calories),
+      parseInt(protein),
+      parseInt(carbs),
+      parseInt(fats),
+      today
+    );
+
+    console.log(`🟢 Meal added: ${name} for user ${userId} on ${today}`);
 
     res.json({ message: "Meal added successfully" });
   } catch (error) {
-    console.error("Database error:", error);
+    console.error("❌ Database error:", error);
     res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 });
@@ -118,9 +161,11 @@ router.delete("/plan/:id", authenticateToken, (req, res) => {
   try {
     const stmt = db.prepare("DELETE FROM nutrition WHERE id = ? AND user_id = ?");
     stmt.run(id, userId);
+    console.log(`🗑️ Meal ID ${id} deleted for user ${userId}`);
+    
     res.json({ message: "Meal deleted successfully" });
   } catch (error) {
-    console.error("Error deleting meal:", error);
+    console.error("❌ Error deleting meal:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

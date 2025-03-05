@@ -29,8 +29,8 @@ jobs:
         run: npm ci
 
       - name: Run tests
+        working-directory: ./frontend
         run: | 
-          cd frontend
           npm ci
           npm run test:coverage
 

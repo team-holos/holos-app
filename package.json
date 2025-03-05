@@ -2,5 +2,11 @@
   "dependencies": {
     "react-timer-hook": "^3.0.8",
     "use-sound": "^5.0.0"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  },
+  "scripts": {
+    "prepare": "husky"
   }
 }

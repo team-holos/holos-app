@@ -17,9 +17,9 @@ vi.mock('use-sound', () => {
 describe('SoundForm Component', () => {
     it('renders the component with play and stop buttons', () => {
         render(<SoundForm />);
-        expect(screen.getByText('Play Sound')).toBeInTheDocument();
-        expect(screen.getByText('Stop Sound')).toBeInTheDocument();
-        expect(screen.getByText('Falls gewünscht, kannst Du Dir hier entspannte Piano Musik zu Deiner Meditation anmachen:')).toBeInTheDocument();
+        expect(screen.getByTestId('playsound')).toBeInTheDocument();
+        expect(screen.getByTestId('stopsound')).toBeInTheDocument();
+        expect(screen.getByTestId('soundinfo')).toBeInTheDocument();
     });
 
     it('calls playSound when the play button is clicked', () => {
@@ -28,7 +28,7 @@ describe('SoundForm Component', () => {
         useSound.mockReturnValue([playSoundMock, { stop: stopSoundMock }]);
 
         render(<SoundForm />);
-        fireEvent.click(screen.getByText('Play Sound'));
+        fireEvent.click(screen.getByTestId('playsound'));
         expect(playSoundMock).toHaveBeenCalledTimes(1);
     });
 
@@ -38,7 +38,7 @@ describe('SoundForm Component', () => {
         useSound.mockReturnValue([playSoundMock, { stop: stopSoundMock }]);
 
         render(<SoundForm />);
-        fireEvent.click(screen.getByText('Stop Sound'));
+        fireEvent.click(screen.getByTestId('stopsound'));
         expect(stopSoundMock).toHaveBeenCalledTimes(1);
     });
 });

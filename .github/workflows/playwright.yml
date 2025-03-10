@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 30  # Increased timeout
+    timeout-minutes: 30
     runs-on: ubuntu-latest
 
     steps:
@@ -31,15 +31,15 @@ jobs:
         run: |
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > backend/.env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> backend/.env
-          echo "NODE_ENV=test" >> backend/.env  # Changed to test environment
-          echo "CORS_ORIGIN=http://localhost:5173" >> backend/.env  # Explicitly set CORS
+          echo "NODE_ENV=test" >> backend/.env
+          echo "CORS_ORIGIN=http://localhost:5173" >> backend/.env
 
       - name: 🚀 Start Backend
         working-directory: backend
         run: |
           export NODE_ENV=test
           export PORT=3000
-          export DEBUG=app:*  # Enable verbose logging
+          export DEBUG=app:*
           nohup npm start > backend.log 2>&1 &
           echo "Waiting for backend to start..."
           for i in {1..30}; do
@@ -53,11 +53,11 @@ jobs:
 
       - name: 🌱 Create Test User
         run: |
-          sleep 5  # Give backend a moment to fully initialize
+          sleep 5
           curl -X POST http://localhost:3000/api/auth/register \
             -H "Content-Type: application/json" \
             -d '{"email":"test@example.com","password":"Test123!"}' || echo "User may already exist"
-          # Verify user can login via API directly
+          # Verify login
           response=$(curl -s -X POST http://localhost:3000/api/auth/login \
             -H "Content-Type: application/json" \
             -d '{"email":"test@example.com","password":"Test123!"}')
@@ -117,14 +117,15 @@ jobs:
           
           // Add longer timeout
           content = content.replace('await expect(page).toHaveURL("http://localhost:5173/dashboard")',
-            'await page.waitForTimeout(1000); console.log("After login click"); await page.screenshot({ path: "after-login.png" }); await expect(page).toHaveURL("http://localhost:5173/dashboard", { timeout: 30000 })');
+            'await page.waitForTimeout(1000); console.log("After login click"); await expect(page).toHaveURL("http://localhost:5173/dashboard", { timeout: 30000 })');
           
           fs.writeFileSync(testPath, content);
           console.log('Test file updated with debug info');
           EOF
           
           node debug-test.js
-          PWDEBUG=1 npx playwright test workout.spec.js --workers=1 --retries=2 --timeout=60000 
+          # Run with headless: true explicitly set
+          PLAYWRIGHT_HEADLESS=true npx playwright test workout.spec.js --workers=1 --retries=2 --timeout=60000
 
       - name: 📤 Upload Playwright Report
         uses: actions/upload-artifact@v4
@@ -133,17 +134,15 @@ jobs:
           name: playwright-report
           path: |
             playwright-report/
-            after-login.png
           retention-days: 14
 
       - name: 📤 Upload Logs on Failure
-        if: always()  # Changed from failure() to always() to always get logs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: debug-logs
           path: |
             backend/backend.log
             frontend/frontend.log
-            after-login.png
             test-results/
           retention-days: 7

@@ -4,10 +4,10 @@ import "react-calendar/dist/Calendar.css";
 import TrainingPlan from "../components/TrainingPlan";
 
 const exercisesData = {
-  Push: ["Bench Press", "Overhead Press", "Dips"],
-  Pull: ["Deadlifts", "Pull-ups", "Barbell Rows"],
-  Legs: ["Squats", "Romanian Deadlifts", "Calf Raises"],
-  Cardio: ["Running", "Cycling", "Jump Rope"],
+  Push: ["Bankdrücken", "Schulterdrücken", "Dips"],
+  Pull: ["Kreuzheben", "Klimmzüge", "Langhantelrudern"],
+  Legs: ["Kniebeugen", "Rumänisches Kreuzheben", "Wadenheben"],
+  Cardio: ["Laufen", "Radfahren", "Springseil"],
   "Full Body": ["Burpees", "Kettlebell Swings", "Thrusters"],
 };
 
@@ -25,22 +25,22 @@ const WorkoutTrackerCalendarPage = () => {
     })
       .then((res) => res.json())
       .then((data) => setTrainingPlan(data))
-      .catch((err) => console.error("Error fetching training plan:", err));
+      .catch((err) => console.error("Fehler beim Abrufen des Trainingsplans:", err));
 
-    // Fetch workout logs from backend
+    // Trainingsprotokolle vom Backend abrufen
     fetch(`http://localhost:3000/api/training/workout-log/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => setWorkoutLogs(data))
-      .catch((err) => console.error("Error fetching workout logs:", err));
+      .catch((err) => console.error("Fehler beim Abrufen der Trainingsdaten:", err));
   }, [userId, token]);
 
   useEffect(() => {
-    const dayName = new Intl.DateTimeFormat("en-US", {
+    const dayName = new Intl.DateTimeFormat("de-DE", {
       weekday: "long",
     }).format(selectedDate);
-    const workoutType = trainingPlan[dayName] || "Rest";
+    const workoutType = trainingPlan[dayName] || "Ruhetag";
     setCurrentWorkout(exercisesData[workoutType] || []);
   }, [selectedDate, trainingPlan]);
 
@@ -50,7 +50,7 @@ const WorkoutTrackerCalendarPage = () => {
       const updatedLogs = { ...prevLogs };
       if (!updatedLogs[dateKey]) updatedLogs[dateKey] = {};
       if (!updatedLogs[dateKey][exercise])
-        updatedLogs[dateKey][exercise] = { sets: "", reps: "", weight: "" };
+        updatedLogs[dateKey][exercise] = { sets: "", reps: "", gewicht: "" };
       updatedLogs[dateKey][exercise][field] = value;
       return updatedLogs;
     });
@@ -60,7 +60,7 @@ const WorkoutTrackerCalendarPage = () => {
     const dateKey = selectedDate.toISOString().split("T")[0];
     const workouts = workoutLogs[dateKey];
 
-    if (!workouts) return alert("No workout data to save!");
+    if (!workouts) return alert("Keine Trainingsdaten zum Speichern!");
 
     Object.entries(workouts).forEach(([exercise, details]) => {
       fetch("http://localhost:3000/api/training/workout-log", {
@@ -75,12 +75,12 @@ const WorkoutTrackerCalendarPage = () => {
           exercise,
           sets: details.sets,
           reps: details.reps,
-          weight: details.weight,
+          weight: details.gewicht,
         }),
       })
         .then((res) => res.json())
-        .then(() => alert("Workout saved successfully!"))
-        .catch((err) => console.error("Error saving workout:", err));
+        .then(() => alert("Training erfolgreich gespeichert!"))
+        .catch((err) => console.error("Fehler beim Speichern des Trainings:", err));
     });
   };
 
@@ -88,25 +88,22 @@ const WorkoutTrackerCalendarPage = () => {
     if (view !== "month") return "";
   
     const dateKey = date.toISOString().split("T")[0];
-    const dayName = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(date);
+    const dayName = new Intl.DateTimeFormat("de-DE", { weekday: "long" }).format(date);
     const plannedWorkout = trainingPlan[dayName];
   
     if (workoutLogs[dateKey]) {
       return "bg-green-300 text-black font-bold";
     }
-    if (plannedWorkout && plannedWorkout !== "Rest") {
+    if (plannedWorkout && plannedWorkout !== "Ruhetag") {
       return "bg-blue-300 text-black font-bold";
     }
     return "text-black";
   };
-  
-  
-  
 
   return (
     <div className="container mx-auto p-4 flex flex-col md:flex-row gap-6">
       <div className="md:w-2/3">
-        <h1 className="text-2xl font-bold mb-4">Workout Tracker & Calendar</h1>
+        <h1 className="text-2xl font-bold mb-4">Trainingsplan & Kalender</h1>
         <Calendar
           onChange={setSelectedDate}
           value={selectedDate}
@@ -115,12 +112,12 @@ const WorkoutTrackerCalendarPage = () => {
 
         <div className="mt-6 border p-4 rounded-lg shadow-md bg-white">
           <h2 className="text-xl mb-2">
-            Workout for {selectedDate.toISOString().split("T")[0]} (
+            Training für {selectedDate.toISOString().split("T")[0]} (
             {trainingPlan[
-              new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(
+              new Intl.DateTimeFormat("de-DE", { weekday: "long" }).format(
                 selectedDate
               )
-            ] || "Rest"}
+            ] || "Ruhetag"}
             )
           </h2>
 
@@ -128,10 +125,10 @@ const WorkoutTrackerCalendarPage = () => {
             <table className="w-full mt-4 border-collapse border border-gray-300">
               <thead>
                 <tr className="bg-gray-200">
-                  <th className="border px-2 py-1">Exercise</th>
-                  <th className="border px-2 py-1">Sets</th>
-                  <th className="border px-2 py-1">Reps</th>
-                  <th className="border px-2 py-1">Weight (kg)</th>
+                  <th className="border px-2 py-1">Übung</th>
+                  <th className="border px-2 py-1">Sätze</th>
+                  <th className="border px-2 py-1">Wiederholungen</th>
+                  <th className="border px-2 py-1">Gewicht (kg)</th>
                 </tr>
               </thead>
               <tbody>
@@ -173,10 +170,10 @@ const WorkoutTrackerCalendarPage = () => {
                         value={
                           workoutLogs[
                             selectedDate.toISOString().split("T")[0]
-                          ]?.[exercise]?.weight || ""
+                          ]?.[exercise]?.gewicht || ""
                         }
                         onChange={(e) =>
-                          updateWorkoutLog(exercise, "weight", e.target.value)
+                          updateWorkoutLog(exercise, "gewicht", e.target.value)
                         }
                       />
                     </td>
@@ -186,7 +183,7 @@ const WorkoutTrackerCalendarPage = () => {
             </table>
           ) : (
             <p className="mt-4 text-gray-500">
-              No workout planned for this day.
+              Kein Training für diesen Tag geplant.
             </p>
           )}
 
@@ -194,7 +191,7 @@ const WorkoutTrackerCalendarPage = () => {
             className="mt-4 px-4 py-2 bg-green-500 text-white rounded-md"
             onClick={saveWorkout}
           >
-            Save Workout
+            Training speichern
           </button>
         </div>
       </div>

@@ -59,14 +59,17 @@ db.exec(`
         FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
-    CREATE TABLE IF NOT EXISTS nutrition (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        name TEXT NOT NULL,
-        description TEXT NOT NULL,
-        meals TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-    );
+CREATE TABLE IF NOT EXISTS nutrition_goals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    calorie_target INTEGER DEFAULT 2500,
+    protein_target INTEGER DEFAULT 150,
+    carbs_target INTEGER DEFAULT 300,
+    fats_target INTEGER DEFAULT 80,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
 
     CREATE TABLE IF NOT EXISTS journal_entries (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

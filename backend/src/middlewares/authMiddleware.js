@@ -23,7 +23,7 @@ const authenticateToken = (req, res, next) => {
 
     // Ensure `req.user` contains `id`
     req.user = {
-      id: decoded.userId, // Make sure this key exists
+      id: decoded.userId,
       email: decoded.email,
     };
 

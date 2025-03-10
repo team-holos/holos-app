@@ -3,9 +3,14 @@ import { useNavigate } from "react-router-dom";
 
 function Navigation() {
   const navigate = useNavigate();
+
   const handleNavigation = (event) => {
-    navigate(event.target.value);
+    const path = event.target.value;
+    if (path) {
+      navigate(path);
+    }
   };
+
   return (
     <div>
       <form className="flex items-center text-[#FFF2F2]">
@@ -13,12 +18,10 @@ function Navigation() {
           <Menu />
         </label>
         <select id="uebersicht" name="uebersicht" onChange={handleNavigation} className="bg-[#7886C7]">
-          {/* <option value="">Select a page...</option> */}
-          <option value="/nutrition" className="inline-block">
-            Ernährung
-          </option>
+          <option value="">-- Wähle eine Seite --</option>
+          <option value="/dashboard">Dashboard</option>
           <option value="/nutrition">Ernährung</option>
-          <option value="/fitness">Fitness</option>
+          <option value="/workout">Fitness</option>
           <option value="/mentalhealth">Mentale Gesundheit</option>
           <option value="/relaxation">Entspannung</option>
           <option value="/settings">Einstellungen</option>

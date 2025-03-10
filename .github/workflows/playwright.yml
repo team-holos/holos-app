@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 60
+    timeout-minutes: 30  # Adjusted timeout from 60 to 30
     runs-on: ubuntu-latest
 
     steps:
@@ -21,6 +21,12 @@ jobs:
           node-version: lts/*
           cache: "npm"
 
+      - name: 📂 Cache Playwright browsers
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+
       - name: 📦 Install Dependencies
         run: |
           npm ci
@@ -30,89 +36,40 @@ jobs:
       - name: 📄 Create .env file for Backend
         run: |
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > backend/.env
-
-      - name: 🛠️ Configure Backend for CI
-        run: |
-          if grep -q "start" backend/package.json; then
-            node -e "const pkg = require('./backend/package.json'); pkg.scripts.start_ci = 'cross-env HOST=0.0.0.0 PORT=3000 ' + pkg.scripts.start.replace('--watch', ''); require('fs').writeFileSync('./backend/package.json', JSON.stringify(pkg, null, 2));"
-          fi
-
-      - name: 🔄 Seed Database (Optional)
-        working-directory: backend
-        run: |
-          if [ -f src/db/seed.js ]; then
-            node src/db/seed.js
-          else
-            echo "No seed file found, skipping..."
-          fi
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> backend/.env
+          echo "NODE_ENV=production" >> backend/.env
 
       - name: 🌍 Start the Backend
         working-directory: backend
         run: |
-          echo "Starting backend..."
-          if grep -q "start_ci" package.json; then
-            nohup npm run start_ci > backend.log 2>&1 &
-          else
-            HOST=0.0.0.0 PORT=3000 nohup npm start > backend.log 2>&1 &
-          fi
-          echo "Backend started with PID: $!"
-          sleep 5
-          echo "Checking backend status:"
-          ps aux | grep node
-          cat backend.log
+          nohup npm start > backend.log 2>&1 &
+          sleep 10  # Increased wait time
 
-      - name: 🔍 Check Backend API Response
+      - name: 🔍 Ensure Backend is Running
         run: |
-          echo "Testing Backend API Response..."
-          curl -s http://localhost:3000/api/workouts || echo "API did not respond"
+          for i in {1..10}; do
+            if curl -s http://localhost:3000/api/workouts; then
+              echo "✅ Backend is responding"
+              exit 0
+            else
+              echo "⏳ Backend not ready, retrying in 5s..."
+              sleep 5
+            fi
+          done
+          echo "❌ Backend did not start properly!" && exit 1
 
       - name: 🚀 Start Frontend
         working-directory: frontend
         run: |
-          echo "Starting frontend..."
           npm run build
           nohup npx vite preview --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
-          echo "Frontend started with PID: $!"
-          sleep 5
-          echo "Checking frontend status:"
-          ps aux | grep node
-          cat frontend.log
-
-      - name: 🔍 Debug Server Logs
-        run: |
-          echo "Current working directory: $(pwd)"
-          echo "Backend log:"
-          cat backend/backend.log || echo "No backend logs found"
-          echo "Frontend log:"
-          cat frontend/frontend.log || echo "No frontend logs found"
-          echo "Network check:"
-          curl -s http://localhost:3000 || echo "Cannot connect to backend"
-          curl -s http://localhost:5173 || echo "Cannot connect to frontend"
-
-      - name: ⏳ Wait for the App to be Ready
-        run: |
-          echo "Waiting for Frontend (http://localhost:5173) and Backend (http://localhost:3000)..."
-          npx wait-on http://localhost:5173 http://localhost:3000 -t 90000 || echo "Timeout waiting for services"
+          sleep 10
 
       - name: 🧪 Install Playwright Chromium Only
         run: npx playwright install chromium
 
-      - name: 🚀 Run Playwright Tests
-        run: npx playwright test --update-snapshots
-
-      - name: 📸 Capture Debug Screenshot (If Test Fails)
-        if: failure()
-        run: |
-          mkdir -p debug-screenshots
-          npx playwright screenshot --full-page debug-screenshots/debug.png
-
-      - name: 📤 Upload Debug Screenshot
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: debug-screenshots
-          path: debug-screenshots/debug.png
-          retention-days: 5
+      - name: 🔄 Run Playwright Tests (With Retries & Parallel)
+        run: npx playwright test --workers=2 --retries=2
 
       - name: 📤 Upload Playwright Report
         uses: actions/upload-artifact@v4

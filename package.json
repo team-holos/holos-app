@@ -5,14 +5,9 @@
     "vitest": "^3.0.7"
   },
   "devDependencies": {
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.2.0",
-    "husky": "^9.1.7",
-    "jsdom": "^26.0.0"
+    "husky": "^9.1.7"
   },
   "scripts": {
-    "prepare": "husky",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage"
+    "prepare": "husky"
   }
 }

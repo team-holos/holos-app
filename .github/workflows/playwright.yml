@@ -1,26 +1,45 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, e2e-workout ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, e2e-workout ]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: 🔧 Install Node.js
+      uses: actions/setup-node@v4
       with:
         node-version: lts/*
-    - name: Install dependencies
+        cache: 'npm'
+
+    - name: 📦 Install Dependencies
       run: npm ci
-    - name: Install Playwright Browsers
+
+    - name: 🌍 Start the Application
+      run: npm run dev &
+
+    - name: ⏳ Wait for the App to be Ready
+      run: |
+        echo "Warte auf http://localhost:5173..."
+        npx wait-on http://localhost:5173 -t 60000
+
+    - name: 🧪 Install Playwright Browsers
       run: npx playwright install --with-deps
-    - name: Run Playwright tests
+
+    - name: 🚀 Run Playwright Tests
       run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
+
+    - name: 📤 Upload Playwright Report
+      uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: playwright-report
         path: playwright-report/

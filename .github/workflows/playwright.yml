@@ -39,14 +39,18 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> backend/.env
           echo "NODE_ENV=production" >> backend/.env
 
-      - name: 🔄 Seed Database (If Required)
+      - name: 🌱 Seed Database (Ensure Test Data Exists)
         working-directory: backend
         run: |
-          if [ -f src/db/seed.js ]; then
-            node src/db/seed.js
+          if [ -f src/db/holos.db ]; then
+            echo "✅ Database already exists, skipping creation..."
           else
-            echo "⚠️ No seed file found, skipping..."
+            echo "🆕 Database does not exist. Seeding now..."
+            node src/db/seed.js
           fi
+          
+          echo "📋 Checking database content:"
+          sqlite3 src/db/holos.db "SELECT * FROM users;" || echo "⚠️ No users found in database."
 
       - name: 🌍 Start the Backend
         working-directory: backend
@@ -66,7 +70,6 @@ jobs:
           cat backend/backend.log || echo "⚠️ No backend logs found"
 
           echo "🔍 Checking backend availability..."
-          # First check if the server is responding at all
           for i in {1..15}; do
             ROOT_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/)
             if [[ "$ROOT_RESPONSE" != "000" ]]; then
@@ -82,18 +85,9 @@ jobs:
             fi
           done
           
-          # Then check for the specific API endpoint
           echo "🔍 Checking API endpoints..."
           curl -v http://localhost:3000/api/ || echo "⚠️ API base endpoint check (this may 404 normally)"
           
-          # Try both potential workout endpoints without failing the build
-          echo "🔍 Attempted endpoint: /api/training/workout-log"
-          curl -v http://localhost:3000/api/training/workout-log || echo "⚠️ This endpoint may be POST-only"
-          
-          echo "🔍 Attempted endpoint: /api/workouts"
-          curl -v http://localhost:3000/api/workouts || echo "⚠️ This endpoint might not exist"
-          
-          # Only require that the server itself is running
           echo "✅ Backend health check completed - server is responsive"
 
       - name: 🚀 Start Frontend

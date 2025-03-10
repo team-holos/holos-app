@@ -174,36 +174,85 @@ Dieser Testkatalog dokumentiert die End-to-End Testfälle für die Holos App, be
 ## 3. Mental Health Page
 
 ### TC-MH-001: Journal-Eintrag speichern
-**Priorität:** Hoch
-**Vorbedingung:** Mental Health Page ist geöffnet und Benutzer ist eingeloggt
+**Priorität:** Hoch  
+**Vorbedingung:** 
+- Mental Health Page ist geöffnet
+- Benutzer ist eingeloggt
+- Keine bestehenden Einträge für das aktuelle Datum
+
+**Testdaten:**
+- Journaltext: "This is a test journal entry"
+
 **Schritte:**
-1. Datum im Kalender auswählen
+1. Datum im Kalender auswählen (standardmäßig heutiges Datum)
 2. Text in das Journal-Textfeld eingeben
 3. "Speichern" Button klicken
+
 **Erwartetes Ergebnis:**
-- Erfolgsmeldung wird angezeigt
-- Journal-Eintrag wird gespeichert und im Kalender markiert
+- Erfolgsmeldung "Eintrag gespeichert!" wird angezeigt
+- Nach Neuladen der Seite ist der Eintrag noch vorhanden
+- Das Datum wird im Kalender markiert
 
 ### TC-MH-002: Journal-Eintrag laden
-**Priorität:** Hoch
-**Vorbedingung:** Mental Health Page ist geöffnet und Benutzer ist eingeloggt
+**Priorität:** Hoch  
+**Vorbedingung:** 
+- Mental Health Page ist geöffnet
+- Benutzer ist eingeloggt
+- Es existiert bereits ein Eintrag für das aktuelle Datum
+
 **Schritte:**
 1. Datum im Kalender auswählen, für das ein Eintrag existiert
+
 **Erwartetes Ergebnis:**
-- Journal-Textfeld wird mit dem gespeicherten Eintrag gefüllt
+- Journal-Textfeld wird automatisch mit dem gespeicherten Eintrag gefüllt
+- Der Inhalt entspricht exakt dem gespeicherten Text
 
 ### TC-MH-003: Meditationstimer starten
-**Priorität:** Mittel
-**Vorbedingung:** Mental Health Page ist geöffnet
+**Priorität:** Mittel  
+**Vorbedingung:** 
+- Mental Health Page ist geöffnet
+- Timer ist nicht aktiv
+
 **Schritte:**
-1. Timer starten
+1. "Start" Button des Timers klicken
+
 **Erwartetes Ergebnis:**
-- Timer beginnt zu zählen
+- Timer beginnt von 10:00 Minuten herunterzuzählen
+- Timer-Display aktualisiert sich jede Sekunde
+- Start-Button wird zum Pause-Button
 
 ### TC-MH-004: Sound abspielen
-**Priorität:** Mittel
-**Vorbedingung:** Mental Health Page ist geöffnet
+**Priorität:** Mittel  
+**Vorbedingung:** 
+- Mental Health Page ist geöffnet
+- Kein Sound wird aktuell abgespielt
+
+**Testdaten:**
+- Sound: "soft-piano" (Piano)
+
 **Schritte:**
-1. Sound im SoundForm auswählen und abspielen
+1. Sound "soft-piano"
+2. Play-Button klicken
+
 **Erwartetes Ergebnis:**
-- Ausgewählter Sound wird abgespielt
+- Audio-Element beginnt mit der Wiedergabe
+- Play-Button wird zum Pause-Button
+- Sound ist hörbar
+
+## Edge Cases und Grenzen
+
+### Journal
+- Sehr lange Einträge (>1000 Zeichen)
+- Sonderzeichen und Emojis im Text
+- Gleichzeitiges Speichern von mehreren Geräten
+- Offline-Verhalten
+
+### Timer
+- Browser-Tab wird gewechselt
+- Gerät geht in den Ruhezustand
+- Timer läuft ab
+
+### Sound
+- Mehrere Sounds gleichzeitig
+- Browser blockiert Autoplay
+- Internetverbindung wird unterbrochen

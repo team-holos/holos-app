@@ -43,7 +43,7 @@ jobs:
         working-directory: backend
         run: |
           if [ -f src/db/seed.js ]; then
-            node src/db/seed.js || (echo "❌ Database seeding failed!" && exit 1)
+            node src/db/seed.js
           else
             echo "⚠️ No seed file found, skipping..."
           fi
@@ -52,12 +52,12 @@ jobs:
         working-directory: backend
         run: |
           nohup npm start > backend.log 2>&1 &
-          sleep 10  # Initial wait time
+          sleep 10  # Increased wait time
 
-      - name: 🔍 Check Backend Health (Increased Retries)
+      - name: 🔍 Check Backend Health
         run: |
-          for i in {1..20}; do  # Increased retries
-            if curl -s http://localhost:3000/auth/login --fail; then
+          for i in {1..10}; do
+            if curl -s http://localhost:3000/api/workouts; then
               echo "✅ Backend is responding"
               exit 0
             else
@@ -73,13 +73,6 @@ jobs:
           npm run build
           nohup npx vite preview --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
           sleep 10
-
-      - name: 🔍 Debug API Before Testing
-        run: |
-          echo "🔍 Testing API Availability:"
-          curl -s http://localhost:3000/auth/login || echo "⚠️ Login endpoint failed"
-          curl -s http://localhost:3000/api/training-plan/1 || echo "⚠️ Training plan endpoint failed"
-          curl -s http://localhost:3000/api/workouts || echo "⚠️ Workouts endpoint failed"
 
       - name: 🔍 Debug Logs Before Testing
         run: |

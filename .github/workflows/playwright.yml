@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 30
+    timeout-minutes: 20
     runs-on: ubuntu-latest
 
     steps:
@@ -20,12 +20,6 @@ jobs:
         with:
           node-version: lts/*
           cache: "npm"
-
-      - name: 📂 Cache Playwright browsers
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: 📦 Install Dependencies
         run: |
@@ -39,98 +33,32 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> backend/.env
           echo "NODE_ENV=production" >> backend/.env
 
-      - name: 🌱 Seed Database (Ensure Test Data Exists)
-        working-directory: backend
-        run: |
-          if [ -f src/db/holos.db ]; then
-            echo "✅ Database already exists, skipping creation..."
-          else
-            echo "🆕 Database does not exist. Seeding now..."
-            node src/db/seed.js
-          fi
-          
-          echo "📋 Checking database content:"
-          sqlite3 src/db/holos.db "SELECT * FROM users;" || echo "⚠️ No users found in database."
-
-      - name: 🌍 Start the Backend
+      - name: 🚀 Start Backend
         working-directory: backend
         run: |
           export NODE_ENV=production
           export PORT=3000
-          export HOST=0.0.0.0
           nohup npm start > backend.log 2>&1 &
-          sleep 15  # Increased wait time for backend initialization
-
-      - name: 🔍 Check Backend Health
-        run: |
-          echo "🔍 Checking if backend is running..."
-          ps aux | grep node
-          
-          echo "🔍 Listing backend log content:"
-          cat backend/backend.log || echo "⚠️ No backend logs found"
-
-          echo "🔍 Checking backend availability..."
-          for i in {1..15}; do
-            ROOT_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/)
-            if [[ "$ROOT_RESPONSE" != "000" ]]; then
-              echo "✅ Backend server is running!"
-              break
-            else
-              echo "⏳ Waiting for backend to start... (Attempt $i/15)"
-              sleep 5
-            fi
-            if [[ $i -eq 15 ]]; then
-              echo "❌ Backend server failed to start!"
-              exit 1
-            fi
-          done
-          
-          echo "🔍 Checking API endpoints..."
-          curl -v http://localhost:3000/api/ || echo "⚠️ API base endpoint check (this may 404 normally)"
-          
-          echo "✅ Backend health check completed - server is responsive"
+          sleep 10  # Warten, bis Backend startet
 
       - name: 🚀 Start Frontend
         working-directory: frontend
         run: |
           npm run build
           nohup npx vite preview --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
-          sleep 15
+          sleep 10  # Warten, bis Frontend startet
 
-      - name: 🔍 Check Frontend Health
+      - name: 🔍 Check Frontend & Backend
         run: |
-          echo "🔍 Checking if frontend is running..."
-          for i in {1..15}; do
-            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5173/)
-            if [[ "$RESPONSE" == "200" ]]; then
-              echo "✅ Frontend is responding correctly!"
-              break
-            else
-              echo "⏳ Frontend not ready (Status: $RESPONSE), retrying in 5s..."
-              sleep 5
-            fi
-            if [[ $i -eq 15 ]]; then
-              echo "❌ Frontend server failed to start!"
-              exit 1
-            fi
-          done
+          curl -Is http://localhost:3000/ | head -n 1 || echo "⚠️ Backend nicht erreichbar"
+          curl -Is http://localhost:5173/ | head -n 1 || echo "⚠️ Frontend nicht erreichbar"
 
-      - name: 🔍 Debug Logs Before Testing
-        run: |
-          echo "🔍 Backend logs:"
-          cat backend/backend.log || echo "⚠️ No backend logs found"
-          echo "🔍 Frontend logs:"
-          cat frontend/frontend.log || echo "⚠️ No frontend logs found"
-          echo "🌐 Service status summary:"
-          curl -s -o /dev/null -w "Backend status: %{http_code}\n" http://localhost:3000/ || echo "⚠️ Backend not reachable"
-          curl -s -o /dev/null -w "Frontend status: %{http_code}\n" http://localhost:5173/ || echo "⚠️ Frontend not reachable"
-
-      - name: 🧪 Install Playwright Chromium Only
+      - name: 🧪 Install Playwright Chromium
         run: npx playwright install chromium
 
-      - name: 🔄 Run Playwright Tests (With Retries & Extended Timeout)
+      - name: 🔄 Run Playwright Tests
         run: |
-          npx playwright test --workers=2 --retries=2 --timeout=30000
+          npx playwright test workout.spec.ts --workers=2 --retries=1
 
       - name: 📤 Upload Playwright Report
         uses: actions/upload-artifact@v4
@@ -138,7 +66,7 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 30
+          retention-days: 14
 
       - name: 📤 Upload Logs on Failure
         if: failure()

@@ -52,16 +52,17 @@ jobs:
         working-directory: backend
         run: |
           nohup npm start > backend.log 2>&1 &
-          sleep 10  # Increased wait time
+          sleep 15  # Increased wait time for backend initialization
 
       - name: 🔍 Check Backend Health
         run: |
-          for i in {1..10}; do
-            if curl -s http://localhost:3000/api/workouts; then
+          for i in {1..20}; do  # Increased retries
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/workouts)
+            if [[ "$RESPONSE" == "200" ]]; then
               echo "✅ Backend is responding"
               exit 0
             else
-              echo "⏳ Backend not ready, retrying in 5s..."
+              echo "⏳ Backend not ready (Status: $RESPONSE), retrying in 5s..."
               sleep 5
             fi
           done
@@ -72,7 +73,7 @@ jobs:
         run: |
           npm run build
           nohup npx vite preview --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
-          sleep 10
+          sleep 15  # Ensure frontend is fully started before testing
 
       - name: 🔍 Debug Logs Before Testing
         run: |
@@ -87,8 +88,9 @@ jobs:
       - name: 🧪 Install Playwright Chromium Only
         run: npx playwright install chromium
 
-      - name: 🔄 Run Playwright Tests (With Retries & Parallel)
-        run: npx playwright test --workers=2 --retries=2
+      - name: 🔄 Run Playwright Tests (With Retries & Extended Timeout)
+        run: |
+          npx playwright test --workers=2 --retries=2 --timeout=30000  # Increased timeout
 
       - name: 📤 Upload Playwright Report
         uses: actions/upload-artifact@v4

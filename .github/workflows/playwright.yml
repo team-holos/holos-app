@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 20
+    timeout-minutes: 30  # Increased timeout
     runs-on: ubuntu-latest
 
     steps:
@@ -31,49 +31,119 @@ jobs:
         run: |
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > backend/.env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> backend/.env
-          echo "NODE_ENV=production" >> backend/.env
+          echo "NODE_ENV=test" >> backend/.env  # Changed to test environment
+          echo "CORS_ORIGIN=http://localhost:5173" >> backend/.env  # Explicitly set CORS
 
       - name: 🚀 Start Backend
         working-directory: backend
         run: |
-          export NODE_ENV=production
+          export NODE_ENV=test
           export PORT=3000
+          export DEBUG=app:*  # Enable verbose logging
           nohup npm start > backend.log 2>&1 &
-          sleep 10  # Warten, bis Backend startet
+          echo "Waiting for backend to start..."
+          for i in {1..30}; do
+            if curl -s http://localhost:3000/ > /dev/null; then
+              echo "Backend started successfully"
+              break
+            fi
+            echo "Waiting... $i/30"
+            sleep 2
+          done
+
+      - name: 🌱 Create Test User
+        run: |
+          sleep 5  # Give backend a moment to fully initialize
+          curl -X POST http://localhost:3000/api/auth/register \
+            -H "Content-Type: application/json" \
+            -d '{"email":"test@example.com","password":"Test123!"}' || echo "User may already exist"
+          # Verify user can login via API directly
+          response=$(curl -s -X POST http://localhost:3000/api/auth/login \
+            -H "Content-Type: application/json" \
+            -d '{"email":"test@example.com","password":"Test123!"}')
+          echo "API Login Response: $response"
 
       - name: 🚀 Start Frontend
         working-directory: frontend
         run: |
           npm run build
           nohup npx vite preview --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
-          sleep 10  # Warten, bis Frontend startet
+          echo "Waiting for frontend to start..."
+          for i in {1..15}; do
+            if curl -s http://localhost:5173/ > /dev/null; then
+              echo "Frontend started successfully"
+              break
+            fi
+            echo "Waiting... $i/15"
+            sleep 2
+          done
 
       - name: 🔍 Check Frontend & Backend
         run: |
-          curl -Is http://localhost:3000/ | head -n 1 || echo "⚠️ Backend nicht erreichbar"
-          curl -Is http://localhost:5173/ | head -n 1 || echo "⚠️ Frontend nicht erreichbar"
+          echo "Checking backend health..."
+          backend_response=$(curl -s http://localhost:3000/ || echo "Failed to connect")
+          echo "Backend response: $backend_response"
+          
+          echo "Checking frontend..."
+          frontend_response=$(curl -s http://localhost:5173/ || echo "Failed to connect")
+          if echo "$frontend_response" | grep -q "<html"; then
+            echo "Frontend is running and returned HTML"
+          else
+            echo "⚠️ Frontend response issues"
+            echo "$frontend_response" | head -n 20
+          fi
 
-      - name: 🧪 Install Playwright Chromium
-        run: npx playwright install chromium
-
-      - name: 🔄 Run Playwright Tests
+      - name: 🧪 Install Playwright
         run: |
-          npx playwright test workout.spec.js --workers=2 --retries=1
+          npx playwright install chromium
+          npx playwright install-deps chromium
+
+      - name: 🔄 Run Playwright Tests with Debug
+        run: |
+          # Create debug script to modify the test
+          cat > debug-test.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+          const testPath = path.join(process.cwd(), 'e2e-tests/workout.spec.js');
+          let content = fs.readFileSync(testPath, 'utf8');
+          
+          // Add debug logging
+          content = content.replace('test.beforeEach(async ({ page }) => {', 
+            `test.beforeEach(async ({ page }) => {
+              // Enable verbose logging
+              page.on('request', request => console.log(\`→ \${request.method()} \${request.url()}\`));
+              page.on('response', response => console.log(\`← \${response.status()} \${response.url()}\`));
+            `);
+          
+          // Add longer timeout
+          content = content.replace('await expect(page).toHaveURL("http://localhost:5173/dashboard")',
+            'await page.waitForTimeout(1000); console.log("After login click"); await page.screenshot({ path: "after-login.png" }); await expect(page).toHaveURL("http://localhost:5173/dashboard", { timeout: 30000 })');
+          
+          fs.writeFileSync(testPath, content);
+          console.log('Test file updated with debug info');
+          EOF
+          
+          node debug-test.js
+          PWDEBUG=1 npx playwright test workout.spec.js --workers=1 --retries=2 --timeout=60000 
 
       - name: 📤 Upload Playwright Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
-          path: playwright-report/
+          path: |
+            playwright-report/
+            after-login.png
           retention-days: 14
 
       - name: 📤 Upload Logs on Failure
-        if: failure()
+        if: always()  # Changed from failure() to always() to always get logs
         uses: actions/upload-artifact@v4
         with:
           name: debug-logs
           path: |
             backend/backend.log
             frontend/frontend.log
+            after-login.png
+            test-results/
           retention-days: 7

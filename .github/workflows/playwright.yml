@@ -27,6 +27,10 @@ jobs:
           cd frontend && npm ci
           cd ../backend && npm ci && npm install --save-dev cross-env
 
+      - name: 📄 Create .env file for Backend
+        run: |
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > backend/.env
+
       - name: 🛠️ Configure Backend for CI
         run: |
           if grep -q "start" backend/package.json; then
@@ -76,8 +80,8 @@ jobs:
           echo "Waiting for Frontend (http://localhost:5173) and Backend (http://localhost:3000)..."
           npx wait-on http://localhost:5173 http://localhost:3000 -t 60000 || echo "Timeout waiting for services"
 
-      - name: 🧪 Install Playwright Browsers
-        run: npx playwright install --with-deps
+      - name: 🧪 Install Playwright Chromium Only
+        run: npx playwright install chromium
 
       - name: 🚀 Run Playwright Tests
         run: npx playwright test --update-snapshots
@@ -89,3 +93,4 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+

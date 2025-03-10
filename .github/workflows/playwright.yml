@@ -55,6 +55,10 @@ jobs:
         working-directory: backend
         run: node src/db/seed.js
 
+      - name: 🔍 Verify Test User Exists in DB
+        run: |
+          sqlite3 backend/db/holos.db "SELECT * FROM users;" || echo "User table check failed!"
+
       - name: 🚀 Start Backend
         working-directory: backend
         run: |
@@ -62,8 +66,8 @@ jobs:
           nohup npm start > backend.log 2>&1 &
           echo "Waiting for backend to start..."
           for i in {1..30}; do
-            if grep -q "Server is running" backend.log; then
-              echo "✅ Backend started successfully"
+            if curl -s http://localhost:3000/health > /dev/null; then
+              echo "✅ Backend is ready!"
               break
             fi
             echo "Waiting... $i/30"
@@ -76,7 +80,7 @@ jobs:
         working-directory: frontend
         run: |
           npm run build
-          nohup npx vite preview --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
+          nohup npx vite preview --host localhost --port 5173 > frontend.log 2>&1 &
           echo "Waiting for frontend to start..."
           for i in {1..15}; do
             if curl -s http://localhost:5173/ > /dev/null; then
@@ -94,9 +98,9 @@ jobs:
           npx playwright install chromium
           npx playwright install-deps chromium
 
-      - name: 🔄 Run Playwright Tests
+      - name: 🔄 Run Playwright Tests with Debug Logs
         run: |
-          DEBUG=pw:api npx playwright test --workers=$PLAYWRIGHT_WORKERS --retries=2
+          DEBUG=pw:api,pw:browser,pw:network npx playwright test --workers=$PLAYWRIGHT_WORKERS --retries=2
 
       - name: 📤 Upload Playwright Report
         uses: actions/upload-artifact@v4

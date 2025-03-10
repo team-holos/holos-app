@@ -37,6 +37,15 @@ jobs:
             node -e "const pkg = require('./backend/package.json'); pkg.scripts.start_ci = 'cross-env HOST=0.0.0.0 PORT=3000 ' + pkg.scripts.start.replace('--watch', ''); require('fs').writeFileSync('./backend/package.json', JSON.stringify(pkg, null, 2));"
           fi
 
+      - name: 🔄 Seed Database (Optional)
+        working-directory: backend
+        run: |
+          if [ -f src/db/seed.js ]; then
+            node src/db/seed.js
+          else
+            echo "No seed file found, skipping..."
+          fi
+
       - name: 🌍 Start the Backend
         working-directory: backend
         run: |
@@ -51,6 +60,11 @@ jobs:
           echo "Checking backend status:"
           ps aux | grep node
           cat backend.log
+
+      - name: 🔍 Check Backend API Response
+        run: |
+          echo "Testing Backend API Response..."
+          curl -s http://localhost:3000/api/workouts || echo "API did not respond"
 
       - name: 🚀 Start Frontend
         working-directory: frontend
@@ -78,13 +92,27 @@ jobs:
       - name: ⏳ Wait for the App to be Ready
         run: |
           echo "Waiting for Frontend (http://localhost:5173) and Backend (http://localhost:3000)..."
-          npx wait-on http://localhost:5173 http://localhost:3000 -t 60000 || echo "Timeout waiting for services"
+          npx wait-on http://localhost:5173 http://localhost:3000 -t 90000 || echo "Timeout waiting for services"
 
       - name: 🧪 Install Playwright Chromium Only
         run: npx playwright install chromium
 
       - name: 🚀 Run Playwright Tests
         run: npx playwright test --update-snapshots
+
+      - name: 📸 Capture Debug Screenshot (If Test Fails)
+        if: failure()
+        run: |
+          mkdir -p debug-screenshots
+          npx playwright screenshot --full-page debug-screenshots/debug.png
+
+      - name: 📤 Upload Debug Screenshot
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: debug-screenshots
+          path: debug-screenshots/debug.png
+          retention-days: 5
 
       - name: 📤 Upload Playwright Report
         uses: actions/upload-artifact@v4
@@ -93,4 +121,3 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-

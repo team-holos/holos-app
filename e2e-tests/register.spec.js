@@ -3,6 +3,9 @@ import { test, expect } from "@playwright/test";
 
 
 test.describe("Registration Tests", () => {
+  let generatedUsername;
+  let generatedEmail;
+  const password = "Test123!";
   test.beforeEach(async ({ page }) => {
     await page.goto("http://localhost:5173/register");
   });
@@ -10,18 +13,21 @@ test.describe("Registration Tests", () => {
   test("TC-REG-001: successful registration with valid data", async ({
     page,
   }) => {
-    await page.getByLabel("Vorname:").fill("Max Mustermann");
-    await page.getByLabel("Email:").fill("test@example.com");
+    const randomNumber = Math.floor(Math.random() * 1000);
+    generatedUsername = `testuser${randomNumber}`;  
+    generatedEmail = `testuser${randomNumber}@example.com`;
+    await page.getByLabel("Vorname:").fill(generatedUsername);
+    await page.getByLabel("Email:").fill(generatedEmail);
     await page.getByLabel("Geburtsdatum:").fill("2000-01-01");
     await page.getByLabel("Gewicht:").fill("75");
     await page.getByLabel("Größe:").fill("180");
     await page.getByLabel("Männlich").check();
-    await page.getByLabel("Passwort:").fill("Test123!");
-    await page.getByLabel("Passwort bestätigen:").fill("Test123!");
+    await page.getByLabel("Passwort:").fill(password);
+    await page.getByLabel("Passwort bestätigen:").fill(password);
 
     await page.getByRole("button", { name: "Register" }).click();
 
-    await expect(page.getByTestId("success-message")).toBeVisible();
+    await expect(page.getByTestId("success-message")).toBeVisible( {timeout: 10000});
   });
 
   test("TC-REG-002: validates minimum age", async ({ page }) => {

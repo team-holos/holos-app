@@ -104,6 +104,7 @@ function LoginPage() {
 
             <div className="mb-4">
               <input
+                data-testid="email-input"
                 type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -115,6 +116,7 @@ function LoginPage() {
 
             <div className="mb-4">
               <input
+                data-testid="password-input"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

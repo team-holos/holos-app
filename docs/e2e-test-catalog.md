@@ -111,3 +111,99 @@ Dieser Testkatalog dokumentiert die End-to-End Testfälle für die Holos App, be
 - Responsive Design auf verschiedenen Viewport-Größen testen
 - Barrierefreiheit (Tab-Navigation, Screen Reader) testen
 - Server-Antworten und Fehlermeldungen validieren
+
+## 2. Login
+
+### TC-LOGIN-001: Erfolgreicher Login
+**Priorität:** Hoch
+**Vorbedingung:** Login-Seite ist geöffnet
+**Schritte:**
+1. E-Mail "test@example.com" eingeben
+2. Passwort "Test123!" eingeben
+3. "Login" Button klicken
+**Erwartetes Ergebnis:**
+- Erfolgreiche Weiterleitung zum Dashboard
+- Erfolgsmeldung wird angezeigt
+
+### TC-LOGIN-002: Ungültige E-Mail
+**Priorität:** Hoch
+**Schritte:**
+1. Ungültige E-Mail "test@" eingeben
+2. Passwort "Test123!" eingeben
+3. "Login" Button klicken
+**Erwartetes Ergebnis:**
+- Fehlermeldung "Invalid email address"
+- Login wird verhindert
+
+### TC-LOGIN-003: Nicht registrierte E-Mail
+**Priorität:** Hoch
+**Schritte:**
+1. Nicht registrierte E-Mail "nonexistent@example.com" eingeben
+2. Passwort "Test123!" eingeben
+3. "Login" Button klicken
+**Erwartetes Ergebnis:**
+- Fehlermeldung "Email ist nicht registriert"
+- Login wird verhindert
+
+### TC-LOGIN-004: Falsches Passwort
+**Priorität:** Hoch
+**Schritte:**
+1. E-Mail "test@example.com" eingeben
+2. Falsches Passwort "WrongPass123!" eingeben
+3. "Login" Button klicken
+**Erwartetes Ergebnis:**
+- Fehlermeldung über ungültiges Passwort
+- Login wird verhindert
+
+### TC-LOGIN-005: Leere Pflichtfelder
+**Priorität:** Hoch
+**Schritte:**
+1. Keine Felder ausfüllen
+2. "Login" Button klicken
+**Erwartetes Ergebnis:**
+- Fehlermeldungen für fehlende E-Mail und Passwort
+- Login wird verhindert
+
+### TC-LOGIN-006: Navigation zur Registrierung
+**Priorität:** Niedrig
+**Schritte:**
+1. Auf "Registrieren" Link klicken
+**Erwartetes Ergebnis:**
+- Weiterleitung zur Registrierungsseite
+
+## 3. Mental Health Page
+
+### TC-MH-001: Journal-Eintrag speichern
+**Priorität:** Hoch
+**Vorbedingung:** Mental Health Page ist geöffnet und Benutzer ist eingeloggt
+**Schritte:**
+1. Datum im Kalender auswählen
+2. Text in das Journal-Textfeld eingeben
+3. "Speichern" Button klicken
+**Erwartetes Ergebnis:**
+- Erfolgsmeldung wird angezeigt
+- Journal-Eintrag wird gespeichert und im Kalender markiert
+
+### TC-MH-002: Journal-Eintrag laden
+**Priorität:** Hoch
+**Vorbedingung:** Mental Health Page ist geöffnet und Benutzer ist eingeloggt
+**Schritte:**
+1. Datum im Kalender auswählen, für das ein Eintrag existiert
+**Erwartetes Ergebnis:**
+- Journal-Textfeld wird mit dem gespeicherten Eintrag gefüllt
+
+### TC-MH-003: Meditationstimer starten
+**Priorität:** Mittel
+**Vorbedingung:** Mental Health Page ist geöffnet
+**Schritte:**
+1. Timer starten
+**Erwartetes Ergebnis:**
+- Timer beginnt zu zählen
+
+### TC-MH-004: Sound abspielen
+**Priorität:** Mittel
+**Vorbedingung:** Mental Health Page ist geöffnet
+**Schritte:**
+1. Sound im SoundForm auswählen und abspielen
+**Erwartetes Ergebnis:**
+- Ausgewählter Sound wird abgespielt

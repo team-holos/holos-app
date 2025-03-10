@@ -9,7 +9,7 @@ test.describe("Workout Page Tests", () => {
     const randomNumber = Math.round(Math.random() * 10000);
     generatedEmail = `testuser${randomNumber}@example.com`;
 
-    // **Registrierung**
+    // **🔹 Registration**
     await page.goto("http://localhost:5173/register");
     await page.getByLabel("Vorname:").fill("Max Mustermann");
     await page.getByLabel("Email:").fill(generatedEmail);
@@ -22,7 +22,7 @@ test.describe("Workout Page Tests", () => {
     await page.getByRole("button", { name: "Register" }).click();
     await expect(page.getByTestId("success-message")).toBeVisible({ timeout: 10000 });
 
-    // **Login**
+    // **🔹 Login**
     await page.goto("http://localhost:5173/login");
     await page.getByPlaceholder("E-Mail-Adresse").fill(generatedEmail);
     await page.getByPlaceholder("Passwort").fill(password);
@@ -31,36 +31,34 @@ test.describe("Workout Page Tests", () => {
   });
 
   test("TC-WORKOUT-001: Nutzer kann zur Workout-Seite navigieren", async ({ page }) => {
-    // **Direkt zur Workout-Seite springen**
     await page.goto("http://localhost:5173/workout");
     await page.waitForLoadState("domcontentloaded");
 
-    // **Überprüfen, ob die Workout-Seite geladen ist**
+    // ✅ Confirm page loaded
     await expect(page).toHaveURL("http://localhost:5173/workout");
     await expect(page.getByText("Trainingsplan & Kalender")).toBeVisible();
   });
 
-// Replace your existing test with this:
-test("TC-WORKOUT-002: Nutzer kann ein Workout eintragen", async ({ page }) => {
+  test("TC-WORKOUT-002: Nutzer kann ein Workout eintragen", async ({ page }) => {
     await page.goto("http://localhost:5173/workout");
     await page.waitForLoadState("domcontentloaded");
   
-    // **Warte auf die Tabelle**
-    await page.waitForSelector("table");
+    // **✅ Wait for workout table**
+    await page.waitForSelector("table tbody tr", { timeout: 10000 });
   
-    // **Daten für die erste Übung eintragen**
+    // **Select first exercise row** (keeping the previous selector)
     const firstRow = page.locator("table tbody tr").first();
     await firstRow.locator("td:nth-child(2) input").fill("4");  // Sätze
     await firstRow.locator("td:nth-child(3) input").fill("10"); // Wiederholungen
     await firstRow.locator("td:nth-child(4) input").fill("80"); // Gewicht
   
-    // Handle the dialog before clicking the button
-    page.on('dialog', async dialog => {
-      expect(dialog.message()).toContain('Training erfolgreich gespeichert');
+    // ✅ **Handle dialog (reverting to original working behavior)**
+    page.on("dialog", async (dialog) => {
+      expect(dialog.message()).toContain("Training erfolgreich gespeichert");
       await dialog.accept();
     });
   
-    // Click save and wait for response
+    // ✅ Click save and wait for response
     const [response] = await Promise.all([
       page.waitForResponse((response) =>
         response.url().includes("/api/training/workout-log") && response.status() === 200
@@ -68,8 +66,7 @@ test("TC-WORKOUT-002: Nutzer kann ein Workout eintragen", async ({ page }) => {
       page.getByRole("button", { name: "Training speichern" }).click(),
     ]);
   
-    // Verify the response status
+    // ✅ Verify the response status
     expect(response.ok()).toBeTruthy();
   });
-  
 });

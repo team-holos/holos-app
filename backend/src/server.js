@@ -123,7 +123,7 @@ app.get("/api/workout-log/:user_id", authenticateToken, (req, res) => {
   }
 });
 
-/* // 🔹 **Register User**
+// 🔹 **Register User**
 app.post("/auth/register", (req, res) => {
   const { username, email, password, passwordRetype } = req.body;
 
@@ -201,7 +201,7 @@ app.post("/auth/changePassword", async (req, res) => {
       .status(500)
       .json({ message: "Fehler beim Ändern des Passworts", error: error.message });
   }
-}); */
+});
 
 // Start Server
 app.listen(PORT, () => {

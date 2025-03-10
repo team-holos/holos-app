@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - feauture/*
   pull_request:
     branches:
       - main
+      - feauture/*
 
 jobs:
   unit-tests:

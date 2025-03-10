@@ -214,7 +214,7 @@ function RegisterPage() {
 
   return (
     <div className="flex flex-col gap-4 max-w-sm mx-auto text-sm">
-      {successMessage && <p className="bg-green-500 text-white p-2">{successMessage}</p>}
+      {successMessage && <p className="bg-green-500 text-white p-2" data-testid="success-message">{successMessage}</p>}
       {errorMessage && <p className="bg-red-500 text-white p-2">{errorMessage}</p>}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-2 max-w-sm mx-auto text-sm">

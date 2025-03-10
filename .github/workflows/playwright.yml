@@ -39,13 +39,22 @@ jobs:
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> backend/.env
           echo "NODE_ENV=production" >> backend/.env
 
+      - name: 🔄 Seed Database (If Required)
+        working-directory: backend
+        run: |
+          if [ -f src/db/seed.js ]; then
+            node src/db/seed.js
+          else
+            echo "⚠️ No seed file found, skipping..."
+          fi
+
       - name: 🌍 Start the Backend
         working-directory: backend
         run: |
           nohup npm start > backend.log 2>&1 &
           sleep 10  # Increased wait time
 
-      - name: 🔍 Ensure Backend is Running
+      - name: 🔍 Check Backend Health
         run: |
           for i in {1..10}; do
             if curl -s http://localhost:3000/api/workouts; then
@@ -65,6 +74,16 @@ jobs:
           nohup npx vite preview --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
           sleep 10
 
+      - name: 🔍 Debug Logs Before Testing
+        run: |
+          echo "🔍 Backend logs:"
+          cat backend/backend.log || echo "⚠️ No backend logs found"
+          echo "🔍 Frontend logs:"
+          cat frontend/frontend.log || echo "⚠️ No frontend logs found"
+          echo "🌐 Checking network connections:"
+          curl -s http://localhost:3000 || echo "⚠️ Backend not reachable"
+          curl -s http://localhost:5173 || echo "⚠️ Frontend not reachable"
+
       - name: 🧪 Install Playwright Chromium Only
         run: npx playwright install chromium
 
@@ -78,3 +97,13 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+      - name: 📤 Upload Logs on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-logs
+          path: |
+            backend/backend.log
+            frontend/frontend.log
+          retention-days: 7

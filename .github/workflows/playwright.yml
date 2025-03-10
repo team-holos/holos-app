@@ -34,12 +34,28 @@ jobs:
           echo "NODE_ENV=test" >> backend/.env
           echo "CORS_ORIGIN=http://localhost:5173" >> backend/.env
 
+      - name: 📄 Examine Database Configuration
+        run: |
+          echo "Check Database Connection String (masked):"
+          grep -o "mongodb\+srv:[^\"]*" backend/.env | sed 's/\(mongodb\+srv:\/\/[^:]*\):[^@]*\(@.*\)/\1:******\2/'
+          echo ""
+          echo "Checking for MongoDB tools:"
+          if command -v mongosh &> /dev/null; then
+            echo "MongoDB shell is available"
+          else 
+            echo "Installing MongoDB tools for diagnostics"
+            wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc | sudo apt-key add -
+            echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+            sudo apt-get update
+            sudo apt-get install -y mongodb-org-tools mongodb-mongosh
+          fi
+
       - name: 🚀 Start Backend
         working-directory: backend
         run: |
           export NODE_ENV=test
           export PORT=3000
-          export DEBUG=app:*
+          export DEBUG=app:*,auth:*,mongoose:*
           nohup npm start > backend.log 2>&1 &
           echo "Waiting for backend to start..."
           for i in {1..30}; do
@@ -50,18 +66,56 @@ jobs:
             echo "Waiting... $i/30"
             sleep 2
           done
+          # Tail the log to see startup issues
+          echo "Backend startup log:"
+          tail -n 50 backend.log
 
-      - name: 🌱 Create Test User
+      - name: 🌱 Create Test User with Multiple Methods
         run: |
           sleep 5
-          curl -X POST http://localhost:3000/api/auth/register \
-            -H "Content-Type: application/json" \
-            -d '{"email":"test@example.com","password":"Test123!"}' || echo "User may already exist"
-          # Verify login
-          response=$(curl -s -X POST http://localhost:3000/api/auth/login \
+          
+          # Try direct registration first
+          echo "Attempting user registration via API:"
+          register_result=$(curl -s -X POST http://localhost:3000/api/auth/register \
             -H "Content-Type: application/json" \
             -d '{"email":"test@example.com","password":"Test123!"}')
-          echo "API Login Response: $response"
+          echo "$register_result"
+          
+          # Extract database connection for direct access if needed
+          if echo "$register_result" | grep -q "error\|fail\|duplicate"; then
+            echo "Registration API reported an issue. Trying a different method."
+            
+            # Try registration with different credentials in case of collision
+            echo "Trying with timestamp-based email:"
+            timestamp=$(date +%s)
+            test_email="test${timestamp}@example.com"
+            echo "Using email: $test_email"
+            
+            register_result2=$(curl -s -X POST http://localhost:3000/api/auth/register \
+              -H "Content-Type: application/json" \
+              -d "{\"email\":\"$test_email\",\"password\":\"Test123!\"}")
+            echo "$register_result2"
+            
+            # Update the test script with new credentials if they worked
+            if ! echo "$register_result2" | grep -q "error\|fail"; then
+              echo "New registration succeeded. Updating test script with new credentials."
+              sed -i "s/const email = \"test@example.com\"/const email = \"$test_email\"/" e2e-tests/workout.spec.js
+            fi
+          fi
+          
+          # Try login to verify credentials
+          echo "Attempting login with test credentials:"
+          login_result=$(curl -s -X POST http://localhost:3000/api/auth/login \
+            -H "Content-Type: application/json" \
+            -d '{"email":"test@example.com","password":"Test123!"}')
+          echo "$login_result"
+          
+          if echo "$login_result" | grep -q "token"; then
+            echo "Login successful! Got valid token."
+          else
+            echo "Login failed. This will likely cause the tests to fail."
+            echo "Detailed backend logs may help diagnose the issue."
+          fi
 
       - name: 🚀 Start Frontend
         working-directory: frontend
@@ -77,6 +131,9 @@ jobs:
             echo "Waiting... $i/15"
             sleep 2
           done
+          # Tail the log to see startup issues
+          echo "Frontend startup log:"
+          tail -n 20 frontend.log
 
       - name: 🔍 Check Frontend & Backend
         run: |
@@ -98,7 +155,44 @@ jobs:
           npx playwright install chromium
           npx playwright install-deps chromium
 
-      - name: 🔄 Run Playwright Tests with Debug
+      - name: 🔄 Create Playwright Config
+        run: |
+          cat > playwright.config.js << 'EOF'
+          // @ts-check
+          const { defineConfig, devices } = require('@playwright/test');
+          
+          /**
+           * @see https://playwright.dev/docs/test-configuration
+           */
+          module.exports = defineConfig({
+            testDir: './e2e-tests',
+            fullyParallel: false,
+            forbidOnly: !!process.env.CI,
+            retries: process.env.CI ? 2 : 0,
+            workers: 1,
+            reporter: [['html'], ['list']],
+            use: {
+              headless: true,
+              trace: 'on-first-retry',
+              video: 'on-first-retry',
+              screenshot: 'only-on-failure',
+              baseURL: 'http://localhost:5173',
+              actionTimeout: 20000,
+              navigationTimeout: 30000,
+            },
+            projects: [
+              {
+                name: 'chromium',
+                use: { ...devices['Desktop Chrome'] },
+              },
+            ],
+            webServer: {
+              reuseExistingServer: true,
+            },
+          });
+          EOF
+
+      - name: 🔄 Run Playwright Tests with Debug Script
         run: |
           # Create debug script to modify the test
           cat > debug-test.js << 'EOF'
@@ -112,20 +206,43 @@ jobs:
             `test.beforeEach(async ({ page }) => {
               // Enable verbose logging
               page.on('request', request => console.log(\`→ \${request.method()} \${request.url()}\`));
-              page.on('response', response => console.log(\`← \${response.status()} \${response.url()}\`));
+              page.on('response', response => {
+                console.log(\`← \${response.status()} \${response.url()}\`);
+                if (response.url().includes('/api/auth/login')) {
+                  response.text().then(body => {
+                    console.log('Login response body:', body);
+                  }).catch(err => {});
+                }
+              });
             `);
           
-          // Add longer timeout
+          // Add longer timeout and enhanced debugging
           content = content.replace('await expect(page).toHaveURL("http://localhost:5173/dashboard")',
-            'await page.waitForTimeout(1000); console.log("After login click"); await expect(page).toHaveURL("http://localhost:5173/dashboard", { timeout: 30000 })');
+            `try {
+              await page.waitForTimeout(1000); 
+              console.log("After login click");
+              // Save screenshots
+              await page.screenshot({ path: "after-login.png" });
+              // Check local storage
+              const localStorage = await page.evaluate(() => Object.entries(window.localStorage));
+              console.log('LocalStorage after login attempt:', JSON.stringify(localStorage));
+              // Check if error message appears on the page
+              const errorText = await page.locator('text=Falsches Passwort, text=Benutzer nicht gefunden').textContent().catch(() => null);
+              if (errorText) console.log('Error on page:', errorText);
+              // Continue with the expectation
+              await expect(page).toHaveURL("http://localhost:5173/dashboard", { timeout: 30000 });
+            } catch (e) {
+              console.log('Error during login:', e);
+              throw e;
+            }`);
           
           fs.writeFileSync(testPath, content);
           console.log('Test file updated with debug info');
           EOF
           
           node debug-test.js
-          # Run with headless: true explicitly set
-          PLAYWRIGHT_HEADLESS=true npx playwright test workout.spec.js --workers=1 --retries=2 --timeout=60000
+          # Run test with detailed debug information
+          DEBUG=pw:api PLAYWRIGHT_HEADLESS=true npx playwright test workout.spec.js --workers=1 --retries=2
 
       - name: 📤 Upload Playwright Report
         uses: actions/upload-artifact@v4
@@ -134,6 +251,7 @@ jobs:
           name: playwright-report
           path: |
             playwright-report/
+            *.png
           retention-days: 14
 
       - name: 📤 Upload Logs on Failure
@@ -145,4 +263,5 @@ jobs:
             backend/backend.log
             frontend/frontend.log
             test-results/
+            *.png
           retention-days: 7

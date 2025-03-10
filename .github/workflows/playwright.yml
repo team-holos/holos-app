@@ -28,7 +28,7 @@ jobs:
 
     - name: 🌍 Start the Backend
       working-directory: backend
-      run: npm start
+      run: npm start &
 
     - name: 🌍 Start the Frontend
       working-directory: frontend

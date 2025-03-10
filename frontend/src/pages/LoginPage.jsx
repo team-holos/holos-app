@@ -143,7 +143,7 @@ function LoginPage() {
 
             <p className="text-sm font-semibold mt-2 text-center">
               Kein Konto?
-              <Link to="/register" className="text-red-600 hover:text-red-700 ml-1">
+              <Link data-testid="register-button" to="/register" className="text-red-600 hover:text-red-700 ml-1">
                 Registrieren
               </Link>
             </p>

@@ -1,5 +1,4 @@
 name: Tests
-
 on:
   push:
     branches:
@@ -9,28 +8,28 @@ on:
     branches:
       - main
       - feature/*
-
 jobs:
-  build:
+  unit-tests:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22.x"
-
+          node-version: "22"
       - name: Install dependencies
         run: npm ci
-
       - name: Run tests
-        run: npm run test:singlerun
-
+        working-directory: ./frontend
+        run: |
+          npm ci
+          npm run test:coverage
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
-          path: coverage/
+          name: coverage
+          path: ./frontend/coverage/

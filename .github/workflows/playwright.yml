@@ -21,15 +21,25 @@ jobs:
         cache: 'npm'
 
     - name: 📦 Install Dependencies
-      run: npm ci
-
-    - name: 🌍 Start the Application
-      run: npm run dev &
-
-    - name: ⏳ Wait for the App to be Ready
       run: |
-        echo "Warte auf http://localhost:5173..."
-        npx wait-on http://localhost:5173 -t 60000
+        npm ci
+        cd frontend && npm ci
+        cd ../backend && npm ci  # Ensure backend dependencies are installed
+
+    - name: 🌍 Start the Backend
+      working-directory: backend
+      run: npm start
+
+    - name: 🌍 Start the Frontend
+      working-directory: frontend
+      run: |
+        npm run build  # If using Vite or React
+        npm run preview &  # Use "start" if needed
+
+    - name: ⏳ Wait for the App & Backend
+      run: |
+        echo "Warte auf Frontend (http://localhost:5173) und Backend (http://localhost:3000)..."
+        npx wait-on http://localhost:5173 http://localhost:3000 -t 60000
 
     - name: 🧪 Install Playwright Browsers
       run: npx playwright install --with-deps

@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    timeout-minutes: 30  # Adjusted timeout from 60 to 30
+    timeout-minutes: 30
     runs-on: ubuntu-latest
 
     steps:
@@ -54,26 +54,38 @@ jobs:
           nohup npm start > backend.log 2>&1 &
           sleep 15  # Increased wait time for backend initialization
 
-      - name: 🔍 Check Backend Health
+      - name: 🔍 Check Backend Health (Debugging 404)
         run: |
-          for i in {1..20}; do  # Increased retries
+          echo "🔍 Checking if backend is running..."
+          ps aux | grep node
+          
+          echo "🔍 Listing backend log content:"
+          cat backend/backend.log || echo "⚠️ No backend logs found"
+
+          echo "🔍 Checking available backend routes..."
+          curl -s http://localhost:3000/ || echo "⚠️ Root not reachable"
+          curl -s http://localhost:3000/api/ || echo "⚠️ API base not reachable"
+
+          echo "🔍 Checking /api/workouts specifically..."
+          for i in {1..20}; do
             RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/api/workouts)
             if [[ "$RESPONSE" == "200" ]]; then
-              echo "✅ Backend is responding"
+              echo "✅ Backend is responding correctly!"
               exit 0
             else
               echo "⏳ Backend not ready (Status: $RESPONSE), retrying in 5s..."
               sleep 5
             fi
           done
-          echo "❌ Backend did not start properly!" && exit 1
+          echo "❌ Backend did not start properly or route is missing!"
+          exit 1
 
       - name: 🚀 Start Frontend
         working-directory: frontend
         run: |
           npm run build
           nohup npx vite preview --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
-          sleep 15  # Ensure frontend is fully started before testing
+          sleep 15
 
       - name: 🔍 Debug Logs Before Testing
         run: |
@@ -90,7 +102,7 @@ jobs:
 
       - name: 🔄 Run Playwright Tests (With Retries & Extended Timeout)
         run: |
-          npx playwright test --workers=2 --retries=2 --timeout=30000  # Increased timeout
+          npx playwright test --workers=2 --retries=2 --timeout=30000
 
       - name: 📤 Upload Playwright Report
         uses: actions/upload-artifact@v4

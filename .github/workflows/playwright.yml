@@ -45,7 +45,7 @@ jobs:
       - name: 🗄 Ensure SQLite Database File Exists
         run: |
           mkdir -p backend/db
-          touch backend/db/holos.db
+          touch backend/src/db/holos.db
 
       - name: 📦 Run Database Migrations (if applicable)
         working-directory: backend
@@ -53,7 +53,7 @@ jobs:
 
       - name: 🌱 Seed Database
         working-directory: backend
-        run: node db/seed.js
+        run: node backend/src/db/seed.js
 
       - name: 🚀 Start Backend
         working-directory: backend

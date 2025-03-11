@@ -97,6 +97,89 @@ Dieser Testkatalog dokumentiert die End-to-End Testfälle für die Holos App, be
 **Erwartetes Ergebnis:**
 - Weiterleitung zur Login-Seite
 
+## 2. Login
+
+### TC-LOG-001: Erfolgreicher Login
+**Priorität:** Hoch
+**Vorbedingung:** Registrierter Benutzer vorhanden
+**Schritte:**
+1. Navigiere zur Login-Seite
+2. E-Mail "test@example.com" eingeben
+3. Passwort "Test123!" eingeben
+4. "Login" Button klicken
+**Erwartetes Ergebnis:**
+- Erfolgreiche Anmeldung
+- Weiterleitung zum Dashboard
+- Benutzername wird in der Navigation angezeigt
+
+### TC-LOG-002: Login mit falscher E-Mail
+**Priorität:** Hoch
+**Schritte:**
+1. Navigiere zur Login-Seite
+2. Nicht registrierte E-Mail "falsch@example.com" eingeben
+3. Beliebiges Passwort eingeben
+4. "Login" Button klicken
+**Erwartetes Ergebnis:**
+- Fehlermeldung "Ungültige Anmeldedaten"
+- Verbleib auf Login-Seite
+
+### TC-LOG-003: Login mit falschem Passwort
+**Priorität:** Hoch
+**Schritte:**
+1. Navigiere zur Login-Seite
+2. Registrierte E-Mail eingeben
+3. Falsches Passwort "FalschesPasswort123!" eingeben
+4. "Login" Button klicken
+**Erwartetes Ergebnis:**
+- Fehlermeldung "Ungültige Anmeldedaten"
+- Verbleib auf Login-Seite
+
+### TC-LOG-004: Login mit leeren Feldern
+**Priorität:** Mittel
+**Schritte:**
+1. Navigiere zur Login-Seite
+2. Keine Daten eingeben
+3. "Login" Button klicken
+**Erwartetes Ergebnis:**
+- Fehlermeldungen für Pflichtfelder
+- Verbleib auf Login-Seite
+
+### TC-LOG-005: "Passwort vergessen" Funktion
+**Priorität:** Hoch
+**Schritte:**
+1. Navigiere zur Login-Seite
+2. Auf "Passwort vergessen" Link klicken
+3. Registrierte E-Mail eingeben
+4. "Zurücksetzen" Button klicken
+**Erwartetes Ergebnis:**
+- Bestätigungsnachricht über versendete E-Mail
+- E-Mail mit Reset-Link wird empfangen
+
+### TC-LOG-006: Navigation zur Registrierung
+**Priorität:** Niedrig
+**Schritte:**
+1. Navigiere zur Login-Seite
+2. Auf "Registrieren" Link klicken
+**Erwartetes Ergebnis:**
+- Weiterleitung zur Registrierungsseite
+
+### TC-LOG-007: Brute Force Schutz
+**Priorität:** Hoch
+**Schritte:**
+1. Mehrere fehlgeschlagene Login-Versuche durchführen
+**Erwartetes Ergebnis:**
+- Nach X Fehlversuchen wird Account temporär gesperrt
+- Benutzer erhält entsprechende Benachrichtigung
+
+### TC-LOG-008: Session Handling
+**Priorität:** Hoch
+**Schritte:**
+1. Erfolgreicher Login
+2. Browser schließen und neu öffnen
+**Erwartetes Ergebnis:**
+- Benutzer bleibt eingeloggt (falls "Angemeldet bleiben" aktiviert)
+- Sichere Session-Verwaltung
+
 ## Edge Cases und Grenzwerte
 
 - Maximale Länge des Vornamens testen

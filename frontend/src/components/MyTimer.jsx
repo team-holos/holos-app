@@ -1,7 +1,7 @@
 import React from "react";
 import { useTimer } from "react-timer-hook";
 import  useSound  from "use-sound";
-import gong from "/sounds/gong.mp3";
+// import gong from ".sounds/gong.mp3";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -24,6 +24,7 @@ function MyTimer({ expiryTimestamp }) {
     onExpire: () => playExpireSound(), // Play sound on expire
   });
 
+  const gong = "./sounds/gong.mp3"; // Sound file
   const [playExpireSound] = useSound(gong); // Initialize sound
   const [time, setTime] = useState(new Date()); // State for current time
 

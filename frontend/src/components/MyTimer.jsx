@@ -57,7 +57,8 @@ function MyTimer({ expiryTimestamp }) {
       <div style={{ fontSize: "45px" }}>
         {/* <span>{days}</span>: */} 
         {/* <span>{hours}</span>: */}
-        <span>{minutes}</span>:
+        <span>{minutes}</span>:  
+        {/**/}
         <span>{seconds}</span>
       </div>
       <p className="text-xs">{isRunning ? "Timer läuft" : "Timer aus"}</p>

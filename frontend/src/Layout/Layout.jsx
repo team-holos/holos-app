@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import AIChat from "../components/AIChat";
+import PropTypes from "prop-types";
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 function Layout({ children }) {
   const [showHoli, setShowHoli] = useState(false);

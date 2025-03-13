@@ -1,6 +1,7 @@
 import { useTimer } from "react-timer-hook";
 import  useSound  from "use-sound";
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
 
 function MyTimer({ expiryTimestamp }) {
@@ -90,5 +91,10 @@ function MyTimer({ expiryTimestamp }) {
     </div>
   );
 }
+
+MyTimer.propTypes = {
+  expiryTimestamp: PropTypes.instanceOf(Date).isRequired,
+};
+
 
 export default MyTimer;

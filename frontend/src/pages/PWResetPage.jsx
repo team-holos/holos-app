@@ -31,7 +31,7 @@ function ResetPasswordPage() {
             <label>Email</label>
             <input type="email" name="email" className="border p-2" placeholder="Email Adresse" />
             <button type="submit" className="bg-blue-500 px-2 py-1 text-white font-semibold">Passwort zurücksetzen</button>
-            <h2 class="max-w-sm and mx-auto"><a href="/">Zurück zur Loginseite</a></h2>
+            <h2 className="max-w-sm and mx-auto"><a href="/">Zurück zur Loginseite</a></h2>
         </form>
     );
 }

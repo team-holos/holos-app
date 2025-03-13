@@ -1,5 +1,6 @@
 import React from "react";
 import useSound from "use-sound";
+import PropTypes from "prop-types";
 
 const SoundPlayer = ({ onSoundSelected }) => {
     const [playDaytimeForrestBonfire, { stop: stopDaytimeForrestBonfire }] = useSound("./sounds/DaytimeForrestBonfire.mp3");
@@ -49,6 +50,10 @@ const SoundPlayer = ({ onSoundSelected }) => {
             </div>
         </div>
     );
+}
+
+SoundPlayer.propTypes = {
+    onSoundSelected: PropTypes.func.isRequired,
 };
 
 export default SoundPlayer;

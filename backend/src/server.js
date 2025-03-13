@@ -82,26 +82,26 @@ app.get("/api/training-plan/:user_id", authenticateToken, (req, res) => {
 
 // 🔹 **Log a Workout**
 app.post("/api/workout-log", authenticateToken, (req, res) => {
-  const { user_id, date, exercise, sets, reps, weight } = req.body;
+  // const { user_id, date, exercise, sets, reps, weight } = req.body;
 
-  if (!user_id || !date || !exercise) {
-    return res.status(400).json({ error: "Missing required workout details" });
-  }
+  // if (!user_id || !date || !exercise) {
+  //   return res.status(400).json({ error: "Missing required workout details" });
+  // }
 
-  try {
-    const stmt = db.prepare(`
-      INSERT INTO workout_logs (user_id, date, exercise, sets, reps, weight) 
-      VALUES (?, ?, ?, ?, ?, ?) 
-      ON CONFLICT(user_id, date, exercise) 
-      DO UPDATE SET sets=excluded.sets, reps=excluded.reps, weight=excluded.weight
-    `);
+  // try {
+  //   const stmt = db.prepare(`
+  //     INSERT INTO workout_logs (user_id, date, exercise, sets, reps, weight) 
+  //     VALUES (?, ?, ?, ?, ?, ?) 
+  //     ON CONFLICT(user_id, date, exercise) 
+  //     DO UPDATE SET sets=excluded.sets, reps=excluded.reps, weight=excluded.weight
+  //   `);
     
-    stmt.run(user_id, date, exercise, sets || 0, reps || 0, weight || 0);
+  //   stmt.run(user_id, date, exercise, sets || 0, reps || 0, weight || 0);
 
-    res.json({ message: "Workout logged successfully." });
-  } catch (error) {
-    res.status(500).json({ error: "Database error", details: error.message });
-  }
+  //   res.json({ message: "Workout logged successfully." });
+  // } catch (error) {
+  //   res.status(500).json({ error: "Database error", details: error.message });
+  // }
 });
 
 // 🔹 **Fetch Workout Logs**
@@ -127,21 +127,21 @@ app.get("/api/workout-log/:user_id", authenticateToken, (req, res) => {
 app.post("/auth/register", (req, res) => {
   const { username, email, password, passwordRetype } = req.body;
 
-  if (!email || !password || !username) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
-  if (password !== passwordRetype) {
-    return res.status(400).json({ error: "Passwords do not match" });
-  }
+  // if (!email || !password || !username) {
+  //   return res.status(400).json({ error: "All fields are required" });
+  // }
+  // if (password !== passwordRetype) {
+  //   return res.status(400).json({ error: "Passwords do not match" });
+  // }
 
-  const checkUser = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-  if (checkUser) {
-    return res.status(400).json({ error: "User already exists" });
-  }
+  // const checkUser = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+  // if (checkUser) {
+  //   return res.status(400).json({ error: "User already exists" });
+  // }
 
-  const hashedPassword = bcrypt.hashSync(password, 12);
-  const insertUser = db.prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-  const { lastInsertRowid } = insertUser.run(username, email, hashedPassword);
+  // const hashedPassword = bcrypt.hashSync(password, 12);
+  // const insertUser = db.prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+  // const { lastInsertRowid } = insertUser.run(username, email, hashedPassword);
 
   res.json({ userId: lastInsertRowid, email, username, message: `User ${username} successfully registered!` });
 });

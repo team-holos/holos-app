@@ -1,7 +1,6 @@
 import React from "react";
 import { useTimer } from "react-timer-hook";
 import  useSound  from "use-sound";
-// import gong from ".sounds/gong.mp3";
 import { useState } from "react";
 import { useEffect } from "react";
 
